@@ -191,10 +191,17 @@ window.data = JSON.parse(localStorage.getItem("pets")) || [];
 window.isAdmin = false;
 window.page = "home";
 
-/* SAFETY CATCH (IMPORTANT) */
-window.addEventListener("error", e => {
-console.log("JS ERROR:", e.message);
-});
+/* VALUE CONVERTER (NEW) */
+function toNumber(v){
+if(!v) return 0;
+v = v.toUpperCase();
+
+if(v.includes("T")) return parseFloat(v) * 1e12;
+if(v.includes("B")) return parseFloat(v) * 1e9;
+if(v.includes("M")) return parseFloat(v) * 1e6;
+
+return parseFloat(v) || 0;
+}
 
 /* MENU */
 window.toggleMenu = function(){
@@ -218,14 +225,19 @@ page !== "home" ? "block" : "none";
 render(page);
 };
 
-/* RENDER */
+/* 🔥 FIXED RENDER (SORT HIGH → LOW BY NORMAL VALUE) */
 function render(page){
 let tbody = document.getElementById("tableBody");
 if(!tbody) return;
 
 tbody.innerHTML = "";
 
-window.data
+/* SORT BEFORE FILTER */
+let sorted = [...window.data].sort(
+(a,b) => toNumber(b.normal) - toNumber(a.normal)
+);
+
+sorted
 .filter(p => p.rarity === page)
 .forEach(p => {
 tbody.innerHTML += `
@@ -239,7 +251,7 @@ tbody.innerHTML += `
 });
 }
 
-/* FIXED ADD PET */
+/* ADD / UPDATE */
 window.addPet = function(){
 
 if(!window.isAdmin){
@@ -276,7 +288,7 @@ render(window.page);
 alert("Saved!");
 };
 
-/* LOGIN SAFE */
+/* LOGIN */
 window.login = function(){
 const e = document.getElementById("email").value;
 const p = document.getElementById("password").value;
