@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Value List</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#070a18;
+color:white;
+}
+
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px;
+background:#111827;
+position:sticky;
+top:0;
+}
+
+button{
+padding:10px;
+border:none;
+border-radius:8px;
+background:#7c3aed;
+color:white;
+cursor:pointer;
+}
+
+#menu{
+display:none;
+position:absolute;
+right:10px;
+top:60px;
+background:#111827;
+border:1px solid #333;
+border-radius:10px;
+}
+
+#menu button{
+display:block;
+width:150px;
+text-align:left;
+background:none;
+}
+
+section{
+padding:20px;
+}
+
+#admin{
+display:none;
+position:fixed;
+right:0;
+top:0;
+width:300px;
+height:100%;
+background:#0f172a;
+padding:15px;
+overflow:auto;
+}
+
+input,select{
+width:100%;
+padding:10px;
+margin-top:8px;
+background:#111827;
+color:white;
+border:none;
+border-radius:6px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div>🐾 Value List</div>
+
+<button onclick="toggleMenu()">Menu</button>
+
+<div id="menu">
+<button onclick="showPage('home')">Home</button>
+<button onclick="showPage('Secret')">Secrets</button>
+<button onclick="showPage('Mythical')">Mythicals</button>
+</div>
+
+<button onclick="openAdmin()">Admin</button>
+</header>
+
+<section id="homePage">
+<h2>Home</h2>
+<p>Official Clicker Simulator Value List</p>
+</section>
+
+<section id="listPage" style="display:none;">
+<h2 id="title"></h2>
+<div id="list"></div>
+</section>
+
+<div id="admin">
+<h3>Admin</h3>
+
+<input id="name" placeholder="Name">
+<input id="value" placeholder="Value">
+
+<select id="rarity">
+<option>Secret</option>
+<option>Mythical</option>
+</select>
+
+<button onclick="addPet()">Add / Update</button>
+
+<br><br>
+<button onclick="closeAdmin()">Close</button>
+</div>
+
+<script>
+let page = "home";
+
+let data = JSON.parse(localStorage.getItem("pets") || "[]");
+
+function save(){
+localStorage.setItem("pets", JSON.stringify(data));
+render();
+}
+
+function toggleMenu(){
+let m = document.getElementById("menu");
+m.style.display = m.style.display === "block" ? "none" : "block";
+}
+
+function showPage(p){
+page = p;
+
+document.getElementById("menu").style.display = "none";
+document.getElementById("homePage").style.display = (p==="home")?"block":"none";
+document.getElementById("listPage").style.display = (p==="home")?"none":"block";
+
+document.getElementById("title").innerText = p;
+
+render();
+}
+
+function render(){
+let list = document.getElementById("list");
+list.innerHTML = "";
+
+data.filter(x => page==="home" ? false : x.rarity===page)
+.forEach(p=>{
+list.innerHTML += `
+<p><b>${p.name}</b> - ${p.value} (${p.rarity})</p>
+`;
+});
+}
+
+function addPet(){
+
+let n = document.getElementById("name").value;
+let v = document.getElementById("value").value;
+let r = document.getElementById("rarity").value;
+
+if(!n || !v) return alert("Fill fields");
+
+let found = data.find(x=>x.name===n);
+
+if(found){
+found.value = v;
+found.rarity = r;
+}else{
+data.push({name:n,value:v,rarity:r});
+}
+
+save();
+alert("Saved!");
+}
+
+function openAdmin(){
+document.getElementById("admin").style.display="block";
+}
+
+function closeAdmin(){
+document.getElementById("admin").style.display="none";
+}
+
+render();
+</script>
+
+</body>
+</html>
