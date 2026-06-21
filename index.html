@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Pro Value List</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#070a18;
+color:white;
+}
+
+/* HEADER */
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 8%;
+background:#111827;
+position:sticky;
+top:0;
+}
+
+.logo{
+color:#c084fc;
+font-weight:bold;
+}
+
+/* MENU */
+.dropdown{
+position:relative;
+}
+
+.menuBtn{
+background:#7c3aed;
+border:none;
+color:white;
+padding:10px 14px;
+border-radius:8px;
+cursor:pointer;
+}
+
+.menu{
+display:none;
+position:absolute;
+right:0;
+top:45px;
+background:#111827;
+border:1px solid rgba(255,255,255,0.1);
+border-radius:10px;
+overflow:hidden;
+z-index:999;
+}
+
+.menu button{
+display:block;
+width:150px;
+padding:10px;
+background:none;
+border:none;
+color:white;
+text-align:left;
+cursor:pointer;
+}
+
+.menu button:hover{
+background:rgba(255,255,255,0.1);
+}
+
+/* SEARCH + INPUTS */
+input{
+padding:10px;
+width:100%;
+max-width:400px;
+margin:20px 8%;
+border-radius:8px;
+border:none;
+outline:none;
+background:#111827;
+color:white;
+}
+
+/* TABLE */
+table{
+width:84%;
+margin:0 8%;
+border-collapse:collapse;
+background:#111827;
+border-radius:10px;
+overflow:hidden;
+}
+
+th,td{
+padding:12px;
+border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+th{
+background:#0f172a;
+color:#c084fc;
+}
+
+tr:hover{
+background:rgba(255,255,255,0.05);
+cursor:pointer;
+}
+
+/* ADMIN */
+#adminPanel{
+display:none;
+position:fixed;
+top:0;
+right:0;
+width:320px;
+height:100%;
+background:#0f172a;
+padding:20px;
+border-left:2px solid #c084fc;
+overflow:auto;
+}
+
+.btn{
+background:#7c3aed;
+border:none;
+color:white;
+padding:10px;
+width:100%;
+border-radius:6px;
+margin-top:10px;
+}
+
+/* LAYOUT */
+.hidden{display:none;}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">🐾 Pro Value List</div>
+
+<div class="dropdown">
+<button class="menuBtn" onclick="toggleMenu()">Menu ▼</button>
+
+<div id="menu" class="menu">
+<button onclick="goPage('home')">Home</button>
+<button onclick="goPage('Secret')">Secrets</button>
+<button onclick="goPage('Mythical')">Mythicals</button>
+</div>
+
+</div>
+</header>
+
+<input id="search" placeholder="Search pets..." onkeyup="render()"/>
+
+<table>
+<thead>
+<tr>
+<th>Pet</th>
+<th>Normal</th>
+<th>Golden</th>
+<th>Rainbow</th>
+<th>Demand</th>
+<th>Rarity</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
+
+<!-- ADMIN -->
+<div id="adminPanel">
+<h3>Admin Panel</h3>
+
+<input id="name" placeholder="Pet Name"/>
+<input id="normal" placeholder="Normal Value"/>
+<input id="golden" placeholder="Golden Value"/>
+<input id="rainbow" placeholder="Rainbow Value"/>
+<input id="demand" placeholder="Demand"/>
+<input id="rarity" placeholder="Rarity"/>
+
+<button class="btn" onclick="addPet()">Add / Update</button>
+<button class="btn" onclick="logout()">Close</button>
+</div>
+
+<script>
+
+let page = "home";
+
+let data = JSON.parse(localStorage.getItem("pets")) || [
+{
+name:"Celestial Dragon",
+normal:"500B",
+golden:"1T",
+rainbow:"2.5T",
+demand:"High",
+rarity:"Secret"
+},
+{
+name:"Infernal Cat",
+normal:"250B",
+golden:"600B",
+rainbow:"1.5T",
+demand:"Medium",
+rarity:"Mythical"
+}
+];
+
+/* MENU */
+function toggleMenu(){
+let m = document.getElementById("menu");
+m.style.display = m.style.display === "block" ? "none" : "block";
+}
+
+function goPage(p){
+page = p;
+document.getElementById("menu").style.display = "none";
+render();
+}
+
+/* SAVE */
+function save(){
+localStorage.setItem("pets", JSON.stringify(data));
+}
+
+/* RENDER */
+function render(){
+
+let search = document.getElementById("search").value.toLowerCase();
+let tbody = document.getElementById("tableBody");
+tbody.innerHTML = "";
+
+let list = [...data];
+
+list = list.filter(p => {
+
+let matchSearch = p.name.toLowerCase().includes(search);
+
+if(page === "Secret") return matchSearch && p.rarity === "Secret";
+if(page === "Mythical") return matchSearch && p.rarity === "Mythical";
+
+return matchSearch;
+});
+
+list.forEach((p,i)=>{
+
+tbody.innerHTML += `
+<tr onclick="selectPet(${i})">
+<td>${p.name}</td>
+<td>${p.normal}</td>
+<td>${p.golden}</td>
+<td>${p.rainbow}</td>
+<td>${p.demand}</td>
+<td>${p.rarity}</td>
+<td>
+<button onclick="event.stopPropagation(); editPet(${i})">Edit</button>
+<button onclick="event.stopPropagation(); deletePet(${i})">X</button>
+</td>
+</tr>
+`;
+});
+
+}
+
+/* SELECT */
+window.selectPet = function(i){
+let p = data[i];
+
+document.getElementById("name").value = p.name;
+document.getElementById("normal").value = p.normal;
+document.getElementById("golden").value = p.golden;
+document.getElementById("rainbow").value = p.rainbow;
+document.getElementById("demand").value = p.demand;
+document.getElementById("rarity").value = p.rarity;
+}
+
+/* ADD / UPDATE */
+window.addPet = function(){
+
+let n = document.getElementById("name").value;
+let no = document.getElementById("normal").value;
+let g = document.getElementById("golden").value;
+let r = document.getElementById("rainbow").value;
+let d = document.getElementById("demand").value;
+let ra = document.getElementById("rarity").value;
+
+if(!n || !no){
+alert("Fill Name + Normal Value");
+return;
+}
+
+let found = data.find(p => p.name === n);
+
+if(found){
+found.normal = no;
+found.golden = g;
+found.rainbow = r;
+found.demand = d;
+found.rarity = ra;
+}else{
+data.push({
+name:n,
+normal:no,
+golden:g,
+rainbow:r,
+demand:d,
+rarity:ra
+});
+}
+
+save();
+render();
+clearInputs();
+}
+
+/* EDIT */
+window.editPet = function(i){
+let p = data[i];
+
+document.getElementById("name").value = p.name;
+document.getElementById("normal").value = p.normal;
+document.getElementById("golden").value = p.golden;
+document.getElementById("rainbow").value = p.rainbow;
+document.getElementById("demand").value = p.demand;
+document.getElementById("rarity").value = p.rarity;
+}
+
+/* DELETE */
+window.deletePet = function(i){
+data.splice(i,1);
+save();
+render();
+}
+
+/* CLEAR */
+function clearInputs(){
+document.getElementById("name").value="";
+document.getElementById("normal").value="";
+document.getElementById("golden").value="";
+document.getElementById("rainbow").value="";
+document.getElementById("demand").value="";
+document.getElementById("rarity").value="";
+}
+
+/* ADMIN OPEN */
+function logout(){
+document.getElementById("adminPanel").style.display="none";
+}
+
+document.addEventListener("keydown", (e)=>{
+if(e.key === "F2"){
+document.getElementById("adminPanel").style.display="block";
+}
+});
+
+render();
+
+</script>
+
+</body>
+</html>
