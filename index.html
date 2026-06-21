@@ -128,11 +128,11 @@ margin-top:0;
 <header>
 <div class="logo">🐾 Value List</div>
 
+<div style="display:flex;align-items:center;gap:10px;flex:1;margin:0 20px;">
 <div style="position:relative;">
 <button onclick="toggleMenu()">Menu ▼</button>
 <div id="menu">
 <button onclick="goPage('home')">Home</button>
-<button onclick="goPage('search')">Search</button>
 <button onclick="goPage('Basic')">Basic</button>
 <button onclick="goPage('Rare')">Rare</button>
 <button onclick="goPage('Epic')">Epic</button>
@@ -143,6 +143,8 @@ margin-top:0;
 <button onclick="goPage('Secret')">Secret</button>
 <button onclick="goPage('Mega')">Mega</button>
 </div>
+</div>
+<input type="text" id="headerSearch" placeholder="Search pets..." style="width:200px;margin:0;">
 </div>
 
 <button onclick="openAdmin()">Admin</button>
@@ -462,6 +464,19 @@ tbody.appendChild(tr);
 
 document.getElementById("searchBar").addEventListener("input", (e) => {
 renderSearch(e.target.value);
+document.getElementById("headerSearch").value = e.target.value;
+});
+
+document.getElementById("headerSearch").addEventListener("input", (e) => {
+const q = e.target.value;
+if (window.page !== "search") {
+window.page = "search";
+document.getElementById("homePage").style.display = "none";
+document.getElementById("listPage").style.display = "none";
+document.getElementById("searchPage").style.display = "block";
+}
+document.getElementById("searchBar").value = q;
+renderSearch(q);
 });
 
 /* CLOSE MENU ON OUTSIDE CLICK */
