@@ -1007,9 +1007,9 @@ async function loadIcon(assetId, imgEl) {
 if (!assetId) { imgEl.style.display = "none"; return; }
 if (iconCache.has(assetId)) { imgEl.src = iconCache.get(assetId); imgEl.style.display = "block"; return; }
 try {
-const res = await fetch(`https://thumbnails.roblox.com/v1/assets?assetIds=${assetId}&returnPolicy=PlaceHolder&size=150x150&format=Png`);
-const json = await res.json();
-const url = json.data && json.data[0] && json.data[0].imageUrl;
+const res = await fetch(`https://devilish-keys.devilish-codes.workers.dev/api/thumbnails?ids=${assetId}`);
+const j = await res.json();
+const url = j.data && j.data[0] && j.data[0].imageUrl;
 if (url) { iconCache.set(assetId, url); imgEl.src = url; imgEl.style.display = "block"; }
 else { imgEl.style.display = "none"; }
 } catch(e) { imgEl.style.display = "none"; }
