@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Value List Pro</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#070a18;
+color:white;
+}
+
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px;
+background:#111827;
+position:sticky;
+top:0;
+}
+
+button{
+padding:10px;
+border:none;
+border-radius:8px;
+background:#7c3aed;
+color:white;
+cursor:pointer;
+margin:2px;
+}
+
+#menu{
+display:none;
+position:absolute;
+right:10px;
+top:60px;
+background:#111827;
+border:1px solid #333;
+border-radius:10px;
+}
+
+#menu button{
+display:block;
+width:150px;
+text-align:left;
+background:none;
+}
+
+section{padding:20px;}
+
+input, select{
+width:100%;
+padding:10px;
+margin-top:10px;
+border-radius:6px;
+border:none;
+background:#111827;
+color:white;
+}
+
+/* 🟣 RARITY COLORS */
+.secret{color:#c084fc;}
+.mythical{color:gold;}
+
+/* PET CARD */
+.pet{
+background:#111827;
+padding:10px;
+margin:10px 0;
+border-radius:8px;
+position:relative;
+}
+
+/* BADGE */
+.badge{
+position:absolute;
+top:8px;
+right:8px;
+background:#22c55e;
+padding:4px 8px;
+border-radius:6px;
+font-size:12px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div>🐾 Value List Pro</div>
+
+<button onclick="toggleMenu()">Menu</button>
+
+<div id="menu">
+<button onclick="showPage('home')">Home</button>
+<button onclick="showPage('Secret')">Secrets</button>
+<button onclick="showPage('Mythical')">Mythicals</button>
+</div>
+
+<button onclick="openAdmin()">Admin</button>
+</header>
+
+<section id="homePage">
+<h2>Home</h2>
+<p>Official Clicker Simulator Value List</p>
+
+<!-- 💾 BACKUP TOOLS -->
+<button onclick="exportData()">Export Backup</button>
+<input type="file" onchange="importData(event)">
+</section>
+
+<section id="listPage" style="display:none;">
+
+<h2 id="title"></h2>
+
+<!-- 🔍 FILTERS -->
+<input id="search" placeholder="Search pets..." oninput="render()">
+
+<select id="valueFilter" onchange="render()">
+<option value="all">All Values</option>
+<option value="top3">Top 3 Only</option>
+</select>
+
+<div id="list"></div>
+
+<!-- 💾 SAVE INDICATOR -->
+<p id="saved" style="opacity:0.7;font-size:12px;"></p>
+</section>
+
+<div id="admin">
+<h3>Admin</h3>
+
+<input id="name" placeholder="Name">
+<input id="value" placeholder="Value">
+
+<select id="rarity">
+<option>Secret</option>
+<option>Mythical</option>
+</select>
+
+<button onclick="addPet()">Add / Update</button>
+
+<br><br>
+<button onclick="closeAdmin()">Close</button>
+</div>
+
+<script>
+let page = "home";
+let editIndex = null;
+
+let data = JSON.parse(localStorage.getItem("pets") || "[]");
+
+/* 💾 SAVE */
+function save(){
+localStorage.setItem("pets", JSON.stringify(data));
+showSaved();
+render();
+}
+
+/* 🟢 SAVE INDICATOR */
+function showSaved(){
+let s = document.getElementById("saved");
+s.innerText = "Saved ✔";
+setTimeout(()=>s.innerText="",1500);
+}
+
+/* MENU */
+function toggleMenu(){
+let m=document.getElementById("menu");
+m.style.display=m.style.display==="block"?"none":"block";
+}
+
+/* PAGE */
+function showPage(p){
+page=p;
+document.getElementById("menu").style.display="none";
+document.getElementById("homePage").style.display=(p==="home")?"block":"none";
+document.getElementById("listPage").style.display=(p==="home")?"none":"block";
+document.getElementById("title").innerText=p;
+render();
+}
+
+/* 🔥 VALUE SORT */
+function toNumber(v){
+if(!v) return 0;
+v=v.toUpperCase();
+if(v.includes("T")) return parseFloat(v)*1e12;
+if(v.includes("B")) return parseFloat(v)*1e9;
+if(v.includes("M")) return parseFloat(v)*1e6;
+return parseFloat(v)||0;
+}
+
+/* 📊 RENDER */
+function render(){
+
+let list=document.getElementById("list");
+list.innerHTML="";
+
+let search=document.getElementById("search")?.value?.toLowerCase()||"";
+let filter=document.getElementById("valueFilter")?.value||"all";
+
+let filtered=data.filter(x=>page==="home"?false:x.rarity===page);
+
+filtered=filtered.filter(p=>p.name.toLowerCase().includes(search));
+
+filtered.sort((a,b)=>toNumber(b.value)-toNumber(a.value));
+
+if(filter==="top3"){
+filtered=filtered.slice(0,3);
+}
+
+filtered.forEach((p,i)=>{
+
+let badge = i===0 ? "🔥 BEST" : (i<3 ? "💎 TOP" : "");
+
+list.innerHTML+=`
+<div class="pet ${p.rarity.toLowerCase()}">
+${badge ? `<div class="badge">${badge}</div>` : ""}
+<b>${p.name}</b><br>
+Value: ${p.value}<br>
+Rarity: ${p.rarity}
+</div>
+`;
+});
+}
+
+/* ➕ ADD / UPDATE */
+function addPet(){
+
+let n=document.getElementById("name").value;
+let v=document.getElementById("value").value;
+let r=document.getElementById("rarity").value;
+
+if(!n||!v) return alert("Fill fields");
+
+if(editIndex!==null){
+data[editIndex]={name:n,value:v,rarity:r};
+editIndex=null;
+}else{
+data.push({name:n,value:v,rarity:r});
+}
+
+save();
+clearInputs();
+}
+
+/* ✏️ EDIT */
+function editPet(i){
+editIndex=i;
+document.getElementById("name").value=data[i].name;
+document.getElementById("value").value=data[i].value;
+document.getElementById("rarity").value=data[i].rarity;
+}
+
+/* ❌ DELETE */
+function deletePet(i){
+data.splice(i,1);
+save();
+}
+
+/* CLEAR */
+function clearInputs(){
+document.getElementById("name").value="";
+document.getElementById("value").value="";
+}
+
+/* 💾 EXPORT */
+function exportData(){
+let blob=new Blob([JSON.stringify(data)],{type:"application/json"});
+let a=document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download="pets-backup.json";
+a.click();
+}
+
+/* 📥 IMPORT */
+function importData(e){
+let file=e.target.files[0];
+let reader=new FileReader();
+reader.onload=function(evt){
+data=JSON.parse(evt.target.result);
+save();
+};
+reader.readAsText(file);
+}
+
+/* INIT */
+render();
+</script>
+
+</body>
+</html>
