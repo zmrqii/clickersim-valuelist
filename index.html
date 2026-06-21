@@ -21,6 +21,7 @@ padding:15px 8%;
 background:#111827;
 position:sticky;
 top:0;
+z-index:10;
 }
 
 .logo{color:#c084fc;font-weight:bold;}
@@ -69,6 +70,7 @@ background:#0f172a;
 padding:20px;
 border-left:2px solid #c084fc;
 overflow:auto;
+z-index:100;
 }
 
 input, select{
@@ -93,6 +95,16 @@ padding:10px;
 border-bottom:1px solid rgba(255,255,255,0.1);
 }
 th{color:#c084fc;background:#0f172a;}
+
+.delete-btn{
+background:#dc2626;
+padding:5px 10px;
+font-size:12px;
+border-radius:4px;
+}
+.delete-btn:hover{background:#ef4444;}
+
+.loading{color:#8b5cf6;text-align:center;padding:20px;}
 </style>
 </head>
 
@@ -119,7 +131,8 @@ th{color:#c084fc;background:#0f172a;}
 </section>
 
 <section id="listPage" style="display:none;">
-<table>
+<p class="loading" id="loadingMsg">Loading pets...</p>
+<table id="petTable" style="display:none;">
 <thead>
 <tr>
 <th>Pet</th>
@@ -127,6 +140,7 @@ th{color:#c084fc;background:#0f172a;}
 <th>Golden</th>
 <th>Rainbow</th>
 <th>Rarity</th>
+<th id="deleteCol" style="display:none;">Action</th>
 </tr>
 </thead>
 <tbody id="tableBody"></tbody>
@@ -157,6 +171,7 @@ th{color:#c084fc;background:#0f172a;}
 </select>
 
 <button onclick="addPet()">Add / Update</button>
+<button onclick="logout()" style="background:#dc2626;margin-top:10px;">Logout</button>
 
 </div>
 
@@ -170,8 +185,17 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import {
 getAuth,
 signInWithEmailAndPassword,
+signOut,
 onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import {
+getFirestore,
+collection,
+doc,
+getDocs,
+setDoc,
+deleteDoc
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 /* FIREBASE */
 const firebaseConfig = {
@@ -185,16 +209,41 @@ appId: "1:55307390383:web:0cc96c0446b83061cb335a"
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-/* SAFE STATE */
-window.data = JSON.parse(localStorage.getItem("pets")) || [];
+/* STATE */
+window.data = [];
 window.isAdmin = false;
 window.page = "home";
 
-/* SAFETY CATCH (IMPORTANT) */
+/* SAFETY CATCH */
 window.addEventListener("error", e => {
 console.log("JS ERROR:", e.message);
 });
+
+/* XSS PROTECTION */
+function esc(str) {
+const d = document.createElement("div");
+d.textContent = String(str);
+return d.innerHTML;
+}
+
+/* LOAD PETS FROM FIRESTORE */
+async function loadPets() {
+try {
+const snap = await getDocs(collection(db, "pets"));
+window.data = [];
+snap.forEach(d => {
+window.data.push({ id: d.id, ...d.data() });
+});
+document.getElementById("loadingMsg").style.display = "none";
+document.getElementById("petTable").style.display = "table";
+render(window.page);
+} catch (err) {
+console.log("Firestore load error:", err.message);
+document.getElementById("loadingMsg").textContent = "Failed to load pets.";
+}
+}
 
 /* MENU */
 window.toggleMenu = function(){
@@ -204,53 +253,55 @@ m.style.display = m.style.display === "block" ? "none" : "block";
 };
 
 window.goPage = function(page){
-
 window.page = page;
-
 document.getElementById("menu").style.display = "none";
-
 document.getElementById("homePage").style.display =
 page === "home" ? "block" : "none";
-
 document.getElementById("listPage").style.display =
 page !== "home" ? "block" : "none";
-
 render(page);
 };
 
 /* RENDER */
 function render(page){
-let tbody = document.getElementById("tableBody");
+const tbody = document.getElementById("tableBody");
 if(!tbody) return;
 
 tbody.innerHTML = "";
 
+const deleteCol = document.getElementById("deleteCol");
+if (deleteCol) deleteCol.style.display = window.isAdmin ? "table-cell" : "none";
+
 window.data
 .filter(p => p.rarity === page)
 .forEach(p => {
-tbody.innerHTML += `
-<tr>
-<td>${p.name}</td>
-<td>${p.normal}</td>
-<td>${p.golden}</td>
-<td>${p.rainbow}</td>
-<td>${p.rarity}</td>
-</tr>`;
+const tr = document.createElement("tr");
+tr.innerHTML =
+`<td>${esc(p.name)}</td>` +
+`<td>${esc(p.normal)}</td>` +
+`<td>${esc(p.golden)}</td>` +
+`<td>${esc(p.rainbow)}</td>` +
+`<td>${esc(p.rarity)}</td>` +
+(window.isAdmin ? `<td><button class="delete-btn" data-id="${esc(p.id)}">Delete</button></td>` : "");
+tbody.appendChild(tr);
+});
+
+tbody.querySelectorAll(".delete-btn").forEach(btn => {
+btn.addEventListener("click", () => deletePet(btn.dataset.id));
 });
 }
 
-/* FIXED ADD PET */
-window.addPet = function(){
-
+/* ADD / UPDATE PET — SAVES TO FIRESTORE */
+window.addPet = async function(){
 if(!window.isAdmin){
 alert("Not admin");
 return;
 }
 
-const n = document.getElementById("name").value;
-const no = document.getElementById("normal").value;
-const g = document.getElementById("golden").value;
-const r = document.getElementById("rainbow").value;
+const n = document.getElementById("name").value.trim();
+const no = document.getElementById("normal").value.trim();
+const g = document.getElementById("golden").value.trim();
+const r = document.getElementById("rainbow").value.trim();
 const ra = document.getElementById("rarity").value;
 
 if(!n || !no){
@@ -258,45 +309,56 @@ alert("Fill required fields");
 return;
 }
 
-let found = window.data.find(p => p.name === n);
+const petData = { name: n, normal: no, golden: g, rainbow: r, rarity: ra };
+const docId = n.toLowerCase().replace(/[^a-z0-9]/g, "_");
 
-if(found){
-found.normal = no;
-found.golden = g;
-found.rainbow = r;
-found.rarity = ra;
-}else{
-window.data.push({name:n,normal:no,golden:g,rainbow:r,rarity:ra});
-}
-
-localStorage.setItem("pets", JSON.stringify(window.data));
-
-render(window.page);
-
+try {
+await setDoc(doc(db, "pets", docId), petData);
+await loadPets();
+document.getElementById("name").value = "";
+document.getElementById("normal").value = "";
+document.getElementById("golden").value = "";
+document.getElementById("rainbow").value = "";
 alert("Saved!");
+} catch (err) {
+alert("Save failed: " + err.message);
+}
 };
 
-/* LOGIN SAFE */
+/* DELETE PET */
+async function deletePet(id) {
+if (!window.isAdmin) return;
+if (!confirm("Delete this pet?")) return;
+try {
+await deleteDoc(doc(db, "pets", id));
+await loadPets();
+} catch (err) {
+alert("Delete failed: " + err.message);
+}
+}
+
+/* LOGIN */
 window.login = function(){
 const e = document.getElementById("email").value;
 const p = document.getElementById("password").value;
-
 signInWithEmailAndPassword(auth, e, p)
+.then(() => {
+document.getElementById("email").value = "";
+document.getElementById("password").value = "";
+})
 .catch(err => alert(err.message));
 };
 
+/* LOGOUT */
+window.logout = function(){
+signOut(auth).catch(err => alert(err.message));
+};
+
 /* ADMIN CHECK */
-onAuthStateChanged(auth,(user)=>{
-
-window.isAdmin = false;
-
-if(user){
-window.isAdmin = true;
-document.getElementById("adminTools").style.display = "block";
-}else{
-document.getElementById("adminTools").style.display = "none";
-}
-
+onAuthStateChanged(auth, (user) => {
+window.isAdmin = !!user;
+document.getElementById("adminTools").style.display = user ? "block" : "none";
+render(window.page);
 });
 
 /* ADMIN UI */
@@ -308,8 +370,17 @@ window.closeAdmin = function(){
 document.getElementById("adminPanel").style.display = "none";
 };
 
+/* CLOSE MENU ON OUTSIDE CLICK */
+document.addEventListener("click", (e) => {
+const menu = document.getElementById("menu");
+if (!e.target.closest("#menu") && !e.target.closest("[onclick*='toggleMenu']")) {
+menu.style.display = "none";
+}
+});
+
 /* START */
 goPage("home");
+loadPets();
 
 </script>
 
