@@ -120,6 +120,35 @@ margin-top:0;
 #searchBar:focus{border-color:#7c3aed;}
 #searchBar::placeholder{color:#6b7280;}
 .no-results{color:#6b7280;text-align:center;padding:20px;}
+
+.name-wrap{position:relative;}
+#nameSuggestions{
+position:absolute;
+top:100%;
+left:0;
+right:0;
+background:#1e293b;
+border:1px solid #30363d;
+border-radius:0 0 6px 6px;
+max-height:160px;
+overflow-y:auto;
+z-index:200;
+display:none;
+}
+#nameSuggestions div{
+padding:8px 12px;
+cursor:pointer;
+font-size:13px;
+}
+#nameSuggestions div:hover{background:#334155;}
+
+.seed-btn{
+background:#0d9488;
+margin-top:10px;
+font-size:11px;
+padding:8px 12px;
+}
+.seed-btn:hover{background:#14b8a6;}
 </style>
 </head>
 
@@ -142,6 +171,7 @@ margin-top:0;
 <button onclick="goPage('Special')">Special</button>
 <button onclick="goPage('Secret')">Secret</button>
 <button onclick="goPage('Mega')">Mega</button>
+<button onclick="goPage('Exclusive')">Exclusive</button>
 </div>
 </div>
 <input type="text" id="headerSearch" placeholder="Search pets..." style="width:200px;margin:0;">
@@ -202,7 +232,10 @@ margin-top:0;
 
 <div id="adminTools" style="display:none;">
 
-<input id="name" placeholder="Pet Name"/>
+<div class="name-wrap">
+<input id="name" placeholder="Pet Name" autocomplete="off"/>
+<div id="nameSuggestions"></div>
+</div>
 <input id="normal" placeholder="Normal Value"/>
 <input id="golden" placeholder="Golden Value"/>
 <input id="rainbow" placeholder="Rainbow Value"/>
@@ -217,9 +250,11 @@ margin-top:0;
 <option value="Special">Special</option>
 <option value="Secret">Secret</option>
 <option value="Mega">Mega</option>
+<option value="Exclusive">Exclusive</option>
 </select>
 
 <button onclick="addPet()">Add / Update</button>
+<button onclick="seedPets()" class="seed-btn">Seed All Pets (184)</button>
 <button onclick="logout()" style="background:#dc2626;margin-top:10px;">Logout</button>
 
 </div>
@@ -243,7 +278,8 @@ collection,
 doc,
 getDocs,
 setDoc,
-deleteDoc
+deleteDoc,
+writeBatch
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 /* FIREBASE */
@@ -259,6 +295,19 @@ appId: "1:55307390383:web:0cc96c0446b83061cb335a"
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+/* ALL 184 PETS */
+const ALL_PETS = [
+{name:"Fish",rarity:"Basic"},{name:"Purple Jellyfish",rarity:"Basic"},{name:"Summer Cat",rarity:"Basic"},{name:"Summer Dog",rarity:"Basic"},{name:"Nebula Wyvern",rarity:"Basic"},{name:"Seraph",rarity:"Basic"},{name:"Starling Sprite",rarity:"Basic"},{name:"Supernova",rarity:"Basic"},{name:"Cat",rarity:"Basic"},{name:"Dog",rarity:"Basic"},{name:"Bunny",rarity:"Basic"},{name:"Chicken",rarity:"Basic"},{name:"Black Dominus",rarity:"Basic"},{name:"Blue Block",rarity:"Basic"},{name:"Blue Dominus",rarity:"Basic"},{name:"Blue Dragon",rarity:"Basic"},{name:"Blue Wizard",rarity:"Basic"},{name:"Chest",rarity:"Basic"},{name:"Green Block",rarity:"Basic"},{name:"Green Dragon",rarity:"Basic"},{name:"Green Wizard",rarity:"Basic"},{name:"Magma",rarity:"Basic"},{name:"Orange Block",rarity:"Basic"},{name:"Orange Dominus",rarity:"Basic"},{name:"Orange Wizard",rarity:"Basic"},{name:"Panda",rarity:"Basic"},{name:"Pink Dragon",rarity:"Basic"},{name:"Police",rarity:"Basic"},{name:"Potion",rarity:"Basic"},{name:"Pumpkin",rarity:"Basic"},{name:"Purple Block",rarity:"Basic"},{name:"Purple Wizard",rarity:"Basic"},{name:"Red Block",rarity:"Basic"},{name:"Red Dominus",rarity:"Basic"},{name:"Red Dragon",rarity:"Basic"},{name:"Red Wizard",rarity:"Basic"},{name:"Robot",rarity:"Basic"},{name:"White Dominus",rarity:"Basic"},{name:"Yellow Dragon",rarity:"Basic"},{name:"Zombie",rarity:"Basic"},{name:"Black Cat",rarity:"Basic"},{name:"Calf",rarity:"Basic"},{name:"Squirrel",rarity:"Basic"},{name:"Wolf",rarity:"Basic"},{name:"Seal",rarity:"Basic"},{name:"Goat",rarity:"Basic"},{name:"Cosmic Crawler",rarity:"Basic"},{name:"Mouse",rarity:"Basic"},{name:"Giraffe",rarity:"Basic"},{name:"Zebra",rarity:"Basic"},{name:"Cupcake",rarity:"Basic"},{name:"Chocolate",rarity:"Basic"},{name:"Turtle",rarity:"Basic"},{name:"Slime",rarity:"Basic"},{name:"Snake",rarity:"Basic"},{name:"Reversed Cat",rarity:"Basic"},{name:"Overseer",rarity:"Basic"},
+{name:"Blue Jellyfish",rarity:"Rare"},{name:"Pink Bunny",rarity:"Rare"},{name:"Pig",rarity:"Rare"},{name:"Cow",rarity:"Rare"},{name:"Bear",rarity:"Rare"},{name:"Raccoon",rarity:"Rare"},{name:"Penguin",rarity:"Rare"},{name:"Polar Bear",rarity:"Rare"},{name:"Spider",rarity:"Rare"},{name:"Monkey",rarity:"Rare"},{name:"Camel",rarity:"Rare"},{name:"Fox",rarity:"Rare"},{name:"Candy",rarity:"Rare"},{name:"Cookieman",rarity:"Rare"},{name:"Black Bear",rarity:"Rare"},{name:"Gold Fish",rarity:"Rare"},{name:"Shark",rarity:"Rare"},{name:"Red Hydominus",rarity:"Rare"},{name:"Red Gift",rarity:"Rare"},{name:"Tanuki",rarity:"Rare"},{name:"Blue Gift",rarity:"Rare"},{name:"Magma Cube",rarity:"Rare"},{name:"Molten Slime",rarity:"Rare"},{name:"Reversed Dog",rarity:"Rare"},{name:"Red Balloon",rarity:"Rare"},{name:"Holy Egg",rarity:"Rare"},{name:"Blue Balloon",rarity:"Rare"},
+{name:"Crab",rarity:"Epic"},{name:"Bee",rarity:"Epic"},{name:"Owl",rarity:"Epic"},{name:"Skier",rarity:"Epic"},{name:"Yeti",rarity:"Epic"},{name:"Tiger",rarity:"Epic"},{name:"Bull",rarity:"Epic"},{name:"Cheetah",rarity:"Epic"},{name:"Ice Cream",rarity:"Epic"},{name:"Strawberry",rarity:"Epic"},{name:"Unicorn",rarity:"Epic"},{name:"Duck",rarity:"Epic"},{name:"Frog",rarity:"Epic"},{name:"Orange Hydominus",rarity:"Epic"},{name:"Sakura Turtle",rarity:"Epic"},{name:"Tiny Firecracker",rarity:"Epic"},{name:"Hellfire Bat",rarity:"Epic"},{name:"Disco Ball",rarity:"Epic"},{name:"Aurelite Halo",rarity:"Epic"},{name:"Shattered Shard",rarity:"Epic"},{name:"Yellow Seahorse",rarity:"Epic"},{name:"Red Seahorse",rarity:"Epic"},
+{name:"Pufferfish",rarity:"Legendary"},{name:"Deer",rarity:"Legendary"},{name:"Snowman",rarity:"Legendary"},{name:"Gorilla",rarity:"Legendary"},{name:"Lion",rarity:"Legendary"},{name:"Bubble Gum",rarity:"Legendary"},{name:"Candy Gun",rarity:"Legendary"},{name:"Swimmer",rarity:"Legendary"},{name:"Blue Hydominus",rarity:"Legendary"},{name:"Black Hydominus",rarity:"Legendary"},{name:"Lotus Serpent",rarity:"Legendary"},{name:"Chest Mimic",rarity:"Legendary"},{name:"Pet Stack",rarity:"Legendary"},{name:"Party Cogmower",rarity:"Legendary"},{name:"Cherubis Bloom",rarity:"Legendary"},{name:"Clicker Tetra Cube",rarity:"Legendary"},{name:"Shell",rarity:"Legendary"},
+{name:"Elephant",rarity:"Mythical"},{name:"Cactus",rarity:"Mythical"},{name:"Cowboy",rarity:"Mythical"},{name:"Candy Dominus",rarity:"Mythical"},{name:"Star Fish",rarity:"Mythical"},{name:"Kraken",rarity:"Mythical"},{name:"White Hydominus",rarity:"Mythical"},{name:"Phoenix",rarity:"Mythical"},{name:"The Overlord",rarity:"Mythical"},{name:"500K Overlord",rarity:"Mythical"},{name:"Boombox",rarity:"Mythical"},{name:"Shard",rarity:"Mythical"},{name:"1M Star",rarity:"Mythical"},{name:"Starforge",rarity:"Mythical"},{name:"Poly",rarity:"Mythical"},
+{name:"Acorn",rarity:"Secret"},{name:"Chocolate Ice Cream",rarity:"Secret"},{name:"Sea Serpent",rarity:"Secret"},{name:"Poseidon",rarity:"Secret"},{name:"Abyss",rarity:"Secret"},{name:"Petal Moth",rarity:"Secret"},{name:"Cataclysm Dragon",rarity:"Secret"},{name:"Kitsune",rarity:"Secret"},{name:"Diamond",rarity:"Secret"},{name:"Hellwing",rarity:"Secret"},{name:"Ember Champion",rarity:"Secret"},{name:"Core Guardian",rarity:"Secret"},{name:"Equalizer",rarity:"Secret"},{name:"Firecrackers",rarity:"Secret"},{name:"Giant Holy Egg",rarity:"Secret"},{name:"The Clicker Trophy",rarity:"Secret"},{name:"1M Click",rarity:"Secret"},{name:"Godly Gem",rarity:"Secret"},{name:"1M Rebirth",rarity:"Secret"},{name:"Ophanim",rarity:"Secret"},{name:"Cat In A Bucket",rarity:"Secret"},{name:"Chest Mimic In A Bucket",rarity:"Secret"},{name:"Dog In A Bucket",rarity:"Secret"},{name:"Turtle In A Bucket",rarity:"Secret"},{name:"Apex",rarity:"Secret"},
+{name:"Vault Keeper",rarity:"Special"},{name:"Midas",rarity:"Special"},{name:"Eternal Star",rarity:"Special"},{name:"Crimson Star",rarity:"Special"},{name:"Eternal Shard",rarity:"Special"},{name:"Crimson Shard",rarity:"Special"},{name:"Eternal Trophy",rarity:"Special"},{name:"Crimson Trophy",rarity:"Special"},
+{name:"Astronaut",rarity:"Exclusive"},{name:"Earth",rarity:"Exclusive"},{name:"Rocket",rarity:"Exclusive"},{name:"Angel",rarity:"Exclusive"},{name:"Angel & Devil",rarity:"Exclusive"},{name:"Alien",rarity:"Exclusive"},{name:"UFO",rarity:"Exclusive"},{name:"Embercrest",rarity:"Exclusive"},{name:"Solflare",rarity:"Exclusive"},{name:"All Seeing Guardian",rarity:"Exclusive"},{name:"Frozen Eye Cube",rarity:"Exclusive"},{name:"Royal Trophy",rarity:"Exclusive"},
+{name:"Ktulhu",rarity:"Mega"}
+];
 
 /* STATE */
 window.data = [];
@@ -293,6 +342,36 @@ console.log("Firestore load error:", err.message);
 document.getElementById("loadingMsg").textContent = "Failed to load pets.";
 }
 }
+
+/* SEED ALL PETS */
+window.seedPets = async function() {
+if (!window.isAdmin) { alert("Not admin"); return; }
+if (!confirm("Seed all 184 pets with '?' values? Existing pets will NOT be overwritten.")) return;
+
+const existing = new Set(window.data.map(p => p.name.toLowerCase().replace(/[^a-z0-9]/g, "_")));
+let added = 0;
+
+// Firestore batch max is 500, we have 184 so one batch is fine
+const batch = writeBatch(db);
+for (const pet of ALL_PETS) {
+const docId = pet.name.toLowerCase().replace(/[^a-z0-9]/g, "_");
+if (existing.has(docId)) continue;
+batch.set(doc(db, "pets", docId), {
+name: pet.name, rarity: pet.rarity, normal: "?", golden: "?", rainbow: "?"
+});
+added++;
+}
+
+if (added === 0) { alert("All pets already exist."); return; }
+
+try {
+await batch.commit();
+await loadPets();
+alert("Seeded " + added + " pets!");
+} catch (err) {
+alert("Seed failed: " + err.message);
+}
+};
 
 /* MENU */
 window.toggleMenu = function(){
@@ -390,6 +469,38 @@ await loadPets();
 alert("Delete failed: " + err.message);
 }
 }
+
+/* NAME AUTOCOMPLETE */
+const nameInput = document.getElementById("name");
+const suggestions = document.getElementById("nameSuggestions");
+
+nameInput.addEventListener("input", () => {
+const q = nameInput.value.trim().toLowerCase();
+suggestions.innerHTML = "";
+if (!q) { suggestions.style.display = "none"; return; }
+
+const matches = window.data.filter(p => p.name.toLowerCase().includes(q)).slice(0, 8);
+if (!matches.length) { suggestions.style.display = "none"; return; }
+
+suggestions.style.display = "block";
+matches.forEach(p => {
+const div = document.createElement("div");
+div.textContent = p.name + " (" + p.rarity + ")";
+div.addEventListener("click", () => {
+nameInput.value = p.name;
+document.getElementById("normal").value = p.normal || "";
+document.getElementById("golden").value = p.golden || "";
+document.getElementById("rainbow").value = p.rainbow || "";
+document.getElementById("rarity").value = p.rarity || "Basic";
+suggestions.style.display = "none";
+});
+suggestions.appendChild(div);
+});
+});
+
+nameInput.addEventListener("blur", () => {
+setTimeout(() => { suggestions.style.display = "none"; }, 150);
+});
 
 /* LOGIN */
 window.login = function(){
