@@ -105,6 +105,21 @@ border-radius:4px;
 .delete-btn:hover{background:#ef4444;}
 
 .loading{color:#8b5cf6;text-align:center;padding:20px;}
+
+#searchBar{
+width:100%;
+padding:12px 16px;
+border-radius:8px;
+border:1px solid rgba(255,255,255,0.1);
+background:#111827;
+color:white;
+font-size:14px;
+outline:none;
+margin-top:0;
+}
+#searchBar:focus{border-color:#7c3aed;}
+#searchBar::placeholder{color:#6b7280;}
+.no-results{color:#6b7280;text-align:center;padding:20px;}
 </style>
 </head>
 
@@ -117,6 +132,7 @@ border-radius:4px;
 <button onclick="toggleMenu()">Menu ▼</button>
 <div id="menu">
 <button onclick="goPage('home')">Home</button>
+<button onclick="goPage('search')">Search</button>
 <button onclick="goPage('Basic')">Basic</button>
 <button onclick="goPage('Rare')">Rare</button>
 <button onclick="goPage('Epic')">Epic</button>
@@ -135,6 +151,23 @@ border-radius:4px;
 <section id="homePage">
 <h2>Clicker Sim Value List</h2>
 <p>Official value list for trading.</p>
+</section>
+
+<section id="searchPage" style="display:none;">
+<input type="text" id="searchBar" placeholder="Search pets...">
+<table id="searchTable" style="display:none;margin-top:10px;">
+<thead>
+<tr>
+<th>Pet</th>
+<th>Normal</th>
+<th>Golden</th>
+<th>Rainbow</th>
+<th>Rarity</th>
+</tr>
+</thead>
+<tbody id="searchBody"></tbody>
+</table>
+<p class="no-results" id="noResults" style="display:none;">No pets found.</p>
 </section>
 
 <section id="listPage" style="display:none;">
@@ -269,11 +302,16 @@ m.style.display = m.style.display === "block" ? "none" : "block";
 window.goPage = function(page){
 window.page = page;
 document.getElementById("menu").style.display = "none";
-document.getElementById("homePage").style.display =
-page === "home" ? "block" : "none";
-document.getElementById("listPage").style.display =
-page !== "home" ? "block" : "none";
+document.getElementById("homePage").style.display = page === "home" ? "block" : "none";
+document.getElementById("searchPage").style.display = page === "search" ? "block" : "none";
+document.getElementById("listPage").style.display = (page !== "home" && page !== "search") ? "block" : "none";
+if (page === "search") {
+document.getElementById("searchBar").value = "";
+renderSearch("");
+document.getElementById("searchBar").focus();
+} else if (page !== "home") {
 render(page);
+}
 };
 
 /* RENDER */
@@ -383,6 +421,48 @@ document.getElementById("adminPanel").style.display = "block";
 window.closeAdmin = function(){
 document.getElementById("adminPanel").style.display = "none";
 };
+
+/* SEARCH */
+function renderSearch(query) {
+const tbody = document.getElementById("searchBody");
+const table = document.getElementById("searchTable");
+const noResults = document.getElementById("noResults");
+if (!tbody) return;
+
+tbody.innerHTML = "";
+const q = query.toLowerCase();
+const matches = q ? window.data.filter(p => p.name.toLowerCase().includes(q)) : [];
+
+if (!q) {
+table.style.display = "none";
+noResults.style.display = "none";
+return;
+}
+
+if (matches.length === 0) {
+table.style.display = "none";
+noResults.style.display = "block";
+return;
+}
+
+noResults.style.display = "none";
+table.style.display = "table";
+
+matches.forEach(p => {
+const tr = document.createElement("tr");
+tr.innerHTML =
+`<td>${esc(p.name)}</td>` +
+`<td>${esc(p.normal)}</td>` +
+`<td>${esc(p.golden)}</td>` +
+`<td>${esc(p.rainbow)}</td>` +
+`<td>${esc(p.rarity)}</td>`;
+tbody.appendChild(tr);
+});
+}
+
+document.getElementById("searchBar").addEventListener("input", (e) => {
+renderSearch(e.target.value);
+});
 
 /* CLOSE MENU ON OUTSIDE CLICK */
 document.addEventListener("click", (e) => {
