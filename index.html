@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Pro Value List</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#070a18;
+color:white;
+}
+
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 8%;
+background:#111827;
+position:sticky;
+top:0;
+}
+
+.logo{
+color:#c084fc;
+font-weight:bold;
+}
+
+.menuBtn{
+background:#7c3aed;
+color:white;
+border:none;
+padding:10px 14px;
+border-radius:8px;
+cursor:pointer;
+}
+
+.dropdown{position:relative;}
+
+.menu{
+display:none;
+position:absolute;
+right:0;
+top:45px;
+background:#111827;
+border:1px solid rgba(255,255,255,0.1);
+border-radius:10px;
+overflow:hidden;
+z-index:999;
+}
+
+.menu button{
+display:block;
+width:150px;
+padding:10px;
+background:none;
+border:none;
+color:white;
+text-align:left;
+cursor:pointer;
+}
+
+.menu button:hover{
+background:rgba(255,255,255,0.1);
+}
+
+input, select{
+padding:10px;
+width:100%;
+max-width:400px;
+margin:10px 8%;
+border-radius:8px;
+border:none;
+outline:none;
+background:#111827;
+color:white;
+}
+
+table{
+width:84%;
+margin:0 8%;
+border-collapse:collapse;
+background:#111827;
+border-radius:10px;
+overflow:hidden;
+}
+
+th,td{
+padding:12px;
+border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+th{
+background:#0f172a;
+color:#c084fc;
+}
+
+tr:hover{
+background:rgba(255,255,255,0.05);
+}
+
+/* HOME */
+#homePage{
+margin:20px 8%;
+line-height:1.6;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">🐾 Pro Value List</div>
+
+<div class="dropdown">
+<button class="menuBtn" onclick="toggleMenu()">Menu ▼</button>
+
+<div id="menu" class="menu">
+<button onclick="goPage('home')">Home</button>
+<button onclick="goPage('Secret')">Secrets</button>
+<button onclick="goPage('Mythical')">Mythicals</button>
+</div>
+
+</div>
+</header>
+
+<!-- HOME -->
+<div id="homePage">
+<h1 style="color:#c084fc;">(Clicker Sim Value List)</h1>
+
+<p>
+This is the official Clicker Simulator Value List. These are the most accurate values to the current trading economy.<br><br>
+If you have any bugs/issues, dm <b>@zmrqii33</b> or <b>@ghostgfh23</b>
+</p>
+</div>
+
+<!-- ADD PET PANEL -->
+<div style="margin:20px 8%;">
+
+<input id="name" placeholder="Pet Name"/>
+<input id="normal" placeholder="Normal Value"/>
+<input id="golden" placeholder="Golden Value"/>
+<input id="rainbow" placeholder="Rainbow Value"/>
+
+<!-- 🔥 DROPDOWN RARITY SELECT -->
+<select id="rarity">
+<option value="Secret">Secret</option>
+<option value="Mythical">Mythical</option>
+</select>
+
+<button onclick="addPet()" style="
+background:#7c3aed;
+color:white;
+border:none;
+padding:10px;
+border-radius:8px;
+width:100%;
+max-width:400px;
+margin:10px 8%;
+cursor:pointer;
+">
+Add / Update Pet
+</button>
+
+</div>
+
+<!-- TABLE -->
+<table>
+<thead>
+<tr>
+<th>Pet</th>
+<th>Normal</th>
+<th>Golden</th>
+<th>Rainbow</th>
+<th>Rarity</th>
+</tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
+
+<script>
+
+let page = "home";
+
+let data = JSON.parse(localStorage.getItem("pets")) || [
+{name:"Celestial Dragon",normal:"500B",golden:"1T",rainbow:"2.5T",rarity:"Secret"},
+{name:"Infernal Cat",normal:"250B",golden:"600B",rainbow:"1.5T",rarity:"Mythical"}
+];
+
+/* MENU */
+function toggleMenu(){
+let m = document.getElementById("menu");
+m.style.display = m.style.display === "block" ? "none" : "block";
+}
+
+function goPage(p){
+page = p;
+document.getElementById("menu").style.display = "none";
+render();
+}
+
+/* SAVE */
+function save(){
+localStorage.setItem("pets", JSON.stringify(data));
+}
+
+/* ADD / UPDATE */
+function addPet(){
+
+let n = document.getElementById("name").value;
+let no = document.getElementById("normal").value;
+let g = document.getElementById("golden").value;
+let r = document.getElementById("rainbow").value;
+let ra = document.getElementById("rarity").value;
+
+if(!n || !no) return alert("Fill in required fields");
+
+let found = data.find(p => p.name === n);
+
+if(found){
+found.normal = no;
+found.golden = g;
+found.rainbow = r;
+found.rarity = ra;
+}else{
+data.push({name:n,normal:no,golden:g,rainbow:r,rarity:ra});
+}
+
+save();
+render();
+}
+
+/* RENDER */
+function render(){
+
+let tbody = document.getElementById("tableBody");
+tbody.innerHTML = "";
+
+data
+.filter(p => {
+
+if(page === "Secret") return p.rarity === "Secret";
+if(page === "Mythical") return p.rarity === "Mythical";
+
+return false; // HOME shows NO pets
+})
+.forEach(p => {
+
+tbody.innerHTML += `
+<tr>
+<td>${p.name}</td>
+<td>${p.normal}</td>
+<td>${p.golden}</td>
+<td>${p.rainbow}</td>
+<td>${p.rarity}</td>
+</tr>
+`;
+
+});
+
+}
+
+/* INIT */
+render();
+
+</script>
+
+</body>
+</html>
