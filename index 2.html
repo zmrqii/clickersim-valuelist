@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Pro Value List</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#070a18;
+color:white;
+}
+
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 8%;
+background:#111827;
+position:sticky;
+top:0;
+}
+
+.logo{
+color:#c084fc;
+font-weight:bold;
+}
+
+.menuBtn{
+background:#7c3aed;
+color:white;
+border:none;
+padding:10px 14px;
+border-radius:8px;
+cursor:pointer;
+}
+
+.dropdown{position:relative;}
+
+.menu{
+display:none;
+position:absolute;
+right:0;
+top:45px;
+background:#111827;
+border:1px solid rgba(255,255,255,0.1);
+border-radius:10px;
+overflow:hidden;
+z-index:999;
+}
+
+.menu button{
+display:block;
+width:150px;
+padding:10px;
+background:none;
+border:none;
+color:white;
+text-align:left;
+cursor:pointer;
+}
+
+.menu button:hover{
+background:rgba(255,255,255,0.1);
+}
+
+input{
+padding:10px;
+width:100%;
+max-width:400px;
+margin:20px 8%;
+border-radius:8px;
+border:none;
+outline:none;
+background:#111827;
+color:white;
+}
+
+table{
+width:84%;
+margin:0 8%;
+border-collapse:collapse;
+background:#111827;
+border-radius:10px;
+overflow:hidden;
+}
+
+th,td{
+padding:12px;
+border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+th{
+background:#0f172a;
+color:#c084fc;
+}
+
+tr:hover{
+background:rgba(255,255,255,0.05);
+}
+
+/* HOME */
+#homePage{
+margin:20px 8%;
+line-height:1.6;
+}
+
+.hidden{display:none;}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">🐾 Pro Value List</div>
+
+<div class="dropdown">
+<button class="menuBtn" onclick="toggleMenu()">Menu ▼</button>
+
+<div id="menu" class="menu">
+<button onclick="goPage('home')">Home</button>
+<button onclick="goPage('Secret')">Secrets</button>
+<button onclick="goPage('Mythical')">Mythicals</button>
+</div>
+
+</div>
+</header>
+
+<!-- 🏠 HOME PAGE -->
+<div id="homePage">
+
+<h1 style="color:#c084fc;">
+(Clicker Sim Value List)
+</h1>
+
+<p>
+This is the official Clicker Simulator Value List. These are the most accurate values to the current trading economy.<br><br>
+If you have any bugs/issues, dm <b>@zmrqii33</b> or <b>@ghostgfh23</b>
+</p>
+
+</div>
+
+<!-- SEARCH -->
+<input id="search" placeholder="Search pets..." onkeyup="render()"/>
+
+<table>
+<thead>
+<tr>
+<th>Pet</th>
+<th>Normal</th>
+<th>Golden</th>
+<th>Rainbow</th>
+<th>Demand</th>
+<th>Rarity</th>
+</tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
+
+<script>
+
+let page = "home";
+
+let data = [
+{name:"Celestial Dragon",normal:"500B",golden:"1T",rainbow:"2.5T",demand:"High",rarity:"Secret"},
+{name:"Infernal Cat",normal:"250B",golden:"600B",rainbow:"1.5T",demand:"Medium",rarity:"Mythical"},
+{name:"Galaxy Phoenix",normal:"1T",golden:"2T",rainbow:"4T",demand:"Very High",rarity:"Mythical"}
+];
+
+/* MENU */
+function toggleMenu(){
+let m = document.getElementById("menu");
+m.style.display = m.style.display === "block" ? "none" : "block";
+}
+
+function goPage(p){
+page = p;
+document.getElementById("menu").style.display = "none";
+
+document.getElementById("homePage").style.display =
+(page === "home") ? "block" : "none";
+
+render();
+}
+
+/* RENDER */
+function render(){
+
+let search = document.getElementById("search").value.toLowerCase();
+let tbody = document.getElementById("tableBody");
+tbody.innerHTML = "";
+
+data
+.filter(p => {
+
+let match = p.name.toLowerCase().includes(search);
+
+if(page === "Secret") return match && p.rarity === "Secret";
+if(page === "Mythical") return match && p.rarity === "Mythical";
+
+return match;
+})
+.forEach(p => {
+
+tbody.innerHTML += `
+<tr>
+<td>${p.name}</td>
+<td>${p.normal}</td>
+<td>${p.golden}</td>
+<td>${p.rainbow}</td>
+<td>${p.demand}</td>
+<td>${p.rarity}</td>
+</tr>
+`;
+
+});
+
+}
+
+/* INIT */
+document.getElementById("homePage").style.display = "block";
+render();
+
+</script>
+
+</body>
+</html>
