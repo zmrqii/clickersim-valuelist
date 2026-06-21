@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Clicker Sim Value List</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#070a18;
+color:white;
+}
+
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 8%;
+background:#111827; 
+position:sticky;
+top:0;
+}
+
+.logo{
+color:#c084fc;
+font-weight:bold;
+}
+
+button{cursor:pointer;}
+
+section{
+padding:60px 10%;
+}
+
+h2{
+color:#c084fc;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:#111827;
+border-radius:10px;
+overflow:hidden;
+}
+
+th,td{
+padding:12px;
+border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+th{
+color:#c084fc;
+background:#0f172a;
+}
+
+tr:hover{
+background:rgba(255,255,255,0.05);
+}
+
+input{
+padding:10px;
+width:100%;
+max-width:400px;
+margin-bottom:15px;
+border-radius:8px;
+border:none;
+outline:none;
+}
+
+#adminPanel{
+display:none;
+position:fixed;
+top:0;
+right:0;
+width:320px;
+height:100%;
+background:#0f172a;
+padding:20px;
+border-left:2px solid #c084fc;
+overflow:auto;
+}
+
+#loginBox{
+display:none;
+position:fixed;
+top:30%;
+left:50%;
+transform:translate(-50%,-50%);
+background:#111827;
+padding:20px;
+border:1px solid #c084fc;
+border-radius:10px;
+}
+
+.btn{
+background:#9333ea;
+border:none;
+color:white;
+padding:10px;
+width:100%;
+border-radius:6px;
+margin-bottom:10px;
+}
+
+.editBtn{background:#22c55e;border:none;padding:5px;color:white;border-radius:5px;}
+.deleteBtn{background:#ef4444;border:none;padding:5px;color:white;border-radius:5px;}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">🐾 Clicker Value List</div>
+<button onclick="openLogin()">Staff Login</button>
+</header>
+
+<section>
+
+<h2>Pet Values</h2>
+
+<input id="search" placeholder="Search pets..." onkeyup="render()"/>
+
+<table>
+<thead>
+<tr>
+<th>Pet</th>
+<th>Value</th>
+<th>Demand</th>
+<th>Rarity</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
+
+</section>
+
+<!-- LOGIN -->
+<div id="loginBox">
+<h3>Staff Login</h3>
+
+<input id="email" placeholder="Email"/>
+<input id="password" type="password" placeholder="Password"/>
+
+<button class="btn" onclick="login()">Login</button>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="adminPanel">
+
+<h3>Admin Panel</h3>
+
+<input id="name" placeholder="Pet Name"/>
+<input id="value" placeholder="Value"/>
+<input id="demand" placeholder="Demand"/>
+<input id="rarity" placeholder="Rarity"/>
+
+<button class="btn" onclick="addPet()">Add / Update</button>
+
+<hr/>
+
+<div id="list"></div>
+
+<button class="btn" onclick="logout()">Logout</button>
+
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+getAuth,
+signInWithEmailAndPassword,
+signOut,
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+/* ✅ YOUR FIREBASE CONFIG */
+const firebaseConfig = {
+  apiKey: "AIzaSyCD6mwFA3y6xE8pZwLsVWmBKO_VLXTzxxE",
+  authDomain: "clicker-value-list.firebaseapp.com",
+  projectId: "clicker-value-list",
+  storageBucket: "clicker-value-list.firebasestorage.app",
+  messagingSenderId: "55307390383",
+  appId: "1:55307390383:web:0cc96c0446b83061cb335a"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+/* DATA */
+let data = JSON.parse(localStorage.getItem("pets")) || [
+{name:"Celestial Dragon",value:"500B",demand:"High",rarity:"Secret"},
+{name:"Infernal Cat",value:"250B",demand:"Medium",rarity:"Event"},
+{name:"Galaxy Phoenix",value:"1.2T",demand:"Very High",rarity:"Exclusive"},
+{name:"Void Serpent",value:"800B",demand:"High",rarity:"Secret"}
+];
+
+let admin = false;
+
+/* SAVE */
+function save(){
+localStorage.setItem("pets",JSON.stringify(data));
+render();
+renderList();
+}
+
+/* RENDER */
+function render(){
+let search=document.getElementById("search").value.toLowerCase();
+let tbody=document.getElementById("tableBody");
+tbody.innerHTML="";
+
+data.filter(p=>p.name.toLowerCase().includes(search))
+.forEach((p,i)=>{
+tbody.innerHTML+=`
+<tr>
+<td>${p.name}</td>
+<td>${p.value}</td>
+<td>${p.demand}</td>
+<td>${p.rarity}</td>
+<td>${admin ? `
+<button class="editBtn" onclick="editPet(${i})">Edit</button>
+<button class="deleteBtn" onclick="deletePet(${i})">X</button>` : "-"}</td>
+</tr>
+`;
+});
+}
+
+/* FUNCTIONS */
+window.addPet=function(){
+let n=name.value;
+let v=value.value;
+let d=demand.value;
+let r=rarity.value;
+
+let found=data.find(p=>p.name===n);
+if(found){
+found.value=v;
+found.demand=d;
+found.rarity=r;
+}else{
+data.push({name:n,value:v,demand:d,rarity:r});
+}
+
+save();
+}
+
+window.editPet=function(i){
+let p=data[i];
+name.value=p.name;
+value.value=p.value;
+demand.value=p.demand;
+rarity.value=p.rarity;
+}
+
+window.deletePet=function(i){
+data.splice(i,1);
+save();
+}
+
+function renderList(){
+let list=document.getElementById("list");
+list.innerHTML="";
+data.forEach(p=>{
+list.innerHTML+=`<p>${p.name}</p>`;
+});
+}
+
+/* LOGIN */
+window.login=function(){
+signInWithEmailAndPassword(auth,email.value,password.value)
+.then(()=> document.getElementById("loginBox").style.display="none")
+.catch(err=>alert(err.message));
+}
+
+window.logout=function(){
+signOut(auth);
+}
+
+/* AUTH STATE */
+onAuthStateChanged(auth,(user)=>{
+if(user){
+admin=false;
+document.getElementById("adminPanel").style.display="block";
+}else{
+admin=false;
+document.getElementById("adminPanel").style.display="none";
+}
+render();
+renderList();
+});
+
+/* OPEN LOGIN */
+window.openLogin=function(){
+document.getElementById("loginBox").style.display="block";
+}
+
+/* INIT */
+render();
+renderList();
+
+</script>
+
+</body>
+</html>
