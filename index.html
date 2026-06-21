@@ -95,6 +95,8 @@ padding:10px;
 border-bottom:1px solid rgba(255,255,255,0.1);
 }
 th{color:#c084fc;background:#0f172a;}
+#petTable tbody tr:nth-child(odd),#searchTable tbody tr:nth-child(odd){background:#0f1628;}
+#petTable tbody tr:nth-child(even),#searchTable tbody tr:nth-child(even){background:#1a2335;}
 
 .delete-btn{
 background:#dc2626;
@@ -149,6 +151,118 @@ font-size:11px;
 padding:8px 12px;
 }
 .seed-btn:hover{background:#14b8a6;}
+
+/* Info button */
+.info-btn{
+background:none;
+border:1px solid #6b7280;
+color:#a5b4fc;
+width:22px;
+height:22px;
+border-radius:50%;
+font-size:12px;
+padding:0;
+margin-left:6px;
+cursor:pointer;
+vertical-align:middle;
+line-height:20px;
+display:inline-block;
+text-align:center;
+}
+.info-btn:hover{border-color:#a5b4fc;background:rgba(165,180,252,.1);}
+
+/* Info popup */
+.info-popup{
+position:fixed;
+top:0;left:0;right:0;bottom:0;
+background:rgba(0,0,0,.6);
+z-index:500;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+.info-bubble{
+background:#1e293b;
+border:1px solid #334155;
+border-radius:12px;
+padding:20px 24px;
+max-width:400px;
+width:90%;
+position:relative;
+}
+.info-bubble h3{
+margin:0 0 8px;
+color:#c084fc;
+font-size:16px;
+}
+.info-bubble .info-status{
+display:inline-block;
+padding:3px 10px;
+border-radius:20px;
+font-size:11px;
+font-weight:bold;
+margin-bottom:10px;
+}
+.info-status.obtainable{background:#065f46;color:#6ee7b7;}
+.info-status.unobtainable{background:#7f1d1d;color:#fca5a5;}
+.info-status.limited{background:#78350f;color:#fcd34d;}
+.info-status.leaderboard{background:#312e81;color:#a5b4fc;}
+.info-status.robux{background:#4c1d95;color:#c4b5fd;}
+.info-bubble p{
+margin:8px 0 0;
+font-size:13px;
+color:#94a3b8;
+line-height:1.5;
+}
+.info-bubble .info-close{
+position:absolute;
+top:10px;right:14px;
+background:none;border:none;
+color:#6b7280;font-size:18px;
+cursor:pointer;padding:0;
+}
+.info-bubble .info-close:hover{color:white;}
+
+/* Value column centering */
+#petTable td:nth-child(2),#petTable td:nth-child(3),#petTable td:nth-child(4),#petTable td:nth-child(5),
+#searchTable td:nth-child(2),#searchTable td:nth-child(3),#searchTable td:nth-child(4),#searchTable td:nth-child(5){text-align:center;}
+
+/* Clickable pet names */
+.pet-link{cursor:pointer;color:#c084fc;transition:color .2s;}
+.pet-link:hover{text-decoration:underline;color:#a78bfa;}
+
+/* Pet detail page */
+.pet-header{display:flex;gap:20px;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;}
+.pet-icon-wrap{width:150px;height:150px;border-radius:12px;background:#1e293b;border:2px solid #334155;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.pet-icon-wrap img{width:100%;height:100%;object-fit:contain;}
+.pet-meta h2{margin:0 0 8px;color:#c084fc;}
+.pet-meta p{margin:4px 0;color:#94a3b8;font-size:14px;}
+
+.pet-values{display:flex;gap:16px;flex-wrap:wrap;margin:20px 0;}
+.pet-val-card{background:#1e293b;border-radius:10px;padding:12px 20px;text-align:center;flex:1;min-width:100px;}
+.pet-val-card .val-label{font-size:12px;color:#6b7280;text-transform:uppercase;}
+.pet-val-card .val-num{font-size:20px;font-weight:bold;color:white;margin-top:4px;}
+
+.calc-section{background:#111827;border-radius:12px;padding:20px;margin-top:20px;}
+.calc-section h3{color:#c084fc;margin:0 0 16px;font-size:16px;}
+.calc-row{margin-bottom:14px;}
+.calc-row > label{display:block;color:#94a3b8;font-size:13px;margin-bottom:6px;}
+.calc-slider{width:100%;accent-color:#7c3aed;}
+.calc-checks{display:flex;flex-wrap:wrap;gap:12px;}
+.calc-checks label{display:flex;align-items:center;gap:6px;color:white;font-size:13px;cursor:pointer;}
+
+.calc-results{display:flex;gap:16px;flex-wrap:wrap;margin-top:20px;}
+.stat-card{background:#0f172a;border-radius:10px;padding:12px 20px;text-align:center;flex:1;min-width:80px;}
+.stat-card .stat-label{font-size:12px;color:#6b7280;}
+.stat-card .stat-num{font-size:18px;font-weight:bold;color:#a5b4fc;margin-top:4px;}
+
+.back-btn{background:none;border:1px solid #334155;color:#94a3b8;padding:8px 16px;border-radius:8px;cursor:pointer;margin-bottom:16px;}
+.back-btn:hover{border-color:#7c3aed;color:white;}
+
+/* Icon effects */
+@keyframes rainbowHue{from{filter:hue-rotate(0deg);}to{filter:hue-rotate(360deg);}}
+@keyframes shinyPulse{0%,100%{box-shadow:0 0 8px 2px rgba(255,215,0,.3);}50%{box-shadow:0 0 20px 6px rgba(255,215,0,.6);}}
+.icon-rainbow{animation:rainbowHue 2s linear infinite !important;filter:none !important;}
 </style>
 </head>
 
@@ -194,7 +308,7 @@ padding:8px 12px;
 <th>Normal</th>
 <th>Golden</th>
 <th>Rainbow</th>
-<th>Rarity</th>
+<th>Demand</th>
 </tr>
 </thead>
 <tbody id="searchBody"></tbody>
@@ -211,12 +325,61 @@ padding:8px 12px;
 <th>Normal</th>
 <th>Golden</th>
 <th>Rainbow</th>
-<th>Rarity</th>
+<th>Demand</th>
 <th id="deleteCol" style="display:none;">Action</th>
 </tr>
 </thead>
 <tbody id="tableBody"></tbody>
 </table>
+</section>
+
+<section id="petPage" style="display:none;">
+<button class="back-btn" id="petBackBtn">&larr; Back</button>
+<div class="pet-header">
+<div class="pet-icon-wrap" id="petIconWrap">
+<img id="petIcon" src="" alt="" style="display:none;">
+</div>
+<div class="pet-meta">
+<h2 id="petNameTitle"></h2>
+<p>Rarity: <strong id="petRarityLabel"></strong></p>
+<p id="petDemandLine"></p>
+<p id="petStatusLine"></p>
+<p id="petDescLine" style="color:#6b7280;font-style:italic;"></p>
+</div>
+</div>
+<div class="pet-values" id="petValuesRow"></div>
+<div class="calc-section">
+<h3>Stat Calculator</h3>
+<div class="calc-row">
+<label>Level: <strong id="levelDisplay">0</strong></label>
+<input type="range" class="calc-slider" id="levelSlider" min="0" max="50" value="0">
+</div>
+<div class="calc-row">
+<label>Variant</label>
+<div class="calc-checks">
+<label><input type="radio" name="variant" value="Normal" checked> Normal</label>
+<label><input type="radio" name="variant" value="Golden"> Golden</label>
+<label><input type="radio" name="variant" value="Rainbow"> Rainbow</label>
+</div>
+</div>
+<div class="calc-row">
+<label>Shiny</label>
+<div class="calc-checks">
+<label><input type="checkbox" id="shinyCheck"> Shiny (1.25&times;)</label>
+</div>
+</div>
+<div class="calc-row">
+<label>Mutations</label>
+<div class="calc-checks">
+<label><input type="checkbox" class="mut-check" value="Wet"> Wet (1.25&times;)</label>
+<label><input type="checkbox" class="mut-check" value="Bloodmoon"> Bloodmoon (1.4&times;)</label>
+<label><input type="checkbox" class="mut-check" value="Thunderstorm"> Thunderstorm (1.4&times;)</label>
+<label><input type="checkbox" class="mut-check" value="UpsideDown"> UpsideDown (1.4&times;)</label>
+</div>
+</div>
+<div class="calc-results" id="calcResults"></div>
+<p id="multBreakdown" style="color:#4b5563;font-size:12px;margin-top:8px;"></p>
+</div>
 </section>
 
 <div id="adminPanel">
@@ -253,8 +416,18 @@ padding:8px 12px;
 <option value="Exclusive">Exclusive</option>
 </select>
 
+<select id="demand">
+<option value="?">? (Unknown)</option>
+<option value="No Demand">No Demand</option>
+<option value="Low">Low</option>
+<option value="Medium">Medium</option>
+<option value="High">High</option>
+<option value="Super High">Super High</option>
+</select>
+
 <button onclick="addPet()">Add / Update</button>
 <button onclick="seedPets()" class="seed-btn">Seed All Pets (184)</button>
+<button onclick="setDemandValues()" class="seed-btn">Set Demand Values</button>
 <button onclick="logout()" style="background:#dc2626;margin-top:10px;">Logout</button>
 
 </div>
@@ -309,6 +482,466 @@ const ALL_PETS = [
 {name:"Ktulhu",rarity:"Mega"}
 ];
 
+/* PET OBTAINABILITY DATABASE */
+const PET_INFO = {
+// === BASIC — Eggs ===
+"Fish":{s:"obtainable",t:"Hatch from Bucket Of Sand Egg (150 Shells) on Beach Island."},
+"Purple Jellyfish":{s:"obtainable",t:"Hatch from Sand Castle Egg (500 Shells) on Beach Island."},
+"Summer Cat":{s:"obtainable",t:"Hatch from Bucket Of Sand Egg (150 Shells) on Beach Island. Also from Summer Rewards Road (Level 20)."},
+"Summer Dog":{s:"obtainable",t:"Hatch from Bucket Of Sand Egg (150 Shells) on Beach Island. Also from Summer Rewards Road (Level 10)."},
+"Nebula Wyvern":{s:"limited",t:"From Cosmic Egg (special unlock required). May be currently unobtainable if the Cosmic Egg is disabled."},
+"Seraph":{s:"limited",t:"From Cosmic Egg (special unlock required). May be currently unobtainable if the Cosmic Egg is disabled."},
+"Starling Sprite":{s:"limited",t:"From Cosmic Egg (special unlock required). May be currently unobtainable if the Cosmic Egg is disabled."},
+"Supernova":{s:"limited",t:"From Cosmic Egg (special unlock required). May be currently unobtainable if the Cosmic Egg is disabled."},
+"Cat":{s:"obtainable",t:"Hatch from Basic Egg (250 Clicks) on Spawn Island. Also a starter pet choice."},
+"Dog":{s:"obtainable",t:"Hatch from Basic Egg (250 Clicks) on Spawn Island. Also a starter pet choice."},
+"Bunny":{s:"obtainable",t:"Hatch from Basic Egg (250 Clicks) on Spawn Island. Also a starter pet choice."},
+"Chicken":{s:"obtainable",t:"Rebirth reward pet. Obtained through the rebirth system."},
+"Black Dominus":{s:"obtainable",t:"Rebirth reward pet (untradeable). Obtained through the rebirth system."},
+"Blue Block":{s:"obtainable",t:"Rebirth reward pet. Obtained through the rebirth system."},
+"Blue Dominus":{s:"obtainable",t:"Rebirth reward pet (untradeable). Obtained through the rebirth system."},
+"Blue Dragon":{s:"obtainable",t:"Rebirth reward pet. Obtained through the rebirth system."},
+"Blue Wizard":{s:"obtainable",t:"Rebirth reward pet. Obtained through the rebirth system."},
+"Chest":{s:"obtainable",t:"Rebirth reward pet. Obtained through the rebirth system."},
+"Green Block":{s:"obtainable",t:"Rebirth reward pet. Obtained through the rebirth system."},
+"Green Dragon":{s:"obtainable",t:"Rebirth reward pet. Obtained through the rebirth system."},
+"Green Wizard":{s:"obtainable",t:"Rebirth reward pet. Obtained through the rebirth system."},
+"Magma":{s:"obtainable",t:"Rebirth reward pet. Obtained through the rebirth system."},
+"Orange Block":{s:"obtainable",t:"Rebirth reward pet. Obtained through the rebirth system."},
+"Orange Dominus":{s:"obtainable",t:"Rebirth reward pet (untradeable). Obtained through the rebirth system."},
+"Orange Wizard":{s:"obtainable",t:"Rebirth reward pet. Obtained through the rebirth system."},
+"Panda":{s:"obtainable",t:"Rebirth reward pet. Obtained through the rebirth system."},
+"Pink Dragon":{s:"obtainable",t:"Rebirth reward pet. Obtained through the rebirth system."},
+"Police":{s:"obtainable",t:"Rebirth reward pet. Obtained through the rebirth system."},
+"Potion":{s:"obtainable",t:"Rebirth reward pet. Obtained through the rebirth system."},
+"Pumpkin":{s:"obtainable",t:"Rebirth reward pet. Obtained through the rebirth system."},
+"Purple Block":{s:"obtainable",t:"Rebirth reward pet. Obtained through the rebirth system."},
+"Purple Wizard":{s:"obtainable",t:"Rebirth reward pet. Obtained through the rebirth system."},
+"Red Block":{s:"obtainable",t:"Rebirth reward pet. Obtained through the rebirth system."},
+"Red Dominus":{s:"obtainable",t:"Rebirth reward pet (untradeable). Obtained through the rebirth system."},
+"Red Dragon":{s:"obtainable",t:"Rebirth reward pet. Obtained through the rebirth system."},
+"Red Wizard":{s:"obtainable",t:"Rebirth reward pet. Obtained through the rebirth system."},
+"Robot":{s:"obtainable",t:"Rebirth reward pet. Obtained through the rebirth system."},
+"White Dominus":{s:"obtainable",t:"Rebirth reward pet (untradeable). Obtained through the rebirth system."},
+"Yellow Dragon":{s:"obtainable",t:"Rebirth reward pet. Obtained through the rebirth system."},
+"Zombie":{s:"obtainable",t:"Rebirth reward pet. Obtained through the rebirth system."},
+"Black Cat":{s:"obtainable",t:"Hatch from Flower Egg (2,750 Clicks) on Spawn Island."},
+"Calf":{s:"obtainable",t:"Hatch from Flower Egg (2,750 Clicks) on Spawn Island."},
+"Squirrel":{s:"obtainable",t:"Hatch from Acorn Egg (175,000 Clicks)."},
+"Wolf":{s:"obtainable",t:"Hatch from Snowman Egg (2,500,000 Clicks) on Winter Island."},
+"Seal":{s:"obtainable",t:"Hatch from Snowman Egg (2,500,000 Clicks) on Winter Island."},
+"Goat":{s:"obtainable",t:"Hatch from Snowman Egg (2,500,000 Clicks) on Winter Island."},
+"Cosmic Crawler":{s:"limited",t:"From Cosmic Egg (special unlock required). May be currently unobtainable if the Cosmic Egg is disabled."},
+"Mouse":{s:"obtainable",t:"Hatch from Wood Egg (40,000,000 Clicks) on Forest Island."},
+"Giraffe":{s:"obtainable",t:"Hatch from Cactus Egg (300,000,000 Clicks) on Desert Island."},
+"Zebra":{s:"obtainable",t:"Hatch from Cactus Egg (300,000,000 Clicks) on Desert Island."},
+"Cupcake":{s:"obtainable",t:"Hatch from Cotton Candy Egg (20,000,000,000 Clicks) on Candy Island."},
+"Chocolate":{s:"obtainable",t:"Hatch from Chocolate Egg (70,000,000,000 Clicks) on Candy Island."},
+"Turtle":{s:"obtainable",t:"Hatch from Palm Tree Egg (450,000,000,000 Clicks) on Beach Island."},
+"Slime":{s:"obtainable",t:"Hatch from Palm Tree Egg (450,000,000,000 Clicks) on Beach Island."},
+"Snake":{s:"obtainable",t:"Hatch from Beach Ball Egg (900,000,000,000 Clicks) on Beach Island."},
+"Reversed Cat":{s:"obtainable",t:"Hatch from Disco Egg (200Q Clicks) on Rave Island."},
+"Overseer":{s:"obtainable",t:"Summer Rewards Road (Level 75)."},
+
+// === RARE ===
+"Blue Jellyfish":{s:"obtainable",t:"Hatch from Sand Castle Egg (500 Shells) on Beach Island."},
+"Pink Bunny":{s:"limited",t:"No known egg or obtainment source found in game files. May be a legacy or event pet."},
+"Pig":{s:"obtainable",t:"Hatch from Basic Egg (250 Clicks) on Spawn Island."},
+"Cow":{s:"obtainable",t:"Hatch from Flower Egg (2,750 Clicks) on Spawn Island."},
+"Bear":{s:"obtainable",t:"Hatch from Flower Egg (2,750 Clicks) on Spawn Island."},
+"Raccoon":{s:"obtainable",t:"Hatch from Acorn Egg (175,000 Clicks)."},
+"Penguin":{s:"obtainable",t:"Hatch from Snowman Egg (2,500,000 Clicks) on Winter Island."},
+"Polar Bear":{s:"obtainable",t:"Hatch from Snowman Egg (2,500,000 Clicks) on Winter Island."},
+"Spider":{s:"obtainable",t:"Hatch from Wood Egg (40,000,000 Clicks) on Forest Island."},
+"Monkey":{s:"obtainable",t:"Hatch from Wood Egg (40,000,000 Clicks) on Forest Island."},
+"Camel":{s:"obtainable",t:"Hatch from Cactus Egg (300,000,000 Clicks) on Desert Island."},
+"Fox":{s:"obtainable",t:"Hatch from Cactus Egg (300,000,000 Clicks) on Desert Island."},
+"Candy":{s:"obtainable",t:"Hatch from Cotton Candy Egg (20,000,000,000 Clicks) on Candy Island."},
+"Cookieman":{s:"obtainable",t:"Hatch from Chocolate Egg (70,000,000,000 Clicks) on Candy Island."},
+"Black Bear":{s:"obtainable",t:"Hatch from Palm Tree Egg (450,000,000,000 Clicks) on Beach Island."},
+"Gold Fish":{s:"obtainable",t:"Hatch from Beach Ball Egg (900,000,000,000 Clicks) on Beach Island. Also from Summer Rewards Road (Level 15)."},
+"Shark":{s:"obtainable",t:"Hatch from Beach Ball Egg (900,000,000,000 Clicks) on Beach Island. Also from Summer Rewards Road (Level 30)."},
+"Red Hydominus":{s:"obtainable",t:"Hatch from Dominus Egg (25T Clicks) on Sakura Island. Untradeable when hatched."},
+"Red Gift":{s:"unobtainable",t:"Was from the 500K Egg (retired/NotHatchable). No longer obtainable. Only existing copies remain in circulation."},
+"Tanuki":{s:"obtainable",t:"Hatch from Blossom Egg (100T Clicks) on Sakura Island."},
+"Blue Gift":{s:"unobtainable",t:"Was from the 500K Egg (retired/NotHatchable). No longer obtainable. Only existing copies remain in circulation."},
+"Magma Cube":{s:"obtainable",t:"Hatch from Volcano Egg (10Q Clicks) on Volcano Island."},
+"Molten Slime":{s:"obtainable",t:"Hatch from Volcano Egg (10Q Clicks) on Volcano Island."},
+"Reversed Dog":{s:"obtainable",t:"Hatch from Disco Egg (200Q Clicks) on Rave Island."},
+"Red Balloon":{s:"obtainable",t:"Hatch from 1M Egg (1,000,000,000 Clicks) on 1M Milestone Island."},
+"Holy Egg":{s:"obtainable",t:"Hatch from Angel Egg (4Qi Clicks) on Heaven Island."},
+"Blue Balloon":{s:"obtainable",t:"Hatch from 1M Egg (1,000,000,000 Clicks) on 1M Milestone Island."},
+
+// === EPIC ===
+"Crab":{s:"obtainable",t:"Hatch from Sand Castle Egg (500 Shells) on Beach Island."},
+"Bee":{s:"obtainable",t:"Hatch from Flower Egg (2,750 Clicks) on Spawn Island."},
+"Owl":{s:"obtainable",t:"Hatch from Acorn Egg (175,000 Clicks)."},
+"Skier":{s:"obtainable",t:"Hatch from Snowman Egg (2,500,000 Clicks) on Winter Island."},
+"Yeti":{s:"obtainable",t:"Hatch from Snowman Egg (2,500,000 Clicks) on Winter Island."},
+"Tiger":{s:"obtainable",t:"Hatch from Wood Egg (40,000,000 Clicks) on Forest Island."},
+"Bull":{s:"obtainable",t:"Hatch from Wood Egg (40,000,000 Clicks) on Forest Island."},
+"Cheetah":{s:"obtainable",t:"Hatch from Cactus Egg (300,000,000 Clicks) on Desert Island."},
+"Ice Cream":{s:"obtainable",t:"Hatch from Cotton Candy Egg (20,000,000,000 Clicks) on Candy Island."},
+"Strawberry":{s:"obtainable",t:"Hatch from Chocolate Egg (70,000,000,000 Clicks) on Candy Island."},
+"Unicorn":{s:"obtainable",t:"Hatch from Chocolate Egg (70,000,000,000 Clicks) on Candy Island."},
+"Duck":{s:"obtainable",t:"Hatch from Palm Tree Egg (450,000,000,000 Clicks) on Beach Island."},
+"Frog":{s:"obtainable",t:"Hatch from Beach Ball Egg (900,000,000,000 Clicks) on Beach Island."},
+"Orange Hydominus":{s:"obtainable",t:"Hatch from Dominus Egg (25T Clicks) on Sakura Island."},
+"Sakura Turtle":{s:"obtainable",t:"Hatch from Blossom Egg (100T Clicks) on Sakura Island."},
+"Tiny Firecracker":{s:"unobtainable",t:"Was from the 500K Egg (retired/NotHatchable). No longer obtainable. Only existing copies remain in circulation."},
+"Hellfire Bat":{s:"obtainable",t:"Hatch from Volcano Egg (10Q Clicks) on Volcano Island."},
+"Disco Ball":{s:"obtainable",t:"Hatch from Disco Egg (200Q Clicks) on Rave Island."},
+"Aurelite Halo":{s:"obtainable",t:"Hatch from Angel Egg (4Qi Clicks) on Heaven Island."},
+"Shattered Shard":{s:"obtainable",t:"Hatch from 1M Egg (1,000,000,000 Clicks) on 1M Milestone Island."},
+"Yellow Seahorse":{s:"obtainable",t:"Hatch from Coconut Egg (1,000 Shells) on Beach Island."},
+"Red Seahorse":{s:"obtainable",t:"Hatch from Coconut Egg (1,000 Shells) on Beach Island."},
+
+// === LEGENDARY ===
+"Pufferfish":{s:"obtainable",t:"Hatch from Sand Castle Egg (500 Shells) on Beach Island."},
+"Deer":{s:"obtainable",t:"Hatch from Acorn Egg (175,000 Clicks)."},
+"Snowman":{s:"obtainable",t:"Hatch from Snowman Egg (2,500,000 Clicks) on Winter Island."},
+"Gorilla":{s:"obtainable",t:"Hatch from Wood Egg (40,000,000 Clicks) on Forest Island. Also in Robux Forest Egg."},
+"Lion":{s:"obtainable",t:"Hatch from Cactus Egg (300,000,000 Clicks) on Desert Island."},
+"Bubble Gum":{s:"obtainable",t:"Hatch from Cotton Candy Egg (20,000,000,000 Clicks) on Candy Island."},
+"Candy Gun":{s:"obtainable",t:"Hatch from Chocolate Egg (70,000,000,000 Clicks) on Candy Island. Also in Robux Candy Egg."},
+"Swimmer":{s:"obtainable",t:"Hatch from Beach Ball Egg (900,000,000,000 Clicks) on Beach Island. Also from Summer Rewards Road (Level 40)."},
+"Blue Hydominus":{s:"obtainable",t:"Hatch from Dominus Egg (25T Clicks) on Sakura Island."},
+"Black Hydominus":{s:"obtainable",t:"Hatch from Dominus Egg (25T Clicks) on Sakura Island."},
+"Lotus Serpent":{s:"obtainable",t:"Hatch from Blossom Egg (100T Clicks) on Sakura Island."},
+"Chest Mimic":{s:"obtainable",t:"Hatch from Volcano Egg (10Q Clicks) on Volcano Island. Also in Robux Volcano Egg."},
+"Pet Stack":{s:"unobtainable",t:"Was from the 500K Egg (retired/NotHatchable). No longer obtainable. Only existing copies remain in circulation."},
+"Party Cogmower":{s:"obtainable",t:"Hatch from Disco Egg (200Q Clicks) on Rave Island."},
+"Cherubis Bloom":{s:"obtainable",t:"Hatch from Angel Egg (4Qi Clicks) on Heaven Island."},
+"Clicker Tetra Cube":{s:"obtainable",t:"Hatch from 1M Egg (1,000,000,000 Clicks) on 1M Milestone Island."},
+"Shell":{s:"obtainable",t:"Hatch from Coconut Egg (1,000 Shells) on Beach Island."},
+
+// === MYTHICAL ===
+"Elephant":{s:"obtainable",t:"Hatch from Wood Egg (40,000,000 Clicks) on Forest Island. Also in Robux Forest Egg."},
+"Cactus":{s:"obtainable",t:"Hatch from Cactus Egg (300,000,000 Clicks) on Desert Island. Also in Robux Forest Egg."},
+"Cowboy":{s:"obtainable",t:"Hatch from Cactus Egg (300,000,000 Clicks) on Desert Island. Also in Robux Forest Egg."},
+"Candy Dominus":{s:"obtainable",t:"Hatch from Chocolate Egg (70,000,000,000 Clicks) on Candy Island. Also in Robux Candy Egg."},
+"Star Fish":{s:"obtainable",t:"Hatch from Beach Ball Egg (900,000,000,000 Clicks) on Beach Island. Also from Summer Rewards Road (Level 50)."},
+"Kraken":{s:"obtainable",t:"Hatch from Beach Ball Egg (900,000,000,000 Clicks) on Beach Island. Also in Robux Winter Egg and Summer Rewards Road (Level 60)."},
+"White Hydominus":{s:"obtainable",t:"Hatch from Dominus Egg (25T Clicks) on Sakura Island."},
+"Phoenix":{s:"obtainable",t:"Hatch from Blossom Egg (100T Clicks) on Sakura Island. Also in Robux Beach Egg."},
+"The Overlord":{s:"obtainable",t:"Hatch from Volcano Egg (10Q Clicks) on Volcano Island. Also in Robux Volcano Egg."},
+"500K Overlord":{s:"unobtainable",t:"Was from the 500K Egg (retired/NotHatchable). No longer obtainable. Only existing copies remain in circulation."},
+"Boombox":{s:"obtainable",t:"Hatch from Disco Egg (200Q Clicks) on Rave Island. Also in Robux Rave Egg."},
+"Shard":{s:"unobtainable",t:"Was from the 500K Egg (retired/NotHatchable). No longer obtainable. Only existing copies remain in circulation."},
+"1M Star":{s:"obtainable",t:"Hatch from 1M Egg (1,000,000,000 Clicks) on 1M Milestone Island."},
+"Starforge":{s:"obtainable",t:"Hatch from Angel Egg (4Qi Clicks) on Heaven Island. Also in Robux Sakura Egg."},
+"Poly":{s:"obtainable",t:"Hatch from Coconut Egg (1,000 Shells) on Beach Island."},
+
+// === SECRET ===
+"Acorn":{s:"obtainable",t:"Extremely rare hatch from Sand Castle Egg (500 Shells). ~0.00001% chance."},
+"Chocolate Ice Cream":{s:"obtainable",t:"Extremely rare hatch from Bucket Of Sand Egg (150 Shells). ~0.00001% chance."},
+"Sea Serpent":{s:"obtainable",t:"Summer Rewards Road (Level 68)."},
+"Poseidon":{s:"obtainable",t:"Extremely rare hatch from Beach Ball Egg. ~0.00001% chance. Also from Summer Rewards Road (Level 72)."},
+"Abyss":{s:"obtainable",t:"Scavenger Hunt reward. Collect items from 8 different eggs (Acorn, Basic, Cactus, Chocolate, Flower, Snowman, Wood, Volcano)."},
+"Petal Moth":{s:"obtainable",t:"Extremely rare hatch from Blossom Egg (100T Clicks). ~0.0000067% chance."},
+"Cataclysm Dragon":{s:"robux",t:"Robux pet purchase (limited stock: 150). Comes with UltraLuck T1 enchant."},
+"Kitsune":{s:"obtainable",t:"Extremely rare hatch from Blossom Egg (100T Clicks). ~0.000002% chance."},
+"Diamond":{s:"robux",t:"Robux pet purchase (limited stock: 1,499)."},
+"Hellwing":{s:"obtainable",t:"Extremely rare hatch from Volcano Egg (10Q Clicks). ~0.000005% chance."},
+"Ember Champion":{s:"obtainable",t:"Craft via Potion Recipe: 67x Enchant Relic."},
+"Core Guardian":{s:"obtainable",t:"Extremely rare hatch from Volcano Egg (10Q Clicks). ~0.0000017% chance."},
+"Equalizer":{s:"obtainable",t:"Extremely rare hatch from Disco Egg (200Q Clicks). ~0.0000067% chance."},
+"Firecrackers":{s:"unobtainable",t:"Was from the 500K Egg (retired/NotHatchable). ~0.0000067% chance. No longer obtainable."},
+"Giant Holy Egg":{s:"obtainable",t:"Craft via Potion Recipe: 67x Enchant Relic."},
+"The Clicker Trophy":{s:"unobtainable",t:"Was from the 500K Egg (retired/NotHatchable). ~0.0000029% chance. No longer obtainable."},
+"1M Click":{s:"obtainable",t:"Extremely rare hatch from 1M Egg. ~0.000005% chance."},
+"Godly Gem":{s:"obtainable",t:"Extremely rare hatch from Angel Egg (4Qi Clicks). ~0.000005% chance."},
+"1M Rebirth":{s:"obtainable",t:"Extremely rare hatch from 1M Egg. ~0.0000017% chance."},
+"Ophanim":{s:"obtainable",t:"Extremely rare hatch from Angel Egg (4Qi Clicks). ~0.0000017% chance."},
+"Cat In A Bucket":{s:"obtainable",t:"Extremely rare hatch from Coconut Egg (1,000 Shells). ~0.00001% chance."},
+"Chest Mimic In A Bucket":{s:"obtainable",t:"Extremely rare hatch from Coconut Egg (1,000 Shells). ~0.00001% chance."},
+"Dog In A Bucket":{s:"obtainable",t:"Extremely rare hatch from Coconut Egg (1,000 Shells). ~0.00001% chance."},
+"Turtle In A Bucket":{s:"obtainable",t:"Extremely rare hatch from Coconut Egg (1,000 Shells). ~0.00001% chance."},
+"Apex":{s:"obtainable",t:"Craft via Potion Recipe: 67x Summer Relic."},
+
+// === SPECIAL ===
+"Vault Keeper":{s:"obtainable",t:"Purchase from Tier 3 Merchant (requires 30,000 Respect). Costs Gems."},
+"Midas":{s:"obtainable",t:"Purchase from Tier 3 Merchant (requires 30,000 Respect). Costs Gems."},
+"Eternal Star":{s:"leaderboard",t:"Leaderboard reward (LeaderboardLuck T1). Awarded to top players on Clicks/Rebirths/Playtime/Power leaderboards."},
+"Crimson Star":{s:"leaderboard",t:"Leaderboard reward (LeaderboardLuck T1). Awarded to top players on leaderboards."},
+"Eternal Shard":{s:"leaderboard",t:"Leaderboard reward (LeaderboardLuck T2). Awarded to high-ranking leaderboard players."},
+"Crimson Shard":{s:"leaderboard",t:"Leaderboard reward (LeaderboardLuck T2). Awarded to high-ranking leaderboard players."},
+"Eternal Trophy":{s:"leaderboard",t:"Leaderboard reward (LeaderboardLuck T5). Awarded to the top leaderboard players."},
+"Crimson Trophy":{s:"leaderboard",t:"Leaderboard reward (LeaderboardLuck T5). Awarded to the top leaderboard players."},
+
+// === EXCLUSIVE ===
+"Astronaut":{s:"robux",t:"Hatch from Exclusive Egg (Robux purchase)."},
+"Earth":{s:"robux",t:"Hatch from Exclusive Egg (Robux purchase)."},
+"Rocket":{s:"robux",t:"Hatch from Exclusive Egg (Robux purchase)."},
+"Angel":{s:"robux",t:"Robux pet purchase. Comes with Lucky T1 enchant."},
+"Angel & Devil":{s:"robux",t:"Robux pet purchase (limited stock: 250). Comes with SuperRebirth T1 enchant."},
+"Alien":{s:"robux",t:"Hatch from Exclusive Egg (Robux purchase)."},
+"UFO":{s:"robux",t:"Hatch from Exclusive Egg (Robux purchase)."},
+"Embercrest":{s:"robux",t:"Robux pet purchase. Comes with Lucky T5 enchant."},
+"Solflare":{s:"robux",t:"Robux pet purchase. Comes with SuperRebirth T3 enchant."},
+"All Seeing Guardian":{s:"robux",t:"Robux pet purchase (limited stock: 999). Comes with Lucky T5 enchant."},
+"Frozen Eye Cube":{s:"robux",t:"Robux pet purchase. Comes with Lucky T5 enchant."},
+"Royal Trophy":{s:"robux",t:"Robux pet purchase. Comes with SuperRebirth T3 enchant."},
+
+// === MEGA ===
+"Ktulhu":{s:"obtainable",t:"Extremely rare hatch from Coconut Egg (1,000 Shells). ~0.00000025% chance. Rarest pet in the game."}
+};
+
+const STATUS_LABELS = {
+obtainable: "Obtainable",
+unobtainable: "Unobtainable",
+limited: "Limited / Unknown",
+leaderboard: "Leaderboard Only",
+robux: "Robux Only"
+};
+
+/* PET BASE STATS (from decompiled Directory/Pets) */
+const PET_STATS = {
+"1M Click":{Clicks:65000000},"1M Rebirth":{Clicks:125000000},"1M Star":{Clicks:1750000},"500K Overlord":{Clicks:650000},
+"Abyss":{Clicks:300000,Shells:8},"Acorn":{Shells:75},"Alien":{Clicks:95000},
+"All Seeing Guardian":{Clicks:3000000,Gems:9},"Angel":{Clicks:30000,Gems:3},"Angel & Devil":{Clicks:70000,Gems:8},
+"Apex":{Clicks:600000000},"Astronaut":{Clicks:1800},"Aurelite Halo":{Clicks:175000},
+"Bear":{Clicks:19},"Bee":{Clicks:28},"Black Bear":{Clicks:3000},"Black Cat":{Clicks:11},"Black Dominus":{Clicks:4},
+"Black Hydominus":{Clicks:13200},"Blue Balloon":{Clicks:85000},"Blue Block":{Clicks:4},"Blue Dominus":{Clicks:4},
+"Blue Dragon":{Clicks:4},"Blue Gift":{Clicks:15000},"Blue Hydominus":{Clicks:11400},"Blue Jellyfish":{Shells:12},
+"Blue Wizard":{Clicks:4},"Boombox":{Clicks:975000},"Bubble Gum":{Clicks:1650},"Bull":{Clicks:245},"Bunny":{Clicks:3},
+"Cactus":{Clicks:900},"Calf":{Clicks:11},"Camel":{Clicks:338},"Candy":{Clicks:820},"Candy Dominus":{Clicks:3000},
+"Candy Gun":{Clicks:2250},"Cat":{Clicks:2},"Cat In A Bucket":{Clicks:200000000,Shells:150},
+"Cataclysm Dragon":{Clicks:2000000},"Cheetah":{Clicks:513},"Cherubis Bloom":{Clicks:500000},"Chest":{Clicks:4},
+"Chest Mimic":{Clicks:150000},"Chest Mimic In A Bucket":{Clicks:200000000,Shells:150},"Chicken":{Clicks:3},
+"Chocolate":{Clicks:780},"Chocolate Ice Cream":{Shells:18},"Clicker Tetra Cube":{Clicks:500000},
+"Cookieman":{Clicks:980},"Core Guardian":{Clicks:8000000},"Cosmic Crawler":{Clicks:100},"Cow":{Clicks:15},
+"Cowboy":{Clicks:1475},"Crab":{Shells:20},"Crimson Shard":{Clicks:25000000},"Crimson Star":{Clicks:10000000},
+"Crimson Trophy":{Clicks:50000000},"Cupcake":{Clicks:650},"Deer":{Clicks:53},
+"Diamond":{Clicks:2500000,Shells:30},"Disco Ball":{Clicks:125000},"Dog":{Clicks:2},
+"Dog In A Bucket":{Clicks:200000000,Shells:150},"Duck":{Clicks:3800},"Earth":{Clicks:2400},
+"Elephant":{Clicks:470},"Ember Champion":{Clicks:5000000},"Embercrest":{Clicks:850000,Gems:7},
+"Equalizer":{Clicks:20000000},"Eternal Shard":{Clicks:12500000},"Eternal Star":{Clicks:5000000},
+"Eternal Trophy":{Clicks:25000000},"Firecrackers":{Clicks:25000000},"Fish":{Shells:5},
+"Fox":{Clicks:388},"Frog":{Clicks:4200},"Frozen Eye Cube":{Clicks:3000000,Gems:9},
+"Giant Holy Egg":{Clicks:35000000},"Giraffe":{Clicks:188},"Goat":{Clicks:58},
+"Godly Gem":{Clicks:65000000},"Gold Fish":{Clicks:3200},"Gorilla":{Clicks:320},
+"Green Block":{Clicks:4},"Green Dragon":{Clicks:4},"Green Wizard":{Clicks:4},
+"Hellfire Bat":{Clicks:70000},"Hellwing":{Clicks:3000000},"Holy Egg":{Clicks:75000},
+"Ice Cream":{Clicks:1125},"Kitsune":{Clicks:2000000},"Kraken":{Clicks:7600},
+"Ktulhu":{Clicks:10000000000,Shells:200},"Lion":{Clicks:606},"Lotus Serpent":{Clicks:40000},
+"Magma":{Clicks:4},"Magma Cube":{Clicks:25000},"Midas":{Clicks:17000},"Molten Slime":{Clicks:35000},
+"Monkey":{Clicks:170},"Mouse":{Clicks:102},"Nebula Wyvern":{Clicks:1},"Ophanim":{Clicks:125000000},
+"Orange Block":{Clicks:4},"Orange Dominus":{Clicks:4},"Orange Hydominus":{Clicks:9800},"Orange Wizard":{Clicks:4},
+"Overseer":{Clicks:400000000,Shells:40},"Owl":{Clicks:32},"Panda":{Clicks:4},
+"Party Cogmower":{Clicks:350000},"Penguin":{Clicks:68},"Petal Moth":{Clicks:750000},
+"Pet Stack":{Clicks:200000},"Phoenix":{Clicks:90000},"Pig":{Clicks:4},"Pink Bunny":{Clicks:1},
+"Pink Dragon":{Clicks:4},"Polar Bear":{Clicks:78},"Police":{Clicks:4},
+"Poly":{Clicks:2250000,Shells:115},"Poseidon":{Clicks:125000},"Potion":{Clicks:4},
+"Pufferfish":{Shells:32},"Pumpkin":{Clicks:4},"Purple Block":{Clicks:4},
+"Purple Jellyfish":{Shells:8},"Purple Wizard":{Clicks:4},"Raccoon":{Clicks:24},
+"Red Balloon":{Clicks:65000},"Red Block":{Clicks:4},"Red Dominus":{Clicks:4},"Red Dragon":{Clicks:4},
+"Red Gift":{Clicks:10000},"Red Hydominus":{Clicks:8500},"Red Seahorse":{Clicks:275000,Shells:60},
+"Red Wizard":{Clicks:4},"Reversed Cat":{Clicks:35000},"Reversed Dog":{Clicks:50000},
+"Robot":{Clicks:4},"Rocket":{Clicks:3200},"Royal Trophy":{Clicks:6000000,Gems:18},
+"Sakura Turtle":{Clicks:15000},"Sea Serpent":{Clicks:1},"Seal":{Clicks:49},
+"Seraph":{Clicks:1},"Shard":{Clicks:1300000},"Shark":{Clicks:3600},
+"Shattered Shard":{Clicks:175000},"Shell":{Clicks:650000,Shells:85},"Skier":{Clicks:86},
+"Slime":{Clicks:2400},"Snake":{Clicks:2600},"Snowman":{Clicks:140},
+"Solflare":{Clicks:2200000,Gems:13},"Spider":{Clicks:132},"Squirrel":{Clicks:20},
+"Star Fish":{Clicks:6400},"Starforge":{Clicks:1750000},"Starling Sprite":{Clicks:1},
+"Strawberry":{Clicks:1400},"Summer Cat":{Shells:2},"Summer Dog":{Shells:3},"Supernova":{Clicks:1},
+"Swimmer":{Clicks:5200},"Tanuki":{Clicks:12000},"The Clicker Trophy":{Clicks:55000000},
+"The Overlord":{Clicks:350000},"Tiger":{Clicks:207},"Tiny Firecracker":{Clicks:50000},
+"Turtle":{Clicks:2100},"Turtle In A Bucket":{Clicks:200000000,Shells:150},"UFO":{Clicks:150000},
+"Unicorn":{Clicks:1675},"Vault Keeper":{Clicks:15500},"White Dominus":{Clicks:4},
+"White Hydominus":{Clicks:15500},"Wolf":{Clicks:43},"Yellow Dragon":{Clicks:4},
+"Yellow Seahorse":{Clicks:225000,Shells:45},"Yeti":{Clicks:90},"Zebra":{Clicks:281},"Zombie":{Clicks:4}
+};
+
+/* PET ICON ASSET IDs (normal + golden variants) */
+const PET_ICONS = {
+"1M Click":{normal:"115221256771440",golden:"90864742005145"},
+"1M Rebirth":{normal:"99619770545365",golden:"113493597596824"},
+"1M Star":{normal:"91670232287122",golden:"100347796705597"},
+"500K Overlord":{normal:"132771239528746",golden:"98769372310118"},
+"Abyss":{normal:"114046874757017",golden:"123586548520045"},
+"Acorn":{normal:"121864183808487",golden:"98175882442528"},
+"Alien":{normal:"102018852402245",golden:"116952397211926"},
+"All Seeing Guardian":{normal:"99957352792320",golden:"85753631418756"},
+"Angel":{normal:"79850263086584",golden:"132579694091862"},
+"Angel & Devil":{normal:"114593019451267",golden:"92917914942776"},
+"Apex":{normal:"130353018367033",golden:"83219974076796"},
+"Astronaut":{normal:"78300643458253",golden:"133759611352695"},
+"Aurelite Halo":{normal:"70982658481418",golden:"96737415424429"},
+"Bear":{normal:"130466798991896",golden:"104166879620238"},
+"Bee":{normal:"75437677377369",golden:"102872117456307"},
+"Black Bear":{normal:"100849484124283",golden:"138236346708066"},
+"Black Cat":{normal:"81156479883478",golden:"94553022514698"},
+"Black Dominus":{normal:"111130354166220",golden:"109085650096191"},
+"Black Hydominus":{normal:"107558291664947",golden:"110172364885020"},
+"Blue Balloon":{normal:"117248431989127",golden:"135699155791884"},
+"Blue Block":{normal:"106447954275307",golden:"75023755779333"},
+"Blue Dominus":{normal:"111668931793453",golden:"112527202462754"},
+"Blue Dragon":{normal:"81517759035540",golden:"101341781865985"},
+"Blue Gift":{normal:"113085357548330",golden:"97546783595254"},
+"Blue Hydominus":{normal:"135125767670624",golden:"78926816355503"},
+"Blue Jellyfish":{normal:"88318732629648",golden:"100129341656229"},
+"Blue Wizard":{normal:"81453031678253",golden:"111783930746875"},
+"Boombox":{normal:"86349572042892",golden:"135971834461849"},
+"Bubble Gum":{normal:"84348209283744",golden:"106563784592022"},
+"Bull":{normal:"105852961774706",golden:"136068894617216"},
+"Bunny":{normal:"104763135259770",golden:"89929770010982"},
+"Cactus":{normal:"127314117919964",golden:"108091375807759"},
+"Calf":{normal:"97812410796433",golden:"87583637584278"},
+"Camel":{normal:"104897716469948",golden:"136646475792449"},
+"Candy":{normal:"95584489425177",golden:"80984692487740"},
+"Candy Dominus":{normal:"82795329520323",golden:"90014378054246"},
+"Candy Gun":{normal:"77766252091625",golden:"100416519006761"},
+"Cat":{normal:"90402349428850",golden:"80360476325756"},
+"Cat In A Bucket":{normal:"",golden:""},
+"Cataclysm Dragon":{normal:"95908721514885",golden:"77450018634808"},
+"Cheetah":{normal:"72914760626794",golden:"82381002936149"},
+"Cherubis Bloom":{normal:"124617723377564",golden:"80571650298006"},
+"Chest":{normal:"76001967586699",golden:"80994016155647"},
+"Chest Mimic":{normal:"92749426462005",golden:"124392809981127"},
+"Chest Mimic In A Bucket":{normal:"",golden:""},
+"Chicken":{normal:"70802139790796",golden:"119094017303614"},
+"Chocolate":{normal:"88579842245566",golden:"90511618175107"},
+"Chocolate Ice Cream":{normal:"103695890628134",golden:"72024172825656"},
+"Clicker Tetra Cube":{normal:"89055073709988",golden:"93440503249217"},
+"Cookieman":{normal:"113484920991712",golden:"133995032567061"},
+"Core Guardian":{normal:"98064774940672",golden:"120717968420758"},
+"Cosmic Crawler":{normal:"117395128818620",golden:"106158805909800"},
+"Cow":{normal:"116193935880630",golden:"125441340227128"},
+"Cowboy":{normal:"103727699693840",golden:"130062042546382"},
+"Crab":{normal:"106101390579826",golden:"118715050605162"},
+"Crimson Shard":{normal:"125620321891300",golden:"74604865056187"},
+"Crimson Star":{normal:"99572044860982",golden:"87579316182821"},
+"Crimson Trophy":{normal:"128185973881910",golden:"98185209156838"},
+"Cupcake":{normal:"128905816444157",golden:"110149487000964"},
+"Deer":{normal:"102567070166623",golden:"107080331179345"},
+"Diamond":{normal:"75274272264639",golden:"77917773464725"},
+"Disco Ball":{normal:"126155707363304",golden:"134213053106411"},
+"Dog":{normal:"84816537610420",golden:"112680445961518"},
+"Dog In A Bucket":{normal:"",golden:""},
+"Duck":{normal:"74730912211465",golden:"138920116849431"},
+"Earth":{normal:"70394668092797",golden:"139559674398229"},
+"Elephant":{normal:"127429039913734",golden:"135912773069366"},
+"Ember Champion":{normal:"112778131650646",golden:"119945383610046"},
+"Embercrest":{normal:"129002926817711",golden:""},
+"Equalizer":{normal:"101667041174340",golden:"124055380113625"},
+"Eternal Shard":{normal:"74219807991706",golden:"139135138229298"},
+"Eternal Star":{normal:"107559476222602",golden:"132438470389674"},
+"Eternal Trophy":{normal:"81386110522812",golden:"136621056781942"},
+"Firecrackers":{normal:"117145721492981",golden:"88539354411404"},
+"Fish":{normal:"105943860706214",golden:"90825862351413"},
+"Fox":{normal:"88839098262704",golden:"82553602858014"},
+"Frog":{normal:"84586002155513",golden:"128848896781116"},
+"Frozen Eye Cube":{normal:"92833074103894",golden:"116722455621588"},
+"Giant Holy Egg":{normal:"117640275356556",golden:"129816213188017"},
+"Giraffe":{normal:"124786611820303",golden:"107147128643150"},
+"Goat":{normal:"100840643293388",golden:"113121366121146"},
+"Godly Gem":{normal:"114654108504631",golden:"71935437699936"},
+"Gold Fish":{normal:"86590960041962",golden:"74362495630252"},
+"Gorilla":{normal:"111732465618458",golden:"88097523401696"},
+"Green Block":{normal:"140024145482936",golden:"93948569283029"},
+"Green Dragon":{normal:"102599896021116",golden:"86146867087179"},
+"Green Wizard":{normal:"98702917279600",golden:"123931333870488"},
+"Hellfire Bat":{normal:"102029048545841",golden:"139375759539849"},
+"Hellwing":{normal:"137075188552606",golden:"97375867983512"},
+"Holy Egg":{normal:"93430094725986",golden:"118841014173697"},
+"Ice Cream":{normal:"123120221719628",golden:"92766100479357"},
+"Kitsune":{normal:"130514860854088",golden:"124852857757017"},
+"Kraken":{normal:"87878967180615",golden:"117611114294229"},
+"Ktulhu":{normal:"111184864451932",golden:"134964665050565"},
+"Lion":{normal:"126606000761880",golden:"133759501297800"},
+"Lotus Serpent":{normal:"132051694605745",golden:"135116418351960"},
+"Magma":{normal:"136339404560615",golden:"105360547739164"},
+"Magma Cube":{normal:"72364434873752",golden:"135326803254599"},
+"Midas":{normal:"135557691575268",golden:"103109648069386"},
+"Molten Slime":{normal:"101193237026541",golden:"110385800001496"},
+"Monkey":{normal:"76566737639052",golden:"124684574732907"},
+"Mouse":{normal:"72274074632743",golden:"140499747437079"},
+"Nebula Wyvern":{normal:"99259889017315",golden:"81480200164858"},
+"Ophanim":{normal:"99580393209518",golden:"126965652919695"},
+"Orange Block":{normal:"109885680667646",golden:"136213235707881"},
+"Orange Dominus":{normal:"125028968714403",golden:"140457619655823"},
+"Orange Hydominus":{normal:"123278674791479",golden:"127555766130472"},
+"Orange Wizard":{normal:"109647125680437",golden:"139765804898065"},
+"Overseer":{normal:"118501325471758",golden:"125309096558067"},
+"Owl":{normal:"107483178343791",golden:"82084939256320"},
+"Panda":{normal:"101148954705786",golden:"106947522567911"},
+"Party Cogmower":{normal:"111691424014620",golden:"112942040863302"},
+"Penguin":{normal:"107610673949818",golden:"76355082444068"},
+"Petal Moth":{normal:"129488213450565",golden:"129795633049651"},
+"Pet Stack":{normal:"93856946694401",golden:"120521272308769"},
+"Phoenix":{normal:"124071335203484",golden:"128072341628669"},
+"Pig":{normal:"77488028236584",golden:"117707700633422"},
+"Pink Bunny":{normal:"74463526975864",golden:"136844178886904"},
+"Pink Dragon":{normal:"115514672741245",golden:"121332113256652"},
+"Polar Bear":{normal:"92922411418772",golden:"105939419440008"},
+"Police":{normal:"137503678494869",golden:"105372739907180"},
+"Poly":{normal:"72700884296344",golden:"93448317263355"},
+"Poseidon":{normal:"98743994253100",golden:"127645386595606"},
+"Potion":{normal:"104282855426601",golden:"92709504870381"},
+"Pufferfish":{normal:"102535973943066",golden:"82478976789958"},
+"Pumpkin":{normal:"122210713243779",golden:"78051815168026"},
+"Purple Block":{normal:"85197430643721",golden:"89522033885726"},
+"Purple Jellyfish":{normal:"106815127190613",golden:""},
+"Purple Wizard":{normal:"73708275676081",golden:"136041621955734"},
+"Raccoon":{normal:"133670805606540",golden:"116748290185469"},
+"Red Balloon":{normal:"85089096287772",golden:"123186267721451"},
+"Red Block":{normal:"72703734678126",golden:"93249015356323"},
+"Red Dominus":{normal:"80668814104411",golden:"140474216447875"},
+"Red Dragon":{normal:"81150664129187",golden:"139237924468100"},
+"Red Gift":{normal:"83024215739441",golden:"87303144794016"},
+"Red Hydominus":{normal:"87628019936527",golden:"98677711390032"},
+"Red Seahorse":{normal:"107005491414695",golden:"131209334640994"},
+"Red Wizard":{normal:"137646880451109",golden:"103489137221800"},
+"Reversed Cat":{normal:"73922675494304",golden:"81357439369166"},
+"Reversed Dog":{normal:"117279998342366",golden:"97215825622232"},
+"Robot":{normal:"90921981760627",golden:"85711280351756"},
+"Rocket":{normal:"128841860819708",golden:"109639481256119"},
+"Royal Trophy":{normal:"86641601932786",golden:"105437674254154"},
+"Sakura Turtle":{normal:"115616671857870",golden:"123926326820954"},
+"Sea Serpent":{normal:"71536090153177",golden:"130964729366215"},
+"Seal":{normal:"112684814892826",golden:"125099433521514"},
+"Seraph":{normal:"89893642524349",golden:"114337109149067"},
+"Shard":{normal:"84730751363511",golden:"122788500607555"},
+"Shark":{normal:"86472498546769",golden:"77018257077962"},
+"Shattered Shard":{normal:"79508552582319",golden:"122824710296680"},
+"Shell":{normal:"124964487894708",golden:"130422696730488"},
+"Skier":{normal:"133308426943862",golden:"120434292874646"},
+"Slime":{normal:"89345627737735",golden:"79904489822837"},
+"Snake":{normal:"123785830108382",golden:"134867555131264"},
+"Snowman":{normal:"93654987601779",golden:"122877337471961"},
+"Solflare":{normal:"92367578059457",golden:""},
+"Spider":{normal:"79349989622603",golden:"133256169068719"},
+"Squirrel":{normal:"75141867203901",golden:"134530383491041"},
+"Star Fish":{normal:"80877936356719",golden:"137763048135890"},
+"Starforge":{normal:"76782769566021",golden:"98578000298657"},
+"Starling Sprite":{normal:"76003912000017",golden:"135081584253373"},
+"Strawberry":{normal:"124916911644687",golden:"85706505195373"},
+"Summer Cat":{normal:"128065489833609",golden:"106475173582594"},
+"Summer Dog":{normal:"139895329802162",golden:"93908418706252"},
+"Supernova":{normal:"",golden:""},
+"Swimmer":{normal:"121290263315258",golden:"70941638635587"},
+"Tanuki":{normal:"124299252102658",golden:"81174950576677"},
+"The Clicker Trophy":{normal:"112276519898429",golden:"84069744741240"},
+"The Overlord":{normal:"97919633977640",golden:"112208344501153"},
+"Tiger":{normal:"95596298936664",golden:"130707019445781"},
+"Tiny Firecracker":{normal:"99747734877621",golden:"80547778168909"},
+"Turtle":{normal:"125290338866815",golden:"137952582924882"},
+"Turtle In A Bucket":{normal:"",golden:""},
+"UFO":{normal:"90296427751412",golden:"88551297638122"},
+"Unicorn":{normal:"94950279525592",golden:"86863473395481"},
+"Vault Keeper":{normal:"74028640057380",golden:"125432844673925"},
+"White Dominus":{normal:"107439658168566",golden:"104293526369135"},
+"White Hydominus":{normal:"91299199083695",golden:"103043848300099"},
+"Wolf":{normal:"138215752939932",golden:"79417623005113"},
+"Yellow Dragon":{normal:"84301727840608",golden:"105293219307738"},
+"Yellow Seahorse":{normal:"107722451853461",golden:""},
+"Yeti":{normal:"95091967341491",golden:"120696106923828"},
+"Zebra":{normal:"110421432076873",golden:"94133166454454"},
+"Zombie":{normal:"96637012052035",golden:"74777795511791"}
+};
+
 /* STATE */
 window.data = [];
 window.isAdmin = false;
@@ -325,6 +958,216 @@ const d = document.createElement("div");
 d.textContent = String(str);
 return d.innerHTML;
 }
+
+/* DEMAND BADGE */
+function demandBadge(demand) {
+const colors = {"No Demand":"#9ca3af","Low":"#4ade80","Medium":"#fbbf24","High":"#f97316","Super High":"#ef4444"};
+const d = demand || "?";
+const color = colors[d] || "#6b7280";
+return `<span style="color:${color};font-weight:bold;">${esc(d)}</span>`;
+}
+
+/* INFO POPUP */
+function showInfo(petName) {
+const info = PET_INFO[petName];
+if (!info) return;
+const overlay = document.createElement("div");
+overlay.className = "info-popup";
+overlay.innerHTML = `<div class="info-bubble">
+<button class="info-close">&times;</button>
+<h3>${esc(petName)}</h3>
+<span class="info-status ${info.s}">${STATUS_LABELS[info.s] || info.s}</span>
+<p>${esc(info.t)}</p>
+</div>`;
+overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
+overlay.querySelector(".info-close").addEventListener("click", () => overlay.remove());
+document.body.appendChild(overlay);
+}
+
+function petNameCell(name) {
+const hasInfo = PET_INFO[name];
+return `<span class="pet-link" data-pet="${esc(name)}">${esc(name)}</span>${hasInfo ? `<button class="info-btn" data-pet="${esc(name)}">i</button>` : ""}`;
+}
+
+function bindInfoButtons(container) {
+container.querySelectorAll(".info-btn").forEach(btn => {
+btn.addEventListener("click", (e) => { e.stopPropagation(); showInfo(btn.dataset.pet); });
+});
+}
+
+function bindPetLinks(container) {
+container.querySelectorAll(".pet-link").forEach(link => {
+link.addEventListener("click", () => showPetPage(link.dataset.pet));
+});
+}
+
+/* ICON URL */
+function getIconUrl(assetId) {
+if (!assetId) return "";
+return `https://assetgame.roblox.com/asset/?id=${assetId}`;
+}
+
+/* STAT CALCULATOR */
+function calcStats(petName, level, variant, shiny, mutations) {
+const base = PET_STATS[petName];
+if (!base) return null;
+const levelMult = 1 + (level / 50) * 0.5;
+const variantMult = {Normal:1,Golden:2,Rainbow:4}[variant];
+const shinyMult = shiny ? 1.25 : 1;
+let mutMult = 1;
+if (mutations.Wet) mutMult *= 1.25;
+if (mutations.Bloodmoon) mutMult *= 1.4;
+if (mutations.Thunderstorm) mutMult *= 1.4;
+if (mutations.UpsideDown) mutMult *= 1.4;
+const total = levelMult * variantMult * shinyMult * mutMult;
+return {
+Clicks: base.Clicks ? Math.floor(base.Clicks * total) : 0,
+Shells: base.Shells ? Math.floor(base.Shells * total) : 0,
+Gems: base.Gems ? Math.floor(base.Gems * total) : 0,
+multiplier: total
+};
+}
+
+function formatNum(n) {
+if (n >= 1e12) return (n/1e12).toFixed(1) + "T";
+if (n >= 1e9) return (n/1e9).toFixed(1) + "B";
+if (n >= 1e6) return (n/1e6).toFixed(1) + "M";
+if (n >= 1e3) return (n/1e3).toFixed(1) + "K";
+return n.toLocaleString();
+}
+
+function updateCalcResults(petName) {
+const level = parseInt(document.getElementById("levelSlider").value);
+const variant = document.querySelector('input[name="variant"]:checked').value;
+const shiny = document.getElementById("shinyCheck").checked;
+const mutations = {};
+document.querySelectorAll(".mut-check").forEach(c => { mutations[c.value] = c.checked; });
+
+const result = calcStats(petName, level, variant, shiny, mutations);
+if (!result) {
+document.getElementById("calcResults").innerHTML = '<p style="color:#6b7280;">No stat data available.</p>';
+document.getElementById("multBreakdown").textContent = "";
+return;
+}
+
+const stats = PET_STATS[petName];
+let html = "";
+if (stats.Clicks) html += `<div class="stat-card"><div class="stat-label">Clicks</div><div class="stat-num">${formatNum(result.Clicks)}</div></div>`;
+if (stats.Shells) html += `<div class="stat-card"><div class="stat-label">Shells</div><div class="stat-num">${formatNum(result.Shells)}</div></div>`;
+if (stats.Gems) html += `<div class="stat-card"><div class="stat-label">Gems</div><div class="stat-num">${formatNum(result.Gems)}</div></div>`;
+document.getElementById("calcResults").innerHTML = html;
+
+const lm = (1 + (level/50)*0.5).toFixed(2);
+const vm = {Normal:1,Golden:2,Rainbow:4}[variant];
+const sm = shiny ? 1.25 : 1;
+const activeMuts = Object.entries(mutations).filter(([,v])=>v).map(([k])=>k);
+document.getElementById("multBreakdown").textContent =
+`Total: ${result.multiplier.toFixed(2)}\u00d7 (Level ${lm}\u00d7 \u00b7 Variant ${vm}\u00d7 \u00b7 Shiny ${sm}\u00d7 \u00b7 Muts: ${activeMuts.join(", ")||"none"})`;
+
+updateIconEffects(petName, variant, shiny, mutations);
+}
+
+function updateIconEffects(petName, variant, shiny, mutations) {
+const icons = PET_ICONS[petName];
+const img = document.getElementById("petIcon");
+const wrap = document.getElementById("petIconWrap");
+if (!icons || !img) return;
+
+let assetId = icons.normal;
+if (variant === "Golden" && icons.golden) assetId = icons.golden;
+
+if (assetId && assetId !== img.dataset.assetId) {
+img.dataset.assetId = assetId;
+img.src = getIconUrl(assetId);
+img.style.display = "block";
+}
+
+let filters = [];
+if (variant === "Golden" && !icons.golden) filters.push("sepia(1) saturate(3) brightness(1.1) hue-rotate(15deg)");
+if (mutations.Wet) filters.push("saturate(1.3) hue-rotate(20deg)");
+if (mutations.Bloodmoon) filters.push("saturate(1.5) hue-rotate(-15deg)");
+if (mutations.Thunderstorm) filters.push("brightness(1.2) contrast(1.1)");
+
+img.classList.toggle("icon-rainbow", variant === "Rainbow");
+img.style.filter = variant === "Rainbow" ? "" : (filters.length ? filters.join(" ") : "");
+img.style.transform = mutations.UpsideDown ? "scaleY(-1)" : "";
+wrap.style.animation = shiny ? "shinyPulse 1.5s ease-in-out infinite" : "";
+}
+
+async function showPetPage(petName) {
+window.prevPage = window.page;
+window.page = "pet";
+window.currentPet = petName;
+
+document.getElementById("homePage").style.display = "none";
+document.getElementById("searchPage").style.display = "none";
+document.getElementById("listPage").style.display = "none";
+document.getElementById("petPage").style.display = "block";
+
+const pet = ALL_PETS.find(p => p.name === petName);
+const info = PET_INFO[petName];
+const petData = window.data.find(p => p.name === petName);
+
+document.getElementById("petNameTitle").textContent = petName;
+document.getElementById("petRarityLabel").textContent = pet ? pet.rarity : "Unknown";
+
+const statusLine = document.getElementById("petStatusLine");
+statusLine.innerHTML = info ? `Status: <span class="info-status ${info.s}">${STATUS_LABELS[info.s] || info.s}</span>` : "";
+document.getElementById("petDemandLine").innerHTML = petData && petData.demand ? `Demand: ${demandBadge(petData.demand)}` : "";
+document.getElementById("petDescLine").textContent = info ? info.t : "";
+
+const valRow = document.getElementById("petValuesRow");
+valRow.innerHTML = petData
+? `<div class="pet-val-card"><div class="val-label">Normal</div><div class="val-num">${esc(petData.normal)}</div></div>` +
+  `<div class="pet-val-card"><div class="val-label">Golden</div><div class="val-num">${esc(petData.golden)}</div></div>` +
+  `<div class="pet-val-card"><div class="val-label">Rainbow</div><div class="val-num">${esc(petData.rainbow)}</div></div>`
+: '<p style="color:#6b7280;">No value data yet.</p>';
+
+document.getElementById("levelSlider").value = 0;
+document.getElementById("levelDisplay").textContent = "0";
+document.querySelector('input[name="variant"][value="Normal"]').checked = true;
+document.getElementById("shinyCheck").checked = false;
+document.querySelectorAll(".mut-check").forEach(c => c.checked = false);
+
+const icons = PET_ICONS[petName];
+const img = document.getElementById("petIcon");
+const wrap = document.getElementById("petIconWrap");
+img.style.display = "none";
+img.dataset.assetId = "";
+img.style.filter = "";
+img.style.transform = "";
+img.classList.remove("icon-rainbow");
+wrap.style.animation = "";
+img.onerror = () => { img.style.display = "none"; };
+
+if (icons && icons.normal) {
+img.src = getIconUrl(icons.normal);
+img.dataset.assetId = icons.normal;
+img.style.display = "block";
+}
+
+updateCalcResults(petName);
+}
+
+/* PET PAGE CONTROLS */
+document.getElementById("petBackBtn").addEventListener("click", () => goPage(window.prevPage || "home"));
+
+document.getElementById("levelSlider").addEventListener("input", (e) => {
+document.getElementById("levelDisplay").textContent = e.target.value;
+if (window.currentPet) updateCalcResults(window.currentPet);
+});
+
+document.querySelectorAll('input[name="variant"]').forEach(r => {
+r.addEventListener("change", () => { if (window.currentPet) updateCalcResults(window.currentPet); });
+});
+
+document.getElementById("shinyCheck").addEventListener("change", () => {
+if (window.currentPet) updateCalcResults(window.currentPet);
+});
+
+document.querySelectorAll(".mut-check").forEach(c => {
+c.addEventListener("change", () => { if (window.currentPet) updateCalcResults(window.currentPet); });
+});
 
 /* LOAD PETS FROM FIRESTORE */
 async function loadPets() {
@@ -351,13 +1194,15 @@ if (!confirm("Seed all 184 pets with '?' values? Existing pets will NOT be overw
 const existing = new Set(window.data.map(p => p.name.toLowerCase().replace(/[^a-z0-9]/g, "_")));
 let added = 0;
 
-// Firestore batch max is 500, we have 184 so one batch is fine
 const batch = writeBatch(db);
 for (const pet of ALL_PETS) {
 const docId = pet.name.toLowerCase().replace(/[^a-z0-9]/g, "_");
 if (existing.has(docId)) continue;
+const isLow = ["Basic","Rare","Epic","Legendary"].includes(pet.rarity);
 batch.set(doc(db, "pets", docId), {
-name: pet.name, rarity: pet.rarity, normal: "?", golden: "?", rainbow: "?"
+name: pet.name, rarity: pet.rarity,
+normal: isLow ? "0" : "?", golden: isLow ? "0" : "?", rainbow: isLow ? "0" : "?",
+demand: isLow ? "No Demand" : "?"
 });
 added++;
 }
@@ -373,6 +1218,32 @@ alert("Seed failed: " + err.message);
 }
 };
 
+/* SET DEMAND VALUES (MIGRATION) */
+window.setDemandValues = async function() {
+if (!window.isAdmin) { alert("Not admin"); return; }
+if (!confirm("Set Basic-Legendary values to 0 / No Demand, and ? demand for others?")) return;
+
+const lowRarities = new Set(["Basic","Rare","Epic","Legendary"]);
+const batch = writeBatch(db);
+
+for (const pet of window.data) {
+const docRef = doc(db, "pets", pet.id);
+if (lowRarities.has(pet.rarity)) {
+batch.set(docRef, { normal: "0", golden: "0", rainbow: "0", demand: "No Demand" }, { merge: true });
+} else {
+batch.set(docRef, { demand: pet.demand || "?" }, { merge: true });
+}
+}
+
+try {
+await batch.commit();
+await loadPets();
+alert("Updated demand values!");
+} catch (err) {
+alert("Update failed: " + err.message);
+}
+};
+
 /* MENU */
 window.toggleMenu = function(){
 const m = document.getElementById("menu");
@@ -385,6 +1256,7 @@ window.page = page;
 document.getElementById("menu").style.display = "none";
 document.getElementById("homePage").style.display = page === "home" ? "block" : "none";
 document.getElementById("searchPage").style.display = page === "search" ? "block" : "none";
+document.getElementById("petPage").style.display = "none";
 document.getElementById("listPage").style.display = (page !== "home" && page !== "search") ? "block" : "none";
 if (page === "search") {
 document.getElementById("searchBar").value = "";
@@ -410,14 +1282,17 @@ window.data
 .forEach(p => {
 const tr = document.createElement("tr");
 tr.innerHTML =
-`<td>${esc(p.name)}</td>` +
+`<td>${petNameCell(p.name)}</td>` +
 `<td>${esc(p.normal)}</td>` +
 `<td>${esc(p.golden)}</td>` +
 `<td>${esc(p.rainbow)}</td>` +
-`<td>${esc(p.rarity)}</td>` +
+`<td>${demandBadge(p.demand)}</td>` +
 (window.isAdmin ? `<td><button class="delete-btn" data-id="${esc(p.id)}">Delete</button></td>` : "");
 tbody.appendChild(tr);
 });
+
+bindInfoButtons(tbody);
+bindPetLinks(tbody);
 
 tbody.querySelectorAll(".delete-btn").forEach(btn => {
 btn.addEventListener("click", () => deletePet(btn.dataset.id));
@@ -442,7 +1317,8 @@ alert("Fill required fields");
 return;
 }
 
-const petData = { name: n, normal: no, golden: g, rainbow: r, rarity: ra };
+const dem = document.getElementById("demand").value;
+const petData = { name: n, normal: no, golden: g, rainbow: r, rarity: ra, demand: dem };
 const docId = n.toLowerCase().replace(/[^a-z0-9]/g, "_");
 
 try {
@@ -452,6 +1328,7 @@ document.getElementById("name").value = "";
 document.getElementById("normal").value = "";
 document.getElementById("golden").value = "";
 document.getElementById("rainbow").value = "";
+document.getElementById("demand").value = "?";
 alert("Saved!");
 } catch (err) {
 alert("Save failed: " + err.message);
@@ -492,6 +1369,7 @@ document.getElementById("normal").value = p.normal || "";
 document.getElementById("golden").value = p.golden || "";
 document.getElementById("rainbow").value = p.rainbow || "";
 document.getElementById("rarity").value = p.rarity || "Basic";
+document.getElementById("demand").value = p.demand || "?";
 suggestions.style.display = "none";
 });
 suggestions.appendChild(div);
@@ -564,13 +1442,16 @@ table.style.display = "table";
 matches.forEach(p => {
 const tr = document.createElement("tr");
 tr.innerHTML =
-`<td>${esc(p.name)}</td>` +
+`<td>${petNameCell(p.name)}</td>` +
 `<td>${esc(p.normal)}</td>` +
 `<td>${esc(p.golden)}</td>` +
 `<td>${esc(p.rainbow)}</td>` +
-`<td>${esc(p.rarity)}</td>`;
+`<td>${demandBadge(p.demand)}</td>`;
 tbody.appendChild(tr);
 });
+
+bindInfoButtons(tbody);
+bindPetLinks(tbody);
 }
 
 document.getElementById("searchBar").addEventListener("input", (e) => {
