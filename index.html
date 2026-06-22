@@ -756,6 +756,11 @@ td{padding:8px 4px;}
 <option value="Super High">Super High</option>
 </select>
 
+<input id="iconId" placeholder="Icon Asset ID (Roblox)" style="margin-top:10px;"/>
+<input id="statClicks" placeholder="Base Clicks stat" type="number" style="margin-top:10px;"/>
+<input id="statShells" placeholder="Base Shells stat" type="number" style="margin-top:10px;"/>
+<input id="statGems" placeholder="Base Gems stat" type="number" style="margin-top:10px;"/>
+
 <button onclick="addPet()">Add / Update</button>
 <button onclick="seedPets()" class="seed-btn">Seed All Pets (184)</button>
 <button onclick="setDemandValues()" class="seed-btn">Set Demand Values</button>
@@ -1318,10 +1323,16 @@ overlay.querySelector(".info-close").addEventListener("click", () => overlay.rem
 document.body.appendChild(overlay);
 }
 
+function getIconId(name) {
+const pd = window.data.find(p => p.name === name);
+if (pd && pd.iconId) return pd.iconId;
+const icons = PET_ICONS[name];
+return icons && icons.normal ? icons.normal : "";
+}
+
 function petNameCell(name) {
 const hasInfo = PET_INFO[name];
-const icons = PET_ICONS[name];
-const assetId = icons && icons.normal ? icons.normal : "";
+const assetId = getIconId(name);
 return `<img class="row-icon" data-asset="${esc(assetId)}" alt="${esc(name)}">`+
 `<span class="pet-link" data-pet="${esc(name)}">${esc(name)}</span>${hasInfo ? `<button class="info-btn" data-pet="${esc(name)}" title="Pet info">i</button>` : ""}`;
 }
@@ -1364,8 +1375,20 @@ if (id) loadIcon(id, img);
 }
 
 /* STAT CALCULATOR */
+function getBaseStats(petName) {
+const pd = window.data.find(p => p.name === petName);
+if (pd && (pd.statClicks || pd.statShells || pd.statGems)) {
+const s = {};
+if (pd.statClicks) s.Clicks = pd.statClicks;
+if (pd.statShells) s.Shells = pd.statShells;
+if (pd.statGems) s.Gems = pd.statGems;
+return s;
+}
+return PET_STATS[petName] || null;
+}
+
 function calcStats(petName, level, variant, shiny, mutations) {
-const base = PET_STATS[petName];
+const base = getBaseStats(petName);
 if (!base) return null;
 const levelMult = 1 + (level / 50) * 0.5;
 const variantMult = {Normal:1,Golden:2,Rainbow:4}[variant];
@@ -1406,7 +1429,7 @@ document.getElementById("multBreakdown").textContent = "";
 return;
 }
 
-const stats = PET_STATS[petName];
+const stats = getBaseStats(petName);
 let html = "";
 if (stats.Clicks) html += `<div class="stat-card"><div class="stat-label">Clicks</div><div class="stat-num">${formatNum(result.Clicks)}</div></div>`;
 if (stats.Shells) html += `<div class="stat-card"><div class="stat-label">Shells</div><div class="stat-num">${formatNum(result.Shells)}</div></div>`;
@@ -1484,6 +1507,7 @@ document.querySelector('input[name="variant"][value="Normal"]').checked = true;
 document.getElementById("shinyCheck").checked = false;
 document.querySelectorAll(".mut-check").forEach(c => c.checked = false);
 
+const iconAsset = getIconId(petName);
 const icons = PET_ICONS[petName];
 const img = document.getElementById("petIcon");
 const wrap = document.getElementById("petIconWrap");
@@ -1496,10 +1520,10 @@ img.classList.remove("icon-rainbow");
 wrap.style.animation = "";
 img.onerror = () => { img.style.display = "none"; wrap.classList.remove("loading-icon"); };
 
-if (icons && icons.normal) {
-img.dataset.assetId = icons.normal;
+if (iconAsset) {
+img.dataset.assetId = iconAsset;
 wrap.classList.add("loading-icon");
-loadIcon(icons.normal, img).then(() => wrap.classList.remove("loading-icon"));
+loadIcon(iconAsset, img).then(() => wrap.classList.remove("loading-icon"));
 }
 
 updateCalcResults(petName);
@@ -1760,7 +1784,17 @@ return;
 }
 
 const dem = document.getElementById("demand").value;
+const iconId = document.getElementById("iconId").value.trim();
+const statClicks = document.getElementById("statClicks").value.trim();
+const statShells = document.getElementById("statShells").value.trim();
+const statGems = document.getElementById("statGems").value.trim();
+
 const petData = { name: n, normal: no, golden: g, rainbow: r, rarity: ra, demand: dem };
+if (iconId) petData.iconId = iconId;
+if (statClicks) petData.statClicks = Number(statClicks);
+if (statShells) petData.statShells = Number(statShells);
+if (statGems) petData.statGems = Number(statGems);
+
 const docId = n.toLowerCase().replace(/[^a-z0-9]/g, "_");
 
 try {
@@ -1771,6 +1805,10 @@ document.getElementById("normal").value = "";
 document.getElementById("golden").value = "";
 document.getElementById("rainbow").value = "";
 document.getElementById("demand").value = "?";
+document.getElementById("iconId").value = "";
+document.getElementById("statClicks").value = "";
+document.getElementById("statShells").value = "";
+document.getElementById("statGems").value = "";
 alert("Saved!");
 } catch (err) {
 alert("Save failed: " + err.message);
@@ -1812,6 +1850,11 @@ document.getElementById("golden").value = p.golden || "";
 document.getElementById("rainbow").value = p.rainbow || "";
 document.getElementById("rarity").value = p.rarity || "Basic";
 document.getElementById("demand").value = p.demand || "?";
+document.getElementById("iconId").value = p.iconId || (PET_ICONS[p.name] && PET_ICONS[p.name].normal) || "";
+const stats = p.statClicks || p.statShells || p.statGems ? p : PET_STATS[p.name] || {};
+document.getElementById("statClicks").value = p.statClicks || stats.Clicks || "";
+document.getElementById("statShells").value = p.statShells || stats.Shells || "";
+document.getElementById("statGems").value = p.statGems || stats.Gems || "";
 suggestions.style.display = "none";
 });
 suggestions.appendChild(div);
