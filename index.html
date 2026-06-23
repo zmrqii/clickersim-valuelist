@@ -1,682 +1,418 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Clicker Value List</title>
-
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;}
-body{
-margin:0;
-font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
-background:#070a18;
-color:#e2e8f0;
-line-height:1.5;
--webkit-font-smoothing:antialiased;
+:root{
+--bg-base:#050816;--bg-surface:#0a0f24;--bg-elevated:#111836;
+--glass:rgba(255,255,255,0.04);--glass-hover:rgba(255,255,255,0.08);--glass-border:rgba(255,255,255,0.06);
+--accent-300:#d8b4fe;--accent-400:#c084fc;--accent-500:#a855f7;--accent-600:#9333ea;--accent-700:#7c3aed;
+--text-1:#f1f5f9;--text-2:#94a3b8;--text-3:#4b5563;--border:rgba(255,255,255,0.08);
+--shadow-glow:0 0 30px rgba(168,85,247,0.15);
 }
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg-base);color:var(--text-1);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:linear-gradient(rgba(255,255,255,0.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.015) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%,black 30%,transparent 100%);pointer-events:none;z-index:0;}
 
-/* HEADER / NAV */
-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:12px 6%;
-background:linear-gradient(180deg,#111827 0%,#0f172a 100%);
-position:sticky;
-top:0;
-z-index:10;
-border-bottom:1px solid rgba(139,92,246,.15);
-gap:12px;
-}
+/* Floating orbs */
+.orb{position:fixed;border-radius:50%;filter:blur(80px);opacity:0.3;pointer-events:none;z-index:0;}
+.orb-1{width:420px;height:420px;background:radial-gradient(circle,#7c3aed,transparent 70%);top:-120px;left:-120px;animation:orb1 18s ease-in-out infinite;}
+.orb-2{width:350px;height:350px;background:radial-gradient(circle,#6366f1,transparent 70%);top:45%;right:-100px;animation:orb2 22s ease-in-out infinite;}
+.orb-3{width:300px;height:300px;background:radial-gradient(circle,#a855f7,transparent 70%);bottom:-60px;left:35%;animation:orb3 20s ease-in-out infinite;}
+@keyframes orb1{0%,100%{transform:translate(0,0)}33%{transform:translate(70px,90px)}66%{transform:translate(-40px,50px)}}
+@keyframes orb2{0%,100%{transform:translate(0,0)}33%{transform:translate(-60px,-70px)}66%{transform:translate(35px,-35px)}}
+@keyframes orb3{0%,100%{transform:translate(0,0)}33%{transform:translate(50px,-55px)}66%{transform:translate(-65px,25px)}}
 
-.logo{
-color:#c084fc;
-font-weight:700;
-font-size:18px;
-white-space:nowrap;
-letter-spacing:-0.3px;
-}
+/* Header */
+.site-header{position:sticky;top:0;z-index:100;backdrop-filter:blur(24px);background:rgba(5,8,22,0.75);border-bottom:1px solid var(--glass-border);padding:0 max(1.5rem,4%);}
+.header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:20px;height:64px;}
+.logo{display:flex;align-items:center;gap:8px;cursor:default;-webkit-user-select:none;user-select:none;flex-shrink:0;}
+.logo-icon{font-size:22px;}
+.logo-text{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;}
+.gradient-text{background:linear-gradient(90deg,#c084fc,#818cf8,#60a5fa,#c084fc);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradShift 6s linear infinite;}
+@keyframes gradShift{to{background-position:200% center}}
 
-button{
-background:#7c3aed;
-color:white;
-border:none;
-padding:9px 16px;
-border-radius:8px;
-cursor:pointer;
-font-size:13px;
-font-weight:500;
-transition:background .15s,transform .1s,box-shadow .15s;
-}
-button:hover{background:#6d28d9;box-shadow:0 2px 8px rgba(124,58,237,.3);}
-button:active{transform:scale(.97);}
+.nav-tabs{display:flex;align-items:center;gap:2px;flex:1;overflow:visible;scrollbar-width:none;}
+.nav-tabs::-webkit-scrollbar{display:none;}
+.nav-tab{background:none;border:none;color:var(--text-2);font-family:'Inter',sans-serif;font-weight:500;font-size:13px;padding:8px 14px;border-radius:10px;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.nav-tab:hover,.nav-tab.active{color:var(--text-1);background:var(--glass-hover);}
+.nav-tab.active{color:var(--accent-400);}
+.nav-dd{position:relative;}
+.nav-dd-menu{display:none;position:absolute;top:calc(100% + 6px);left:50%;transform:translateX(-50%);background:rgba(10,15,36,0.95);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:14px;padding:6px;min-width:180px;z-index:200;box-shadow:0 12px 40px rgba(0,0,0,0.5);}
+.nav-dd-menu.open{display:block;}
+.nav-dd-menu button{display:flex;align-items:center;gap:10px;width:100%;background:none;border:none;color:var(--text-2);font-family:'Inter',sans-serif;font-size:13px;padding:9px 14px;border-radius:10px;cursor:pointer;transition:all .15s;}
+.nav-dd-menu button:hover{background:var(--glass-hover);color:var(--text-1);}
+.rarity-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.header-search{position:relative;flex-shrink:0;}
+.header-search input{background:var(--glass);border:1px solid var(--border);border-radius:10px;padding:8px 14px 8px 36px;color:var(--text-1);font-size:13px;width:200px;outline:none;transition:border-color .2s;font-family:'Inter',sans-serif;}
+.header-search input:focus{border-color:var(--accent-700);}
+.header-search input::placeholder{color:var(--text-3);}
+.header-search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--text-3);}
 
-#menu{
-display:none;
-position:absolute;
-right:0;
-top:calc(100% + 6px);
-background:#1e293b;
-border:1px solid #334155;
-border-radius:10px;
-overflow:hidden;
-z-index:999;
-min-width:170px;
-box-shadow:0 8px 24px rgba(0,0,0,.4);
-}
-#menu button{
-width:100%;
-padding:11px 16px;
-background:none;
-border:none;
-color:#cbd5e1;
-text-align:left;
-font-size:13px;
-border-radius:0;
-transition:background .12s,color .12s;
-}
-#menu button:hover{background:#334155;color:white;box-shadow:none;transform:none;}
+/* Main */
+.main{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:32px max(1.5rem,4%);}
 
-section{padding:24px 6%;max-width:1200px;margin:0 auto;}
+/* Hero */
+.hero{text-align:center;padding:56px 0 20px;}
+.hero-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(2.5rem,1.5rem+4vw,4rem);font-weight:700;letter-spacing:-.03em;line-height:1.1;}
+.hero-sub{color:var(--text-2);font-size:15px;max-width:440px;margin:14px auto 32px;line-height:1.6;}
+.hero-stats{display:flex;justify-content:center;gap:48px;margin-bottom:36px;}
+.hero-stat-num{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;color:var(--accent-400);display:block;}
+.hero-stat-label{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;}
+.hero-search{position:relative;max-width:440px;margin:0 auto;}
+.hero-search input{width:100%;background:var(--glass);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:14px;padding:14px 18px 14px 44px;color:var(--text-1);font-size:15px;outline:none;transition:border-color .2s;font-family:'Inter',sans-serif;}
+.hero-search input:focus{border-color:var(--accent-700);box-shadow:var(--shadow-glow);}
+.hero-search input::placeholder{color:var(--text-3);}
+.hero-search svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--text-3);}
 
-/* ADMIN PANEL */
-#adminPanel{
-display:none;
-position:fixed;
-top:0;
-right:0;
-width:340px;
-height:100%;
-background:#0f172a;
-padding:24px 20px;
-border-left:1px solid rgba(139,92,246,.2);
-overflow:auto;
-z-index:100;
-box-shadow:-4px 0 20px rgba(0,0,0,.3);
-}
-#adminPanel h3{color:#c084fc;margin-top:0;}
+/* Rarity grid */
+.rarity-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:28px;max-width:640px;margin-left:auto;margin-right:auto;}
+.rarity-card{display:flex;align-items:center;gap:12px;padding:14px 18px;background:var(--glass);backdrop-filter:blur(12px);border:1px solid var(--glass-border);border-radius:14px;cursor:pointer;transition:all .25s cubic-bezier(.16,1,.3,1);color:var(--text-1);font-family:'Inter',sans-serif;font-weight:500;font-size:14px;}
+.rarity-card:hover{background:var(--glass-hover);border-color:rgba(192,132,252,.3);transform:translateY(-2px);box-shadow:var(--shadow-glow);}
+.rarity-card .rarity-dot{width:10px;height:10px;}
+.rarity-card-count{margin-left:auto;color:var(--text-3);font-size:13px;}
 
-input, select{
-width:100%;
-padding:10px 12px;
-margin-top:10px;
-border-radius:8px;
-border:1px solid #334155;
-background:#111827;
-color:white;
-font-size:13px;
-transition:border-color .15s;
-outline:none;
-}
-input[type="radio"],input[type="checkbox"]{
-width:auto;padding:0;margin:0;border:none;background:none;border-radius:0;
-}
-input:focus,select:focus{border-color:#7c3aed;}
-input::placeholder{color:#4b5563;}
+/* Page */
+.page{display:none;}
+.page.active{display:block;}
+#homePage{position:relative;}
 
-/* TABLES */
-table{
-width:100%;
-margin-top:16px;
-border-collapse:collapse;
-background:#111827;
-border-radius:12px;
-overflow:hidden;
-border:1px solid #1e293b;
-table-layout:auto;
-}
-#petTable td:first-child,#petTable th:first-child,
-#searchTable td:first-child,#searchTable th:first-child{width:1%;white-space:nowrap;}
-th,td{
-padding:12px 14px;
-border-bottom:1px solid rgba(255,255,255,0.05);
-font-size:13px;
-}
-th{
-color:#a78bfa;
-background:#0f172a;
-font-size:11px;
-text-transform:uppercase;
-letter-spacing:.8px;
-font-weight:600;
-}
-#petTable tbody tr,#searchTable tbody tr{transition:background .12s;}
-#petTable tbody tr:nth-child(odd),#searchTable tbody tr:nth-child(odd){background:#0c1222;}
-#petTable tbody tr:nth-child(even),#searchTable tbody tr:nth-child(even){background:#111827;}
-#petTable tbody tr:hover,#searchTable tbody tr:hover{background:#1e293b;}
+/* List header */
+.list-header{display:flex;align-items:center;gap:14px;margin-bottom:20px;}
+.list-header h2{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.25rem,1rem+1vw,1.75rem);font-weight:700;display:flex;align-items:center;gap:10px;}
+.rarity-dot-lg{width:14px;height:14px;border-radius:50%;flex-shrink:0;}
+.pet-count{margin-left:auto;color:var(--text-3);font-size:13px;}
+.sort-dd{position:relative;margin-left:8px;}
+.sort-btn{background:var(--glass);border:1px solid var(--border);color:var(--text-2);font-family:'Inter',sans-serif;font-weight:500;font-size:12px;padding:6px 12px;border-radius:10px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;white-space:nowrap;}
+.sort-btn:hover{background:var(--glass-hover);color:var(--text-1);}
+.sort-btn svg{width:14px;height:14px;}
+.sort-menu{display:none;position:absolute;top:calc(100% + 6px);right:0;background:rgba(10,15,36,0.95);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:12px;padding:4px;min-width:170px;z-index:200;box-shadow:0 12px 40px rgba(0,0,0,0.5);}
+.sort-menu.open{display:block;}
+.sort-menu button{display:flex;align-items:center;gap:8px;width:100%;background:none;border:none;color:var(--text-2);font-family:'Inter',sans-serif;font-size:12px;padding:8px 12px;border-radius:8px;cursor:pointer;transition:all .15s;}
+.sort-menu button:hover{background:var(--glass-hover);color:var(--text-1);}
+.sort-menu button.active{color:var(--accent-400);}
 
-.delete-btn{
-background:#dc2626;
-padding:6px 12px;
-font-size:11px;
-border-radius:6px;
-font-weight:500;
-}
-.delete-btn:hover{background:#ef4444;}
+/* Pet card grid */
+.pet-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
+.pet-card{position:relative;background:var(--glass);backdrop-filter:blur(12px);border:1px solid var(--glass-border);border-radius:16px;padding:18px 16px 14px;cursor:pointer;transition:all .3s cubic-bezier(.16,1,.3,1);overflow:hidden;}
+.pet-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(168,85,247,.06),rgba(99,102,241,.03));opacity:0;transition:opacity .3s;border-radius:16px;pointer-events:none;}
+.pet-card:hover{border-color:rgba(192,132,252,.3);transform:translateY(-4px);box-shadow:0 12px 40px rgba(168,85,247,.1);}
+.pet-card:hover::before{opacity:1;}
+.pet-card-icon{width:60px;height:60px;border-radius:12px;background:var(--bg-surface);border:1px solid var(--border);overflow:hidden;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;}
+.pet-card-icon img{width:100%;height:100%;object-fit:contain;}
+.pet-card-name{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;color:var(--text-1);text-align:center;margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pet-card-values{display:flex;justify-content:center;gap:10px;}
+.pcv{text-align:center;}
+.pcv-label{display:block;font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.04em;}
+.pcv-val{font-size:12px;font-weight:600;color:var(--text-2);}
+.pet-card-demand{text-align:center;margin-top:6px;font-size:12px;}
+.pet-card-info{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--text-3);font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;font-family:'Inter',sans-serif;}
+.pet-card:hover .pet-card-info{opacity:1;}
+.pet-card-info:hover{background:rgba(255,255,255,0.12);color:var(--accent-400);}
+.pet-card-del{position:absolute;top:8px;left:8px;width:22px;height:22px;border-radius:50%;background:rgba(220,38,38,0.15);border:1px solid rgba(220,38,38,0.3);color:#f87171;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;font-family:'Inter',sans-serif;}
+.pet-card:hover .pet-card-del{opacity:1;}
+.pet-card-del:hover{background:rgba(220,38,38,0.3);}
 
-.loading{color:#8b5cf6;text-align:center;padding:40px 20px;font-size:14px;}
+/* Search results */
+.search-header{color:var(--text-2);font-size:14px;margin-bottom:16px;}
+.search-header strong{color:var(--accent-400);}
+.no-results{color:var(--text-3);text-align:center;padding:40px 0;}
 
-/* SEARCH */
-#searchBar{
-width:100%;
-padding:14px 18px;
-border-radius:10px;
-border:1px solid #334155;
-background:#111827;
-color:white;
-font-size:15px;
-outline:none;
-margin-top:0;
-transition:border-color .15s,box-shadow .15s;
-}
-#searchBar:focus{border-color:#7c3aed;box-shadow:0 0 0 3px rgba(124,58,237,.15);}
-#searchBar::placeholder{color:#4b5563;}
-.no-results{color:#6b7280;text-align:center;padding:40px 20px;font-size:14px;}
+/* Modal overlay */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(10px);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s ease;}
+.modal{background:var(--bg-elevated);border:1px solid var(--border);border-radius:24px;padding:32px;max-width:620px;width:100%;max-height:90vh;overflow-y:auto;position:relative;animation:slideUp .35s cubic-bezier(.16,1,.3,1);}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.modal-close{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);color:var(--text-3);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;font-family:'Inter',sans-serif;}
+.modal-close:hover{background:rgba(255,255,255,0.12);color:#fff;}
 
-/* AUTOCOMPLETE */
-.name-wrap{position:relative;}
-#nameSuggestions{
-position:absolute;
-top:100%;
-left:0;
-right:0;
-background:#1e293b;
-border:1px solid #334155;
-border-radius:0 0 8px 8px;
-max-height:180px;
-overflow-y:auto;
-z-index:200;
-display:none;
-box-shadow:0 4px 12px rgba(0,0,0,.3);
-}
-#nameSuggestions div{
-padding:10px 14px;
-cursor:pointer;
-font-size:13px;
-transition:background .1s;
-}
-#nameSuggestions div:hover{background:#334155;}
+/* Pet detail in modal */
+.pet-detail-header{display:flex;gap:20px;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;}
+.pet-detail-icon{width:120px;height:120px;border-radius:20px;background:var(--bg-surface);border:2px solid var(--border);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.pet-detail-icon img{width:100%;height:100%;object-fit:contain;}
+.pet-meta h2{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;margin:0 0 8px;}
+.pet-meta p{margin:4px 0;color:var(--text-2);font-size:13px;}
+.pet-meta .pet-desc{color:var(--text-3);font-style:italic;font-size:12px;line-height:1.5;margin-top:8px;}
 
-.seed-btn{
-background:#0d9488;
-margin-top:10px;
-font-size:11px;
-padding:8px 14px;
-}
-.seed-btn:hover{background:#14b8a6;}
+.pet-values{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0;}
+.pet-val-card{background:var(--bg-surface);border:1px solid var(--border);border-radius:12px;padding:12px 20px;text-align:center;flex:1;min-width:90px;}
+.val-label{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.04em;}
+.val-num{font-size:18px;font-weight:700;color:var(--text-1);margin-top:4px;}
 
-/* INFO BUTTON */
-.info-btn{
-background:none;
-border:1px solid rgba(139,92,246,.3);
-color:#a5b4fc;
-width:22px;
-height:22px;
-border-radius:50%;
-font-size:11px;
-padding:0;
-margin-left:6px;
-cursor:pointer;
-vertical-align:middle;
-line-height:20px;
-display:inline-block;
-text-align:center;
-transition:all .15s;
-}
-.info-btn:hover{border-color:#a5b4fc;background:rgba(165,180,252,.12);}
+.calc-section{background:var(--bg-surface);border:1px solid var(--border);border-radius:14px;padding:18px;margin-top:16px;}
+.calc-section h3{font-family:'Space Grotesk',sans-serif;color:var(--accent-400);margin:0 0 14px;font-size:15px;font-weight:600;}
+.calc-row{margin-bottom:12px;}
+.calc-row>label{display:block;color:var(--text-2);font-size:12px;margin-bottom:5px;}
+input[type="range"]{-webkit-appearance:none;width:100%;height:5px;border-radius:3px;background:var(--bg-base);outline:none;margin:0;}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent-500);border:2px solid var(--accent-300);cursor:pointer;box-shadow:0 0 8px rgba(168,85,247,.3);}
+.calc-checks{display:flex;flex-wrap:wrap;gap:10px;}
+.calc-checks label{display:flex;align-items:center;gap:5px;color:var(--text-1);font-size:12px;cursor:pointer;}
+.calc-results{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;}
+.stat-card{background:var(--bg-base);border:1px solid var(--border);border-radius:10px;padding:10px 16px;text-align:center;flex:1;min-width:70px;}
+.stat-label{font-size:11px;color:var(--text-3);}
+.stat-num{font-size:16px;font-weight:700;color:var(--accent-300);margin-top:3px;}
+#multBreakdown{color:var(--text-3);font-size:11px;margin-top:6px;}
 
-/* INFO POPUP */
-.info-popup{
-position:fixed;
-top:0;left:0;right:0;bottom:0;
-background:rgba(0,0,0,.65);
-backdrop-filter:blur(4px);
-z-index:500;
-display:flex;
-align-items:center;
-justify-content:center;
-}
-.info-bubble{
-background:#1e293b;
-border:1px solid #334155;
-border-radius:14px;
-padding:24px 28px;
-max-width:420px;
-width:90%;
-position:relative;
-box-shadow:0 12px 40px rgba(0,0,0,.4);
-}
-.info-bubble h3{
-margin:0 0 10px;
-color:#c084fc;
-font-size:17px;
-}
-.info-bubble .info-status{
-display:inline-block;
-padding:4px 12px;
-border-radius:20px;
-font-size:11px;
-font-weight:600;
-margin-bottom:10px;
-}
+/* Info popup */
+.info-popup{position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(8px);z-index:600;display:flex;align-items:center;justify-content:center;animation:fadeIn .2s;}
+.info-bubble{background:var(--bg-elevated);border:1px solid var(--border);border-radius:20px;padding:24px 28px;max-width:420px;width:90%;position:relative;animation:slideUp .3s cubic-bezier(.16,1,.3,1);}
+.info-bubble h3{margin:0 0 8px;color:var(--accent-400);font-family:'Space Grotesk',sans-serif;font-size:16px;}
+.info-bubble .info-status{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:bold;margin-bottom:10px;}
 .info-status.obtainable{background:#065f46;color:#6ee7b7;}
 .info-status.unobtainable{background:#7f1d1d;color:#fca5a5;}
 .info-status.limited{background:#78350f;color:#fcd34d;}
 .info-status.leaderboard{background:#312e81;color:#a5b4fc;}
 .info-status.robux{background:#4c1d95;color:#c4b5fd;}
-.info-bubble p{
-margin:8px 0 0;
-font-size:13px;
-color:#94a3b8;
-line-height:1.6;
-}
-.info-bubble .info-close{
-position:absolute;
-top:12px;right:16px;
-background:none;border:none;
-color:#6b7280;font-size:20px;
-cursor:pointer;padding:0;
-transition:color .12s;
-}
-.info-bubble .info-close:hover{color:white;}
+.info-bubble p{margin:8px 0 0;font-size:13px;color:var(--text-2);line-height:1.5;}
+.info-bubble .info-close{position:absolute;top:10px;right:14px;background:none;border:none;color:var(--text-3);font-size:18px;cursor:pointer;padding:0;}
+.info-bubble .info-close:hover{color:#fff;}
 
-/* VALUE COLUMNS */
-#petTable td:nth-child(2),#petTable td:nth-child(3),#petTable td:nth-child(4),#petTable td:nth-child(5),
-#searchTable td:nth-child(2),#searchTable td:nth-child(3),#searchTable td:nth-child(4),#searchTable td:nth-child(5){text-align:center;font-weight:500;}
+/* Admin panel */
+.admin-panel{position:fixed;top:0;right:0;width:360px;height:100%;background:rgba(10,15,36,0.96);backdrop-filter:blur(24px);border-left:1px solid rgba(192,132,252,0.2);padding:24px;overflow-y:auto;z-index:700;transform:translateX(100%);transition:transform .4s cubic-bezier(.16,1,.3,1);}
+.admin-panel.open{transform:translateX(0);}
+.admin-panel h3{font-family:'Space Grotesk',sans-serif;color:var(--accent-400);font-size:16px;margin:0 0 16px;}
+.admin-panel input,.admin-panel select{width:100%;padding:10px 14px;margin-top:8px;border-radius:10px;border:1px solid var(--border);background:var(--bg-surface);color:var(--text-1);font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:border-color .2s;}
+.admin-panel input:focus,.admin-panel select:focus{border-color:var(--accent-700);}
+.admin-panel input::placeholder{color:var(--text-3);}
+.admin-btn{background:var(--accent-700);color:#fff;border:none;padding:10px 16px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;width:100%;margin-top:10px;transition:background .2s;}
+.admin-btn:hover{background:var(--accent-600);}
+.admin-btn.danger{background:#dc2626;}
+.admin-btn.danger:hover{background:#ef4444;}
+.admin-btn.teal{background:#0d9488;font-size:11px;padding:8px 12px;}
 
-/* PET LINKS */
-.pet-link{cursor:pointer;color:#c084fc;transition:color .15s;font-weight:500;}
-.pet-link:hover{text-decoration:underline;color:#a78bfa;}
-.row-icon{width:24px;height:24px;object-fit:contain;vertical-align:middle;margin-right:6px;display:none;}
+/* Home editor */
+.home-editor{position:fixed;top:64px;left:0;width:380px;height:calc(100% - 64px);background:rgba(10,15,36,0.96);backdrop-filter:blur(24px);border-right:1px solid rgba(192,132,252,0.2);padding:20px;overflow-y:auto;z-index:700;transform:translateX(-100%);transition:transform .4s cubic-bezier(.16,1,.3,1);}
+.home-editor.open{transform:translateX(0);}
+.home-editor h3{font-family:'Space Grotesk',sans-serif;color:var(--accent-400);font-size:15px;margin:0 0 14px;display:flex;align-items:center;justify-content:space-between;}
+.home-editor label{display:block;color:var(--text-2);font-size:11px;text-transform:uppercase;letter-spacing:.05em;margin:12px 0 4px;}
+.home-editor input,.home-editor textarea{width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg-surface);color:var(--text-1);font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:border-color .2s;}
+.home-editor input:focus,.home-editor textarea:focus{border-color:var(--accent-700);}
+.home-editor textarea{resize:vertical;min-height:60px;line-height:1.5;}
+.home-editor input::placeholder,.home-editor textarea::placeholder{color:var(--text-3);}
+.he-header-btns{display:flex;gap:6px;align-items:center;}
+.he-close-btn{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);color:var(--text-3);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.he-close-btn:hover{color:#fff;background:rgba(255,255,255,0.1);}
+.he-minimize{display:none;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);color:var(--text-3);font-size:16px;cursor:pointer;width:28px;height:28px;border-radius:50%;align-items:center;justify-content:center;flex-shrink:0;}
+.he-minimize:hover{color:#fff;background:rgba(255,255,255,0.1);}
+.he-bubble{display:none;position:fixed;bottom:24px;right:24px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--accent-500),var(--accent-700));color:#fff;font-size:24px;border:none;cursor:pointer;z-index:701;box-shadow:0 4px 20px rgba(168,85,247,0.5);transition:transform .2s;}
+.he-bubble:active{transform:scale(0.9);}
+.he-bubble.visible{display:flex;align-items:center;justify-content:center;}
+.he-row{display:flex;gap:8px;}
+.he-row>div{flex:1;}
+.he-banner-preview{margin:8px 0;padding:10px 14px;border-radius:10px;background:var(--glass);border:1px solid var(--glass-border);color:var(--text-2);font-size:12px;min-height:20px;white-space:pre-wrap;word-break:break-word;}
+.he-actions{display:flex;gap:8px;margin-top:16px;}
+.he-actions button{flex:1;}
 
-/* PET DETAIL PAGE */
-.pet-header{display:flex;gap:24px;align-items:flex-start;margin-bottom:28px;flex-wrap:wrap;}
-.pet-icon-wrap{
-width:160px;height:160px;border-radius:14px;
-background:linear-gradient(135deg,#1e293b,#0f172a);
-border:2px solid #334155;overflow:hidden;flex-shrink:0;
-display:flex;align-items:center;justify-content:center;
-}
-.pet-icon-wrap img{width:100%;height:100%;object-fit:contain;}
-.pet-meta h2{margin:0 0 10px;color:#c084fc;font-size:22px;}
-.pet-meta p{margin:5px 0;color:#94a3b8;font-size:14px;}
+/* Text boxes */
+.tb-container{position:absolute;inset:0;pointer-events:none;z-index:5;}
+.text-box{position:absolute;min-width:80px;min-height:30px;color:#fff;font-family:'Inter',sans-serif;font-size:14px;line-height:1.5;word-break:break-word;white-space:pre-wrap;pointer-events:auto;}
+.text-box.editing{outline:1px dashed var(--accent-400);z-index:10;}
+.text-box.editing .tb-body{cursor:text;}
+.text-box.editing .tb-handle{cursor:move;}
+.text-box.editing:hover{outline-color:var(--accent-300);}
+.tb-handle{position:absolute;top:-28px;left:0;right:0;display:none;background:rgba(10,15,36,0.92);border:1px solid var(--accent-700);border-radius:8px 8px 0 0;padding:2px 6px;font-size:0;white-space:nowrap;z-index:11;}
+.text-box.editing .tb-handle{display:flex;align-items:center;gap:2px;}
+.tb-handle button,.tb-handle select{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);color:var(--text-2);border-radius:4px;cursor:pointer;font-size:11px;padding:2px 4px;height:22px;font-family:'Inter',sans-serif;transition:background .15s;}
+.tb-handle button:hover{background:rgba(255,255,255,0.18);color:#fff;}
+.tb-handle button.active{background:var(--accent-700);color:#fff;}
+.tb-handle select{padding:1px 2px;min-width:60px;}
+.tb-handle input[type="color"]{width:22px;height:22px;border:1px solid rgba(255,255,255,0.1);border-radius:4px;padding:0;cursor:pointer;background:transparent;}
+.tb-resize{position:absolute;bottom:-4px;right:-4px;width:12px;height:12px;background:var(--accent-500);border:2px solid var(--bg-base);border-radius:2px;cursor:nwse-resize;display:none;z-index:12;}
+.text-box.editing .tb-resize{display:block;}
+.tb-del{margin-left:auto!important;background:rgba(220,38,38,0.3)!important;border-color:rgba(220,38,38,0.5)!important;color:#f87171!important;}
 
-.pet-values{display:flex;gap:14px;flex-wrap:wrap;margin:20px 0;}
-.pet-val-card{
-background:linear-gradient(135deg,#1e293b,#172033);
-border:1px solid #334155;
-border-radius:12px;padding:16px 24px;text-align:center;flex:1;min-width:100px;
-}
-.pet-val-card .val-label{font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;}
-.pet-val-card .val-num{font-size:22px;font-weight:700;color:white;margin-top:6px;}
+/* Text box list in editor */
+.he-tb-list{margin-top:8px;display:flex;flex-direction:column;gap:4px;}
+.he-tb-item{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--glass);border:1px solid var(--glass-border);border-radius:8px;font-size:12px;color:var(--text-2);cursor:pointer;transition:all .15s;}
+.he-tb-item:hover{background:var(--glass-hover);color:var(--text-1);}
+.he-tb-item .tb-item-del{margin-left:auto;background:none;border:none;color:var(--text-3);cursor:pointer;font-size:14px;padding:0 2px;}
+.he-tb-item .tb-item-del:hover{color:#f87171;}
+.admin-btn.teal:hover{background:#14b8a6;}
+.admin-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);color:var(--text-3);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.admin-close:hover{color:#fff;background:rgba(255,255,255,0.1);}
+.name-wrap{position:relative;}
+#nameSuggestions{position:absolute;top:100%;left:0;right:0;background:var(--bg-elevated);border:1px solid var(--border);border-radius:0 0 10px 10px;max-height:160px;overflow-y:auto;z-index:200;display:none;}
+#nameSuggestions div{padding:8px 14px;cursor:pointer;font-size:12px;color:var(--text-2);}
+#nameSuggestions div:hover{background:var(--glass-hover);color:var(--text-1);}
 
-/* CALCULATOR */
-.calc-section{
-background:#111827;
-border:1px solid #1e293b;
-border-radius:14px;padding:24px;margin-top:24px;
-}
-.calc-section h3{color:#c084fc;margin:0 0 18px;font-size:16px;font-weight:600;}
-.calc-row{margin-bottom:16px;}
-.calc-row > label{display:block;color:#94a3b8;font-size:13px;margin-bottom:6px;}
-.calc-slider{width:100%;accent-color:#7c3aed;height:6px;}
-.calc-checks{display:flex;flex-wrap:wrap;gap:12px;}
-.calc-checks label{display:inline-flex;align-items:center;gap:6px;color:#cbd5e1;font-size:13px;cursor:pointer;width:fit-content;}
-.calc-checks input[type="radio"],.calc-checks input[type="checkbox"]{accent-color:#7c3aed;}
+.search-page-bar{display:none;margin-bottom:16px;}
+.search-page-bar input{width:100%;padding:12px 16px;border-radius:12px;border:1px solid var(--border);background:var(--glass);color:var(--text-1);font-size:15px;outline:none;font-family:'Inter',sans-serif;}
+.search-page-bar input:focus{border-color:var(--accent-400);}
 
-.calc-results{display:flex;gap:14px;flex-wrap:wrap;margin-top:20px;}
-.stat-card{
-background:#0f172a;border:1px solid #1e293b;
-border-radius:10px;padding:14px 20px;text-align:center;flex:1;min-width:80px;
-}
-.stat-card .stat-label{font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;}
-.stat-card .stat-num{font-size:20px;font-weight:700;color:#a5b4fc;margin-top:4px;}
+/* Reveal animation */
+@keyframes revealUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;animation:revealUp .5s cubic-bezier(.16,1,.3,1) forwards;}
 
-.back-btn{
-background:none;border:1px solid #334155;color:#94a3b8;
-padding:8px 18px;border-radius:8px;cursor:pointer;margin-bottom:18px;
-font-size:13px;transition:all .15s;
-}
-.back-btn:hover{border-color:#7c3aed;color:white;background:rgba(124,58,237,.08);}
-
-/* ICON EFFECTS */
-@keyframes rainbowHue{from{filter:hue-rotate(0deg);}to{filter:hue-rotate(360deg);}}
-@keyframes shinyPulse{0%,100%{box-shadow:0 0 8px 2px rgba(255,215,0,.3);}50%{box-shadow:0 0 20px 6px rgba(255,215,0,.6);}}
+/* Icon effects */
+@keyframes rainbowHue{from{filter:hue-rotate(0deg)}to{filter:hue-rotate(360deg)}}
+@keyframes shinyPulse{0%,100%{box-shadow:0 0 8px 2px rgba(255,215,0,.3)}50%{box-shadow:0 0 20px 6px rgba(255,215,0,.6)}}
 .icon-rainbow{animation:rainbowHue 2s linear infinite;}
 
-/* HOME PAGE EDITOR */
-#homeEditBtn{
-background:rgba(124,58,237,.15);
-color:#c084fc;
-border:1px solid rgba(139,92,246,.3);
-padding:8px 18px;
-font-size:13px;
-border-radius:8px;
-margin-bottom:14px;
-}
-#homeEditBtn:hover{background:rgba(124,58,237,.25);box-shadow:none;}
+/* Scrollbar */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(168,85,247,0.25);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:rgba(168,85,247,0.4);}
 
-#editorToolbar{
-display:none;
-position:sticky;
-top:58px;
-z-index:20;
-background:#1e293b;
-border:1px solid #334155;
-border-radius:12px;
-padding:12px 16px;
-margin-bottom:18px;
-flex-wrap:wrap;
-gap:6px;
-align-items:center;
-box-shadow:0 4px 16px rgba(0,0,0,.3);
-}
-.tb{
-background:#334155;
-color:white;
-border:none;
-padding:7px 11px;
-border-radius:6px;
-cursor:pointer;
-font-size:13px;
-min-width:30px;
-transition:background .12s;
-}
-.tb:hover{background:#7c3aed;}
-.tb-select{
-background:#334155;
-color:white;
-border:none;
-padding:7px 10px;
-border-radius:6px;
-font-size:12px;
-cursor:pointer;
-}
-.tb-color{
-width:30px;height:30px;
-border:2px solid #334155;border-radius:6px;
-cursor:pointer;
-background:none;
-padding:0;
-}
-.tb-sep{
-width:1px;
-height:24px;
-background:#4b5563;
-margin:0 6px;
-display:inline-block;
-vertical-align:middle;
-}
-.tb-save{background:#059669;color:white;border:none;padding:7px 18px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;transition:background .12s;}
-.tb-save:hover{background:#10b981;}
-.tb-cancel{background:#dc2626;color:white;border:none;padding:7px 18px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;transition:background .12s;}
-.tb-cancel:hover{background:#ef4444;}
+.mobile-edit-home{display:none!important;margin-bottom:12px;}
 
-.editable-block[contenteditable="true"]{
-border:2px dashed #4b5563;
-border-radius:10px;
-padding:14px;
-min-height:44px;
-outline:none;
-transition:border-color .2s,box-shadow .2s;
-}
-.editable-block[contenteditable="true"]:focus{border-color:#7c3aed;box-shadow:0 0 0 3px rgba(124,58,237,.12);}
-.editable-block[contenteditable="true"]:empty::before{
-content:attr(data-placeholder);
-color:#4b5563;
-font-style:italic;
-pointer-events:none;
-}
-.block-label{
-display:none;
-font-size:10px;
-color:#7c3aed;
-text-transform:uppercase;
-letter-spacing:1.2px;
-margin:14px 0 4px;
-font-weight:700;
-}
-.editing .block-label{display:block;}
-
-#homeContent h1,#homeContent h2,#homeContent h3{color:#c084fc;margin:8px 0;}
-#homeContent p{color:#94a3b8;margin:6px 0;line-height:1.7;}
-#homeContent hr{border:none;border-top:1px solid #334155;margin:14px 0;}
-#homeContent ul,#homeContent ol{color:#94a3b8;padding-left:22px;}
-#homeContent li{margin:4px 0;}
-
-/* FOOTER */
-.site-footer{
-text-align:center;
-padding:28px 6%;
-color:#334155;
-font-size:12px;
-border-top:1px solid #1e293b;
-margin-top:40px;
-}
-
-/* SCROLLBAR */
-::-webkit-scrollbar{width:8px;}
-::-webkit-scrollbar-track{background:#0f172a;}
-::-webkit-scrollbar-thumb{background:#334155;border-radius:4px;}
-::-webkit-scrollbar-thumb:hover{background:#475569;}
-
-/* SORTABLE HEADERS */
-.sortable{cursor:pointer;user-select:none;-webkit-user-select:none;position:relative;white-space:nowrap;}
-.sortable:hover{color:#c084fc;background:#1a1f35;}
-.sort-arrow{margin-left:4px;font-size:10px;opacity:.5;}
-.sortable.sort-active .sort-arrow{opacity:1;color:#c084fc;}
-.sortable.sort-active{background:rgba(124,58,237,.1);}
-
-/* TABLE ROW COUNT */
-.row-count{font-size:12px;color:#6b7280;padding:4px 0 0;margin:0;}
-
-/* NO RESULTS CARD */
-.no-results{
-color:#6b7280;text-align:center;padding:40px 20px;font-size:14px;
-background:#111827;border:1px solid #1e293b;border-radius:12px;margin-top:14px;
-}
-
-/* SEARCH HINT */
-.search-hint{color:#4b5563;text-align:center;padding:48px 20px;font-size:14px;font-style:italic;}
-
-/* SCROLL TO TOP */
-#scrollTopBtn{
-position:fixed;bottom:24px;right:24px;z-index:90;
-width:40px;height:40px;border-radius:50%;
-background:#7c3aed;color:white;border:none;
-font-size:18px;cursor:pointer;
-box-shadow:0 4px 12px rgba(124,58,237,.4);
-opacity:0;pointer-events:none;
-transition:opacity .2s,transform .1s;
-}
-#scrollTopBtn.visible{opacity:1;pointer-events:auto;}
-#scrollTopBtn:hover{background:#6d28d9;transform:scale(1.05);}
-
-/* ICON PLACEHOLDER */
-.pet-icon-wrap.loading-icon{
-background:linear-gradient(135deg,#1e293b,#0f172a);
-animation:iconPulse 1.5s ease-in-out infinite;
-}
-@keyframes iconPulse{0%,100%{opacity:.6;}50%{opacity:1;}}
-
-/* MOBILE */
+/* Responsive */
 @media(max-width:768px){
-header{padding:10px 4%;gap:8px;}
-header>div{margin:0 8px !important;}
-section{padding:16px 4%;}
-#adminPanel{width:100%;border-left:none;border-top:2px solid rgba(139,92,246,.3);}
-.pet-header{flex-direction:column;align-items:center;text-align:center;}
-.pet-icon-wrap{width:120px;height:120px;}
-.pet-values{flex-direction:column;}
-.pet-val-card{min-width:unset;}
-table{font-size:12px;}
-th,td{padding:8px 6px;}
-#editorToolbar{position:relative;top:0;}
-.calc-section{padding:16px;}
-.calc-checks{flex-direction:column;gap:6px;}
-.stat-card{min-width:60px;padding:10px;}
+.header-inner{gap:10px;}
+.nav-tabs{gap:0;overflow-x:auto;overflow-y:visible;}
+.nav-tab{font-size:12px;padding:6px 10px;}
+.header-search input{width:140px;}
+.pet-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;}
+.pet-card{padding:14px 12px 10px;}
+.pet-card-icon{width:48px;height:48px;}
+.hero-title{font-size:clamp(1.8rem,1rem+3vw,3rem);}
+.hero-stats{gap:24px;}
+.modal{padding:16px;border-radius:20px;max-height:85vh;}
+.modal-overlay{padding:10px;align-items:flex-end;}
+.admin-panel{width:100%;}
+.home-editor{width:100%;}
+.he-minimize{display:flex;}
+.mobile-edit-home.visible{display:block!important;margin-bottom:12px;}
+.rarity-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));max-width:none;}
+.sort-menu{right:auto;left:0;}
+.tb-handle{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.tb-container{display:none!important;}
+.he-tb-section{display:none!important;}
 }
 @media(max-width:480px){
-header{padding:8px 3%;}
-.logo{font-size:15px;}
-section{padding:12px 3%;}
-#headerSearch{display:none;}
-table{font-size:11px;}
-th{font-size:10px;padding:8px 4px;}
-td{padding:8px 4px;}
-.pet-icon-wrap{width:100px;height:100px;}
-.pet-meta h2{font-size:18px;}
-.info-bubble{padding:18px 20px;max-width:92%;}
-.pet-val-card{padding:12px 16px;}
-.pet-val-card .val-num{font-size:18px;}
-.calc-results{flex-direction:column;}
+.pet-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
+.hero-stats{gap:16px;flex-wrap:wrap;}
+.hero-stat-num{font-size:22px;}
+.header-search{display:none;}
+.search-page-bar{display:block;}
+.hero-search input{font-size:14px;padding:12px 14px 12px 40px;}
+.rarity-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
+.rarity-card{padding:10px 12px;font-size:13px;}
+.list-header{flex-wrap:wrap;gap:8px;}
+.pet-detail-header{flex-direction:column;align-items:center;text-align:center;}
+.pet-detail-icon{width:90px;height:90px;}
+.pet-values{flex-direction:column;}
+.calc-checks{flex-direction:column;gap:6px;}
+.nav-dd-menu{left:0;transform:none;}
 }
 </style>
 </head>
-
 <body>
 
-<header>
-<div class="logo">🐾 Value List</div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
 
-<div style="display:flex;align-items:center;gap:10px;flex:1;margin:0 16px;">
-<div style="position:relative;">
-<button onclick="toggleMenu()">Menu ▾</button>
-<div id="menu">
-<button onclick="goPage('home')">🏠 Home</button>
-<button onclick="goPage('search')">🔍 Search</button>
-<button onclick="goPage('Basic')">Basic</button>
-<button onclick="goPage('Rare')">Rare</button>
-<button onclick="goPage('Epic')">Epic</button>
-<button onclick="goPage('Legendary')">Legendary</button>
-<button onclick="goPage('Mythical')">Mythical</button>
-<button onclick="goPage('Special')">Special</button>
-<button onclick="goPage('Secret')">Secret</button>
-<button onclick="goPage('Mega')">Mega</button>
-<button onclick="goPage('Exclusive')">Exclusive</button>
+<header class="site-header">
+<div class="header-inner">
+<div class="logo" id="logoArea">
+<span class="logo-icon">&#x1f43e;</span>
+<span class="logo-text gradient-text">Value List</span>
+</div>
+<nav class="nav-tabs">
+<button class="nav-tab active" data-page="home">Home</button>
+<button class="nav-tab" data-page="all">All Pets</button>
+<div class="nav-dd">
+<button class="nav-tab" id="rarityBtn">Rarity &#9662;</button>
+<div class="nav-dd-menu" id="rarityMenu"></div>
+</div>
+</nav>
+<div class="header-search">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+<input type="text" id="headerSearch" placeholder="Search pets...">
 </div>
 </div>
-<input type="text" id="headerSearch" placeholder="Quick search..." style="width:200px;margin:0;font-size:13px;">
-</div>
-
-<button onclick="openAdmin()" style="background:rgba(124,58,237,.15);color:#c084fc;border:1px solid rgba(139,92,246,.3);font-size:12px;padding:8px 14px;">Admin</button>
 </header>
 
-<section id="homePage">
-<button id="homeEditBtn" onclick="toggleHomeEdit()" style="display:none;">Edit Page</button>
-<div id="editorToolbar">
-<button class="tb" onclick="execFmt('bold')"><b>B</b></button>
-<button class="tb" onclick="execFmt('italic')"><i>I</i></button>
-<button class="tb" onclick="execFmt('underline')"><u>U</u></button>
-<button class="tb" onclick="execFmt('strikeThrough')"><s>S</s></button>
-<span class="tb-sep"></span>
-<select class="tb-select" onchange="execFmt('fontName',this.value);this.selectedIndex=0;">
-<option value="">Font</option>
-<option value="Arial">Arial</option>
-<option value="Georgia">Georgia</option>
-<option value="Times New Roman">Times New Roman</option>
-<option value="Courier New">Courier New</option>
-<option value="Verdana">Verdana</option>
-<option value="Trebuchet MS">Trebuchet MS</option>
-<option value="Impact">Impact</option>
-<option value="Comic Sans MS">Comic Sans MS</option>
-</select>
-<select class="tb-select" onchange="execFmt('fontSize',this.value);this.selectedIndex=0;">
-<option value="">Size</option>
-<option value="1">1</option>
-<option value="2">2</option>
-<option value="3">3</option>
-<option value="4">4</option>
-<option value="5">5</option>
-<option value="6">6</option>
-<option value="7">7</option>
-</select>
-<input type="color" class="tb-color" value="#ffffff" onchange="execFmt('foreColor',this.value)" title="Text Color">
-<select class="tb-select" onchange="execFmt('formatBlock',this.value);this.selectedIndex=0;">
-<option value="">Heading</option>
-<option value="h1">H1</option>
-<option value="h2">H2</option>
-<option value="h3">H3</option>
-<option value="p">Paragraph</option>
-</select>
-<span class="tb-sep"></span>
-<button class="tb" onclick="execFmt('justifyLeft')" title="Align Left">&#8676;</button>
-<button class="tb" onclick="execFmt('justifyCenter')" title="Align Center">&#8596;</button>
-<button class="tb" onclick="execFmt('justifyRight')" title="Align Right">&#8677;</button>
-<span class="tb-sep"></span>
-<button class="tb" onclick="execFmt('insertUnorderedList')" title="Bullet List">&#8226;</button>
-<button class="tb" onclick="execFmt('insertOrderedList')" title="Numbered List">1.</button>
-<button class="tb" onclick="execFmt('insertHorizontalRule')" title="Horizontal Rule">&#8213;</button>
-<span class="tb-sep"></span>
-<button class="tb-save" onclick="saveHomePage()">Save</button>
-<button class="tb-cancel" onclick="cancelHomeEdit()">Cancel</button>
+<div class="main">
+
+<!-- HOME -->
+<section id="homePage" class="page active">
+<div id="homeBanner" style="display:none;text-align:center;padding:12px 18px;margin-bottom:12px;background:linear-gradient(135deg,rgba(168,85,247,.12),rgba(99,102,241,.08));border:1px solid rgba(192,132,252,.2);border-radius:14px;color:var(--accent-300);font-size:14px;line-height:1.5;white-space:pre-wrap;"></div>
+<div class="hero">
+<h1 class="hero-title gradient-text" id="heroTitle">Clicker Sim<br>Value List</h1>
+<p class="hero-sub" id="heroSub">The definitive trading reference. Browse values, check stats, and master the market.</p>
+<div class="hero-stats" id="heroStats">
+<div><span class="hero-stat-num" id="totalPets">184</span><span class="hero-stat-label" id="stat1Label">Total Pets</span></div>
+<div><span class="hero-stat-num" id="stat2Num">9</span><span class="hero-stat-label" id="stat2Label">Rarities</span></div>
+<div><span class="hero-stat-num" id="stat3Num">3</span><span class="hero-stat-label" id="stat3Label">Variants</span></div>
 </div>
-<div id="homeContent">
-<label class="block-label">Header</label>
-<div id="homeHeader" class="editable-block" data-placeholder="Page Header"><h2>Clicker Sim Value List</h2></div>
-<label class="block-label">Message of the Day</label>
-<div id="homeMotd" class="editable-block" data-placeholder="Message of the Day"></div>
-<label class="block-label">Description</label>
-<div id="homeDesc" class="editable-block" data-placeholder="Description"><p>Official value list for trading.</p></div>
-<label class="block-label">Custom Content</label>
-<div id="homeCustom" class="editable-block" data-placeholder="Custom Content"></div>
+<div class="hero-search">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+<input type="text" id="heroSearch" placeholder="Search for any pet...">
 </div>
+</div>
+<div class="tb-container" id="tbContainer"></div>
+<div class="rarity-grid" id="rarityGrid"></div>
 </section>
 
-<section id="searchPage" style="display:none;">
-<input type="text" id="searchBar" placeholder="Search for any pet by name...">
-<p class="search-hint" id="searchHint">Start typing to search for pets...</p>
-<p class="row-count" id="searchCount" style="display:none;"></p>
-<div style="overflow-x:auto;">
-<table id="searchTable" style="display:none;margin-top:14px;">
-<thead>
-<tr>
-<th class="sortable" data-sort="name">Pet <span class="sort-arrow">⇅</span></th>
-<th class="sortable" data-sort="normal">Normal <span class="sort-arrow">⇅</span></th>
-<th class="sortable" data-sort="golden">Golden <span class="sort-arrow">⇅</span></th>
-<th class="sortable" data-sort="rainbow">Rainbow <span class="sort-arrow">⇅</span></th>
-<th class="sortable" data-sort="demand">Demand <span class="sort-arrow">⇅</span></th>
-</tr>
-</thead>
-<tbody id="searchBody"></tbody>
-</table>
+<!-- LIST -->
+<section id="listPage" class="page">
+<div class="list-header">
+<h2><span class="rarity-dot-lg" id="rarityDot"></span><span id="rarityTitle" class="gradient-text"></span></h2>
+<span class="pet-count" id="listCount"></span>
+<div class="sort-dd">
+<button class="sort-btn" id="sortBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M6 12h12M9 18h6"/></svg>Sort</button>
+<div class="sort-menu" id="sortMenu">
+<button data-sort="name-az" class="active">Name A–Z</button>
+<button data-sort="name-za">Name Z–A</button>
+<button data-sort="value-high">Value High–Low</button>
+<button data-sort="value-low">Value Low–High</button>
+<button data-sort="demand-high">Demand High–Low</button>
+<button data-sort="demand-low">Demand Low–High</button>
 </div>
+</div>
+</div>
+<div class="pet-grid" id="petGrid"></div>
+</section>
+
+<!-- ALL PETS -->
+<section id="allPage" class="page">
+<div class="list-header">
+<h2><span class="gradient-text">All Pets</span></h2>
+<span class="pet-count" id="allCount"></span>
+<div class="sort-dd">
+<button class="sort-btn" id="sortBtnAll"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M6 12h12M9 18h6"/></svg>Sort</button>
+<div class="sort-menu" id="sortMenuAll">
+<button data-sort="name-az" class="active">Name A–Z</button>
+<button data-sort="name-za">Name Z–A</button>
+<button data-sort="value-high">Value High–Low</button>
+<button data-sort="value-low">Value Low–High</button>
+<button data-sort="demand-high">Demand High–Low</button>
+<button data-sort="demand-low">Demand Low–High</button>
+</div>
+</div>
+</div>
+<div class="pet-grid" id="allGrid"></div>
+</section>
+
+<!-- SEARCH -->
+<section id="searchPage" class="page">
+<div class="search-page-bar" id="searchPageBar"><input type="text" id="searchPageInput" placeholder="Search pets..."></div>
+<p class="search-header" id="searchHeader"></p>
+<div class="pet-grid" id="searchGrid"></div>
 <p class="no-results" id="noResults" style="display:none;">No pets found.</p>
 </section>
 
-<section id="listPage" style="display:none;">
-<p class="loading" id="loadingMsg">Loading pets...</p>
-<p class="row-count" id="listCount" style="display:none;"></p>
-<div style="overflow-x:auto;">
-<table id="petTable" style="display:none;">
-<thead>
-<tr>
-<th class="sortable" data-sort="name">Pet <span class="sort-arrow">⇅</span></th>
-<th class="sortable" data-sort="normal">Normal <span class="sort-arrow">⇅</span></th>
-<th class="sortable" data-sort="golden">Golden <span class="sort-arrow">⇅</span></th>
-<th class="sortable" data-sort="rainbow">Rainbow <span class="sort-arrow">⇅</span></th>
-<th class="sortable" data-sort="demand">Demand <span class="sort-arrow">⇅</span></th>
-<th id="deleteCol" style="display:none;">Action</th>
-</tr>
-</thead>
-<tbody id="tableBody"></tbody>
-</table>
 </div>
-</section>
 
-<section id="petPage" style="display:none;">
-<button class="back-btn" id="petBackBtn">&larr; Back</button>
-<div class="pet-header">
-<div class="pet-icon-wrap" id="petIconWrap">
+<!-- PET DETAIL MODAL -->
+<div class="modal-overlay" id="petModal" style="display:none;">
+<div class="modal">
+<button class="modal-close" id="modalClose">&times;</button>
+<div class="pet-detail-header">
+<div class="pet-detail-icon" id="petIconWrap">
 <img id="petIcon" src="" alt="" style="display:none;">
 </div>
 <div class="pet-meta">
-<h2 id="petNameTitle"></h2>
+<h2 id="petNameTitle" class="gradient-text"></h2>
 <p>Rarity: <strong id="petRarityLabel"></strong></p>
 <p id="petDemandLine"></p>
 <p id="petStatusLine"></p>
-<p id="petDescLine" style="color:#6b7280;font-style:italic;"></p>
+<p id="petDescLine" class="pet-desc"></p>
 </div>
 </div>
 <div class="pet-values" id="petValuesRow"></div>
@@ -684,7 +420,7 @@ td{padding:8px 4px;}
 <h3>Stat Calculator</h3>
 <div class="calc-row">
 <label>Level: <strong id="levelDisplay">0</strong></label>
-<input type="range" class="calc-slider" id="levelSlider" min="0" max="50" value="0">
+<input type="range" id="levelSlider" min="0" max="50" value="0">
 </div>
 <div class="calc-row">
 <label>Variant</label>
@@ -696,9 +432,7 @@ td{padding:8px 4px;}
 </div>
 <div class="calc-row">
 <label>Shiny</label>
-<div class="calc-checks">
-<label><input type="checkbox" id="shinyCheck"> Shiny (1.25&times;)</label>
-</div>
+<div class="calc-checks"><label><input type="checkbox" id="shinyCheck"> Shiny (1.25&times;)</label></div>
 </div>
 <div class="calc-row">
 <label>Mutations</label>
@@ -710,23 +444,23 @@ td{padding:8px 4px;}
 </div>
 </div>
 <div class="calc-results" id="calcResults"></div>
-<p id="multBreakdown" style="color:#4b5563;font-size:12px;margin-top:8px;"></p>
+<p id="multBreakdown"></p>
 </div>
-</section>
+</div>
+</div>
 
-<div id="adminPanel">
-
-<h3>Admin Login</h3>
-
+<!-- ADMIN PANEL -->
+<div class="admin-panel" id="adminPanel">
+<button class="admin-close" id="adminClose">&times;</button>
+<h3 id="adminTitle">Admin Login</h3>
+<button class="admin-btn mobile-edit-home" id="mobileEditHomeBtn">Edit Home Page</button>
+<div id="adminLogin">
 <input id="email" placeholder="Email"/>
 <input id="password" type="password" placeholder="Password"/>
-
-<button onclick="login()">Login</button>
-
-<hr/>
-
+<button class="admin-btn" id="loginBtn">Login</button>
+</div>
+<hr style="border:0;border-top:1px solid var(--border);margin:16px 0;">
 <div id="adminTools" style="display:none;">
-
 <div class="name-wrap">
 <input id="name" placeholder="Pet Name" autocomplete="off"/>
 <div id="nameSuggestions"></div>
@@ -734,45 +468,60 @@ td{padding:8px 4px;}
 <input id="normal" placeholder="Normal Value"/>
 <input id="golden" placeholder="Golden Value"/>
 <input id="rainbow" placeholder="Rainbow Value"/>
-
 <select id="rarity">
-<option value="Basic">Basic</option>
-<option value="Rare">Rare</option>
-<option value="Epic">Epic</option>
-<option value="Legendary">Legendary</option>
-<option value="Mythical">Mythical</option>
-<option value="Special">Special</option>
-<option value="Secret">Secret</option>
-<option value="Mega">Mega</option>
+<option value="Basic">Basic</option><option value="Rare">Rare</option><option value="Epic">Epic</option>
+<option value="Legendary">Legendary</option><option value="Mythical">Mythical</option>
+<option value="Special">Special</option><option value="Secret">Secret</option><option value="Mega">Mega</option>
 <option value="Exclusive">Exclusive</option>
 </select>
-
 <select id="demand">
-<option value="?">? (Unknown)</option>
-<option value="No Demand">No Demand</option>
-<option value="Low">Low</option>
-<option value="Medium">Medium</option>
-<option value="High">High</option>
-<option value="Super High">Super High</option>
+<option value="?">? (Unknown)</option><option value="No Demand">No Demand</option><option value="Low">Low</option>
+<option value="Medium">Medium</option><option value="High">High</option><option value="Super High">Super High</option>
 </select>
-
-<input id="iconId" placeholder="Icon Asset ID (Roblox)" style="margin-top:10px;"/>
-<input id="statClicks" placeholder="Base Clicks stat" type="number" style="margin-top:10px;"/>
-<input id="statShells" placeholder="Base Shells stat" type="number" style="margin-top:10px;"/>
-<input id="statGems" placeholder="Base Gems stat" type="number" style="margin-top:10px;"/>
-
-<button onclick="addPet()">Add / Update</button>
-<button onclick="seedPets()" class="seed-btn">Seed All Pets (184)</button>
-<button onclick="setDemandValues()" class="seed-btn">Set Demand Values</button>
-<button onclick="logout()" style="background:#dc2626;margin-top:10px;">Logout</button>
-
+<button class="admin-btn" id="addPetBtn">Add / Update</button>
+<button class="admin-btn danger" id="logoutBtn" style="margin-top:14px;">Logout</button>
+</div>
 </div>
 
-<br>
-<button onclick="closeAdmin()">Close</button>
+<!-- SUPER ADMIN PANEL -->
+<div class="admin-panel" id="superAdminPanel">
+<button class="admin-close" id="superAdminClose">&times;</button>
+<h3>Super Admin</h3>
+<div id="superAdminTools" style="display:none;">
+<button class="admin-btn teal" id="seedBtn">Seed All Pets (184)</button>
+<button class="admin-btn teal" id="demandBtn">Set Demand Values</button>
+</div>
+<p id="superAdminMsg" style="color:var(--text-3);font-size:12px;margin-top:10px;">Login via admin panel first.</p>
 </div>
 
-<footer class="site-footer">Clicker Sim Value List</footer>
+<!-- HOME EDITOR PANEL -->
+<div class="home-editor" id="homeEditor">
+<h3>Edit Home Page <span class="he-header-btns"><button class="he-minimize" id="homeEditorMin" title="Minimize">&#x2015;</button><button class="he-close-btn" id="homeEditorClose">&times;</button></span></h3>
+<label>Title (use | for line break)</label>
+<input id="heTitle" placeholder="Clicker Sim|Value List">
+<label>Subtitle</label>
+<textarea id="heSub" rows="2" placeholder="The definitive trading reference..."></textarea>
+<label>Stats</label>
+<div class="he-row">
+<div><input id="heStat1Num" placeholder="184"><input id="heStat1Label" placeholder="Total Pets" style="margin-top:4px;"></div>
+<div><input id="heStat2Num" placeholder="9"><input id="heStat2Label" placeholder="Rarities" style="margin-top:4px;"></div>
+<div><input id="heStat3Num" placeholder="3"><input id="heStat3Label" placeholder="Variants" style="margin-top:4px;"></div>
+</div>
+<label>Announcement Banner (leave empty to hide)</label>
+<textarea id="heBanner" rows="2" placeholder="Optional announcement text..."></textarea>
+<div class="he-banner-preview" id="heBannerPreview">No banner</div>
+<div class="he-tb-section">
+<hr style="border:0;border-top:1px solid var(--border);margin:16px 0;">
+<label>Text Boxes</label>
+<button class="admin-btn" id="heAddTbBtn" style="margin:6px 0 8px;font-size:12px;padding:8px;">+ Add Text Box</button>
+<div class="he-tb-list" id="heTbList"></div>
+</div>
+<div class="he-actions">
+<button class="admin-btn" id="heSaveBtn">Save</button>
+<button class="admin-btn danger" id="heResetBtn">Reset</button>
+</div>
+</div>
+<button class="he-bubble" id="homeEditorBubble">&#9998;</button>
 
 <script type="module">
 
@@ -787,10 +536,10 @@ import {
 getFirestore,
 collection,
 doc,
-getDoc,
 getDocs,
 setDoc,
 deleteDoc,
+getDoc,
 writeBatch
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
@@ -810,22 +559,21 @@ const db = getFirestore(app);
 
 /* ALL 184 PETS */
 const ALL_PETS = [
-{name:"Fish",rarity:"Basic"},{name:"Purple Jellyfish",rarity:"Basic"},{name:"Summer Cat",rarity:"Basic"},{name:"Summer Dog",rarity:"Basic"},{name:"Nebula Wyvern",rarity:"Basic"},{name:"Seraph",rarity:"Basic"},{name:"Starling Sprite",rarity:"Basic"},{name:"Supernova",rarity:"Basic"},{name:"Cat",rarity:"Basic"},{name:"Dog",rarity:"Basic"},{name:"Bunny",rarity:"Basic"},{name:"Chicken",rarity:"Basic"},{name:"Black Dominus",rarity:"Basic"},{name:"Blue Block",rarity:"Basic"},{name:"Blue Dominus",rarity:"Basic"},{name:"Blue Dragon",rarity:"Basic"},{name:"Blue Wizard",rarity:"Basic"},{name:"Chest",rarity:"Basic"},{name:"Green Block",rarity:"Basic"},{name:"Green Dragon",rarity:"Basic"},{name:"Green Wizard",rarity:"Basic"},{name:"Magma",rarity:"Basic"},{name:"Orange Block",rarity:"Basic"},{name:"Orange Dominus",rarity:"Basic"},{name:"Orange Wizard",rarity:"Basic"},{name:"Panda",rarity:"Basic"},{name:"Pink Dragon",rarity:"Basic"},{name:"Police",rarity:"Basic"},{name:"Potion",rarity:"Basic"},{name:"Pumpkin",rarity:"Basic"},{name:"Purple Block",rarity:"Basic"},{name:"Purple Wizard",rarity:"Basic"},{name:"Red Block",rarity:"Basic"},{name:"Red Dominus",rarity:"Basic"},{name:"Red Dragon",rarity:"Basic"},{name:"Red Wizard",rarity:"Basic"},{name:"Robot",rarity:"Basic"},{name:"White Dominus",rarity:"Basic"},{name:"Yellow Dragon",rarity:"Basic"},{name:"Zombie",rarity:"Basic"},{name:"Black Cat",rarity:"Basic"},{name:"Calf",rarity:"Basic"},{name:"Squirrel",rarity:"Basic"},{name:"Wolf",rarity:"Basic"},{name:"Seal",rarity:"Basic"},{name:"Goat",rarity:"Basic"},{name:"Cosmic Crawler",rarity:"Basic"},{name:"Mouse",rarity:"Basic"},{name:"Giraffe",rarity:"Basic"},{name:"Zebra",rarity:"Basic"},{name:"Cupcake",rarity:"Basic"},{name:"Chocolate",rarity:"Basic"},{name:"Turtle",rarity:"Basic"},{name:"Slime",rarity:"Basic"},{name:"Snake",rarity:"Basic"},{name:"Reversed Cat",rarity:"Basic"},{name:"Overseer",rarity:"Basic"},
+{name:"Fish",rarity:"Basic"},{name:"Purple Jellyfish",rarity:"Basic"},{name:"Summer Cat",rarity:"Basic"},{name:"Summer Dog",rarity:"Basic"},{name:"Nebula Wyvern",rarity:"Basic"},{name:"Seraph",rarity:"Basic"},{name:"Starling Sprite",rarity:"Basic"},{name:"Supernova",rarity:"Basic"},{name:"Cat",rarity:"Basic"},{name:"Dog",rarity:"Basic"},{name:"Bunny",rarity:"Basic"},{name:"Chicken",rarity:"Basic"},{name:"Black Dominus",rarity:"Basic"},{name:"Blue Block",rarity:"Basic"},{name:"Blue Dominus",rarity:"Basic"},{name:"Blue Dragon",rarity:"Basic"},{name:"Blue Wizard",rarity:"Basic"},{name:"Chest",rarity:"Basic"},{name:"Green Block",rarity:"Basic"},{name:"Green Dragon",rarity:"Basic"},{name:"Green Wizard",rarity:"Basic"},{name:"Magma",rarity:"Basic"},{name:"Orange Block",rarity:"Basic"},{name:"Orange Dominus",rarity:"Basic"},{name:"Orange Wizard",rarity:"Basic"},{name:"Panda",rarity:"Basic"},{name:"Pink Dragon",rarity:"Basic"},{name:"Police",rarity:"Basic"},{name:"Potion",rarity:"Basic"},{name:"Pumpkin",rarity:"Basic"},{name:"Purple Block",rarity:"Basic"},{name:"Purple Wizard",rarity:"Basic"},{name:"Red Block",rarity:"Basic"},{name:"Red Dominus",rarity:"Basic"},{name:"Red Dragon",rarity:"Basic"},{name:"Red Wizard",rarity:"Basic"},{name:"Robot",rarity:"Basic"},{name:"White Dominus",rarity:"Basic"},{name:"Yellow Dragon",rarity:"Basic"},{name:"Zombie",rarity:"Basic"},{name:"Black Cat",rarity:"Basic"},{name:"Calf",rarity:"Basic"},{name:"Squirrel",rarity:"Basic"},{name:"Wolf",rarity:"Basic"},{name:"Seal",rarity:"Basic"},{name:"Goat",rarity:"Basic"},{name:"Cosmic Crawler",rarity:"Basic"},{name:"Mouse",rarity:"Basic"},{name:"Giraffe",rarity:"Basic"},{name:"Zebra",rarity:"Basic"},{name:"Cupcake",rarity:"Basic"},{name:"Chocolate",rarity:"Basic"},{name:"Turtle",rarity:"Basic"},{name:"Slime",rarity:"Basic"},{name:"Snake",rarity:"Basic"},{name:"Reversed Cat",rarity:"Basic"},
 {name:"Blue Jellyfish",rarity:"Rare"},{name:"Pink Bunny",rarity:"Rare"},{name:"Pig",rarity:"Rare"},{name:"Cow",rarity:"Rare"},{name:"Bear",rarity:"Rare"},{name:"Raccoon",rarity:"Rare"},{name:"Penguin",rarity:"Rare"},{name:"Polar Bear",rarity:"Rare"},{name:"Spider",rarity:"Rare"},{name:"Monkey",rarity:"Rare"},{name:"Camel",rarity:"Rare"},{name:"Fox",rarity:"Rare"},{name:"Candy",rarity:"Rare"},{name:"Cookieman",rarity:"Rare"},{name:"Black Bear",rarity:"Rare"},{name:"Gold Fish",rarity:"Rare"},{name:"Shark",rarity:"Rare"},{name:"Red Hydominus",rarity:"Rare"},{name:"Red Gift",rarity:"Rare"},{name:"Tanuki",rarity:"Rare"},{name:"Blue Gift",rarity:"Rare"},{name:"Magma Cube",rarity:"Rare"},{name:"Molten Slime",rarity:"Rare"},{name:"Reversed Dog",rarity:"Rare"},{name:"Red Balloon",rarity:"Rare"},{name:"Holy Egg",rarity:"Rare"},{name:"Blue Balloon",rarity:"Rare"},
 {name:"Crab",rarity:"Epic"},{name:"Bee",rarity:"Epic"},{name:"Owl",rarity:"Epic"},{name:"Skier",rarity:"Epic"},{name:"Yeti",rarity:"Epic"},{name:"Tiger",rarity:"Epic"},{name:"Bull",rarity:"Epic"},{name:"Cheetah",rarity:"Epic"},{name:"Ice Cream",rarity:"Epic"},{name:"Strawberry",rarity:"Epic"},{name:"Unicorn",rarity:"Epic"},{name:"Duck",rarity:"Epic"},{name:"Frog",rarity:"Epic"},{name:"Orange Hydominus",rarity:"Epic"},{name:"Sakura Turtle",rarity:"Epic"},{name:"Tiny Firecracker",rarity:"Epic"},{name:"Hellfire Bat",rarity:"Epic"},{name:"Disco Ball",rarity:"Epic"},{name:"Aurelite Halo",rarity:"Epic"},{name:"Shattered Shard",rarity:"Epic"},{name:"Yellow Seahorse",rarity:"Epic"},{name:"Red Seahorse",rarity:"Epic"},
 {name:"Pufferfish",rarity:"Legendary"},{name:"Deer",rarity:"Legendary"},{name:"Snowman",rarity:"Legendary"},{name:"Gorilla",rarity:"Legendary"},{name:"Lion",rarity:"Legendary"},{name:"Bubble Gum",rarity:"Legendary"},{name:"Candy Gun",rarity:"Legendary"},{name:"Swimmer",rarity:"Legendary"},{name:"Blue Hydominus",rarity:"Legendary"},{name:"Black Hydominus",rarity:"Legendary"},{name:"Lotus Serpent",rarity:"Legendary"},{name:"Chest Mimic",rarity:"Legendary"},{name:"Pet Stack",rarity:"Legendary"},{name:"Party Cogmower",rarity:"Legendary"},{name:"Cherubis Bloom",rarity:"Legendary"},{name:"Clicker Tetra Cube",rarity:"Legendary"},{name:"Shell",rarity:"Legendary"},
 {name:"Elephant",rarity:"Mythical"},{name:"Cactus",rarity:"Mythical"},{name:"Cowboy",rarity:"Mythical"},{name:"Candy Dominus",rarity:"Mythical"},{name:"Star Fish",rarity:"Mythical"},{name:"Kraken",rarity:"Mythical"},{name:"White Hydominus",rarity:"Mythical"},{name:"Phoenix",rarity:"Mythical"},{name:"The Overlord",rarity:"Mythical"},{name:"500K Overlord",rarity:"Mythical"},{name:"Boombox",rarity:"Mythical"},{name:"Shard",rarity:"Mythical"},{name:"1M Star",rarity:"Mythical"},{name:"Starforge",rarity:"Mythical"},{name:"Poly",rarity:"Mythical"},
-{name:"Acorn",rarity:"Secret"},{name:"Chocolate Ice Cream",rarity:"Secret"},{name:"Sea Serpent",rarity:"Secret"},{name:"Poseidon",rarity:"Secret"},{name:"Abyss",rarity:"Secret"},{name:"Petal Moth",rarity:"Secret"},{name:"Cataclysm Dragon",rarity:"Secret"},{name:"Kitsune",rarity:"Secret"},{name:"Diamond",rarity:"Secret"},{name:"Hellwing",rarity:"Secret"},{name:"Ember Champion",rarity:"Secret"},{name:"Core Guardian",rarity:"Secret"},{name:"Equalizer",rarity:"Secret"},{name:"Firecrackers",rarity:"Secret"},{name:"Giant Holy Egg",rarity:"Secret"},{name:"The Clicker Trophy",rarity:"Secret"},{name:"1M Click",rarity:"Secret"},{name:"Godly Gem",rarity:"Secret"},{name:"1M Rebirth",rarity:"Secret"},{name:"Ophanim",rarity:"Secret"},{name:"Cat In A Bucket",rarity:"Secret"},{name:"Chest Mimic In A Bucket",rarity:"Secret"},{name:"Dog In A Bucket",rarity:"Secret"},{name:"Turtle In A Bucket",rarity:"Secret"},{name:"Apex",rarity:"Secret"},
-{name:"Vault Keeper",rarity:"Special"},{name:"Midas",rarity:"Special"},{name:"Eternal Star",rarity:"Special"},{name:"Crimson Star",rarity:"Special"},{name:"Eternal Shard",rarity:"Special"},{name:"Crimson Shard",rarity:"Special"},{name:"Eternal Trophy",rarity:"Special"},{name:"Crimson Trophy",rarity:"Special"},
+{name:"Acorn",rarity:"Secret"},{name:"Chocolate Ice Cream",rarity:"Secret"},{name:"Sea Serpent",rarity:"Secret"},{name:"Poseidon",rarity:"Secret"},{name:"Petal Moth",rarity:"Secret"},{name:"Cataclysm Dragon",rarity:"Secret"},{name:"Kitsune",rarity:"Secret"},{name:"Diamond",rarity:"Secret"},{name:"Hellwing",rarity:"Secret"},{name:"Ember Champion",rarity:"Secret"},{name:"Core Guardian",rarity:"Secret"},{name:"Equalizer",rarity:"Secret"},{name:"Firecrackers",rarity:"Secret"},{name:"Giant Holy Egg",rarity:"Secret"},{name:"The Clicker Trophy",rarity:"Secret"},{name:"1M Click",rarity:"Secret"},{name:"Godly Gem",rarity:"Secret"},{name:"1M Rebirth",rarity:"Secret"},{name:"Ophanim",rarity:"Secret"},{name:"Cat In A Bucket",rarity:"Secret"},{name:"Chest Mimic In A Bucket",rarity:"Secret"},{name:"Dog In A Bucket",rarity:"Secret"},{name:"Turtle In A Bucket",rarity:"Secret"},{name:"Apex",rarity:"Secret"},
+{name:"Vault Keeper",rarity:"Special"},{name:"Midas",rarity:"Special"},{name:"Eternal Star",rarity:"Special"},{name:"Crimson Star",rarity:"Special"},{name:"Eternal Shard",rarity:"Special"},{name:"Crimson Shard",rarity:"Special"},{name:"Eternal Trophy",rarity:"Special"},{name:"Crimson Trophy",rarity:"Special"},{name:"Abyss",rarity:"Special"},{name:"Overseer",rarity:"Special"},
 {name:"Astronaut",rarity:"Exclusive"},{name:"Earth",rarity:"Exclusive"},{name:"Rocket",rarity:"Exclusive"},{name:"Angel",rarity:"Exclusive"},{name:"Angel & Devil",rarity:"Exclusive"},{name:"Alien",rarity:"Exclusive"},{name:"UFO",rarity:"Exclusive"},{name:"Embercrest",rarity:"Exclusive"},{name:"Solflare",rarity:"Exclusive"},{name:"All Seeing Guardian",rarity:"Exclusive"},{name:"Frozen Eye Cube",rarity:"Exclusive"},{name:"Royal Trophy",rarity:"Exclusive"},
 {name:"Ktulhu",rarity:"Mega"}
 ];
 
 /* PET OBTAINABILITY DATABASE */
 const PET_INFO = {
-// === BASIC — Eggs ===
 "Fish":{s:"obtainable",t:"Hatch from Bucket Of Sand Egg (150 Shells) on Beach Island."},
-"Purple Jellyfish":{s:"obtainable",t:"Hatch from Sand Castle Egg (2,000 Shells) on Beach Island."},
+"Purple Jellyfish":{s:"obtainable",t:"Hatch from Sand Castle Egg (500 Shells) on Beach Island."},
 "Summer Cat":{s:"obtainable",t:"Hatch from Bucket Of Sand Egg (150 Shells) on Beach Island. Also from Summer Rewards Road (Level 20)."},
 "Summer Dog":{s:"obtainable",t:"Hatch from Bucket Of Sand Egg (150 Shells) on Beach Island. Also from Summer Rewards Road (Level 10)."},
 "Nebula Wyvern":{s:"limited",t:"From Cosmic Egg (special unlock required). May be currently unobtainable if the Cosmic Egg is disabled."},
@@ -881,9 +629,7 @@ const PET_INFO = {
 "Snake":{s:"obtainable",t:"Hatch from Beach Ball Egg (900,000,000,000 Clicks) on Beach Island."},
 "Reversed Cat":{s:"obtainable",t:"Hatch from Disco Egg (200Q Clicks) on Rave Island."},
 "Overseer":{s:"obtainable",t:"Summer Rewards Road (Level 75)."},
-
-// === RARE ===
-"Blue Jellyfish":{s:"obtainable",t:"Hatch from Sand Castle Egg (2,000 Shells) on Beach Island."},
+"Blue Jellyfish":{s:"obtainable",t:"Hatch from Sand Castle Egg (500 Shells) on Beach Island."},
 "Pink Bunny":{s:"limited",t:"No known egg or obtainment source found in game files. May be a legacy or event pet."},
 "Pig":{s:"obtainable",t:"Hatch from Basic Egg (250 Clicks) on Spawn Island."},
 "Cow":{s:"obtainable",t:"Hatch from Flower Egg (2,750 Clicks) on Spawn Island."},
@@ -910,9 +656,7 @@ const PET_INFO = {
 "Red Balloon":{s:"obtainable",t:"Hatch from 1M Egg (1,000,000,000 Clicks) on 1M Milestone Island."},
 "Holy Egg":{s:"obtainable",t:"Hatch from Angel Egg (4Qi Clicks) on Heaven Island."},
 "Blue Balloon":{s:"obtainable",t:"Hatch from 1M Egg (1,000,000,000 Clicks) on 1M Milestone Island."},
-
-// === EPIC ===
-"Crab":{s:"obtainable",t:"Hatch from Sand Castle Egg (2,000 Shells) on Beach Island."},
+"Crab":{s:"obtainable",t:"Hatch from Sand Castle Egg (500 Shells) on Beach Island."},
 "Bee":{s:"obtainable",t:"Hatch from Flower Egg (2,750 Clicks) on Spawn Island."},
 "Owl":{s:"obtainable",t:"Hatch from Acorn Egg (175,000 Clicks)."},
 "Skier":{s:"obtainable",t:"Hatch from Snowman Egg (2,500,000 Clicks) on Winter Island."},
@@ -932,11 +676,9 @@ const PET_INFO = {
 "Disco Ball":{s:"obtainable",t:"Hatch from Disco Egg (200Q Clicks) on Rave Island."},
 "Aurelite Halo":{s:"obtainable",t:"Hatch from Angel Egg (4Qi Clicks) on Heaven Island."},
 "Shattered Shard":{s:"obtainable",t:"Hatch from 1M Egg (1,000,000,000 Clicks) on 1M Milestone Island."},
-"Yellow Seahorse":{s:"obtainable",t:"Hatch from Coconut Egg (7,500 Shells) on Beach Island."},
-"Red Seahorse":{s:"obtainable",t:"Hatch from Coconut Egg (7,500 Shells) on Beach Island."},
-
-// === LEGENDARY ===
-"Pufferfish":{s:"obtainable",t:"Hatch from Sand Castle Egg (2,000 Shells) on Beach Island."},
+"Yellow Seahorse":{s:"obtainable",t:"Hatch from Coconut Egg (1,000 Shells) on Beach Island."},
+"Red Seahorse":{s:"obtainable",t:"Hatch from Coconut Egg (1,000 Shells) on Beach Island."},
+"Pufferfish":{s:"obtainable",t:"Hatch from Sand Castle Egg (500 Shells) on Beach Island."},
 "Deer":{s:"obtainable",t:"Hatch from Acorn Egg (175,000 Clicks)."},
 "Snowman":{s:"obtainable",t:"Hatch from Snowman Egg (2,500,000 Clicks) on Winter Island."},
 "Gorilla":{s:"obtainable",t:"Hatch from Wood Egg (40,000,000 Clicks) on Forest Island. Also in Robux Forest Egg."},
@@ -952,9 +694,7 @@ const PET_INFO = {
 "Party Cogmower":{s:"obtainable",t:"Hatch from Disco Egg (200Q Clicks) on Rave Island."},
 "Cherubis Bloom":{s:"obtainable",t:"Hatch from Angel Egg (4Qi Clicks) on Heaven Island."},
 "Clicker Tetra Cube":{s:"obtainable",t:"Hatch from 1M Egg (1,000,000,000 Clicks) on 1M Milestone Island."},
-"Shell":{s:"obtainable",t:"Hatch from Coconut Egg (7,500 Shells) on Beach Island."},
-
-// === MYTHICAL ===
+"Shell":{s:"obtainable",t:"Hatch from Coconut Egg (1,000 Shells) on Beach Island."},
 "Elephant":{s:"obtainable",t:"Hatch from Wood Egg (40,000,000 Clicks) on Forest Island. Also in Robux Forest Egg."},
 "Cactus":{s:"obtainable",t:"Hatch from Cactus Egg (300,000,000 Clicks) on Desert Island. Also in Robux Forest Egg."},
 "Cowboy":{s:"obtainable",t:"Hatch from Cactus Egg (300,000,000 Clicks) on Desert Island. Also in Robux Forest Egg."},
@@ -969,10 +709,8 @@ const PET_INFO = {
 "Shard":{s:"unobtainable",t:"Was from the 500K Egg (retired/NotHatchable). No longer obtainable. Only existing copies remain in circulation."},
 "1M Star":{s:"obtainable",t:"Hatch from 1M Egg (1,000,000,000 Clicks) on 1M Milestone Island."},
 "Starforge":{s:"obtainable",t:"Hatch from Angel Egg (4Qi Clicks) on Heaven Island. Also in Robux Sakura Egg."},
-"Poly":{s:"obtainable",t:"Hatch from Coconut Egg (7,500 Shells) on Beach Island."},
-
-// === SECRET ===
-"Acorn":{s:"obtainable",t:"Extremely rare hatch from Sand Castle Egg (2,000 Shells). ~0.00001% chance."},
+"Poly":{s:"obtainable",t:"Hatch from Coconut Egg (1,000 Shells) on Beach Island."},
+"Acorn":{s:"obtainable",t:"Extremely rare hatch from Sand Castle Egg (500 Shells). ~0.00001% chance."},
 "Chocolate Ice Cream":{s:"obtainable",t:"Extremely rare hatch from Bucket Of Sand Egg (150 Shells). ~0.00001% chance."},
 "Sea Serpent":{s:"obtainable",t:"Summer Rewards Road (Level 68)."},
 "Poseidon":{s:"obtainable",t:"Extremely rare hatch from Beach Ball Egg. ~0.00001% chance. Also from Summer Rewards Road (Level 72)."},
@@ -992,23 +730,19 @@ const PET_INFO = {
 "Godly Gem":{s:"obtainable",t:"Extremely rare hatch from Angel Egg (4Qi Clicks). ~0.000005% chance."},
 "1M Rebirth":{s:"obtainable",t:"Extremely rare hatch from 1M Egg. ~0.0000017% chance."},
 "Ophanim":{s:"obtainable",t:"Extremely rare hatch from Angel Egg (4Qi Clicks). ~0.0000017% chance."},
-"Cat In A Bucket":{s:"obtainable",t:"Extremely rare hatch from Coconut Egg (7,500 Shells). ~0.00001% chance."},
-"Chest Mimic In A Bucket":{s:"obtainable",t:"Extremely rare hatch from Coconut Egg (7,500 Shells). ~0.00001% chance."},
-"Dog In A Bucket":{s:"obtainable",t:"Extremely rare hatch from Coconut Egg (7,500 Shells). ~0.00001% chance."},
-"Turtle In A Bucket":{s:"obtainable",t:"Extremely rare hatch from Coconut Egg (7,500 Shells). ~0.00001% chance."},
+"Cat In A Bucket":{s:"obtainable",t:"Extremely rare hatch from Coconut Egg (1,000 Shells). ~0.00001% chance."},
+"Chest Mimic In A Bucket":{s:"obtainable",t:"Extremely rare hatch from Coconut Egg (1,000 Shells). ~0.00001% chance."},
+"Dog In A Bucket":{s:"obtainable",t:"Extremely rare hatch from Coconut Egg (1,000 Shells). ~0.00001% chance."},
+"Turtle In A Bucket":{s:"obtainable",t:"Extremely rare hatch from Coconut Egg (1,000 Shells). ~0.00001% chance."},
 "Apex":{s:"obtainable",t:"Craft via Potion Recipe: 67x Summer Relic."},
-
-// === SPECIAL ===
 "Vault Keeper":{s:"obtainable",t:"Purchase from Tier 3 Merchant (requires 30,000 Respect). Costs Gems."},
 "Midas":{s:"obtainable",t:"Purchase from Tier 3 Merchant (requires 30,000 Respect). Costs Gems."},
-"Eternal Star":{s:"leaderboard",t:"Leaderboard reward for placing 26th–100th. Comes with Leaderboard Luck enchant (+50% Luck)."},
-"Crimson Star":{s:"leaderboard",t:"Leaderboard reward for placing 26th–100th. Comes with Leaderboard Luck enchant (+50% Luck)."},
-"Eternal Shard":{s:"leaderboard",t:"Leaderboard reward for placing 6th–25th. Comes with Leaderboard Luck enchant (+75% Luck)."},
-"Crimson Shard":{s:"leaderboard",t:"Leaderboard reward for placing 6th–25th. Comes with Leaderboard Luck enchant (+75% Luck)."},
-"Eternal Trophy":{s:"leaderboard",t:"Leaderboard reward for placing 1st–5th. Comes with Leaderboard Luck enchant (+150% Luck)."},
-"Crimson Trophy":{s:"leaderboard",t:"Leaderboard reward for placing 1st–5th. Comes with Leaderboard Luck enchant (+150% Luck)."},
-
-// === EXCLUSIVE ===
+"Eternal Star":{s:"leaderboard",t:"Leaderboard reward (LeaderboardLuck T1). Awarded to top players on Clicks/Rebirths/Playtime/Power leaderboards."},
+"Crimson Star":{s:"leaderboard",t:"Leaderboard reward (LeaderboardLuck T1). Awarded to top players on leaderboards."},
+"Eternal Shard":{s:"leaderboard",t:"Leaderboard reward (LeaderboardLuck T2). Awarded to high-ranking leaderboard players."},
+"Crimson Shard":{s:"leaderboard",t:"Leaderboard reward (LeaderboardLuck T2). Awarded to high-ranking leaderboard players."},
+"Eternal Trophy":{s:"leaderboard",t:"Leaderboard reward (LeaderboardLuck T5). Awarded to the top leaderboard players."},
+"Crimson Trophy":{s:"leaderboard",t:"Leaderboard reward (LeaderboardLuck T5). Awarded to the top leaderboard players."},
 "Astronaut":{s:"robux",t:"Hatch from Exclusive Egg (Robux purchase)."},
 "Earth":{s:"robux",t:"Hatch from Exclusive Egg (Robux purchase)."},
 "Rocket":{s:"robux",t:"Hatch from Exclusive Egg (Robux purchase)."},
@@ -1021,28 +755,22 @@ const PET_INFO = {
 "All Seeing Guardian":{s:"robux",t:"Robux pet purchase (limited stock: 999). Comes with Lucky T5 enchant."},
 "Frozen Eye Cube":{s:"robux",t:"Robux pet purchase. Comes with Lucky T5 enchant."},
 "Royal Trophy":{s:"robux",t:"Robux pet purchase. Comes with SuperRebirth T3 enchant."},
-
-// === MEGA ===
-"Ktulhu":{s:"obtainable",t:"Extremely rare hatch from Coconut Egg (7,500 Shells). ~0.00000025% chance. Rarest pet in the game."}
+"Ktulhu":{s:"obtainable",t:"Extremely rare hatch from Coconut Egg (1,000 Shells). ~0.00000025% chance. Rarest pet in the game."}
 };
 
 const STATUS_LABELS = {
-obtainable: "Obtainable",
-unobtainable: "Unobtainable",
-limited: "Limited / Unknown",
-leaderboard: "Leaderboard Only",
-robux: "Robux Only"
+obtainable:"Obtainable",unobtainable:"Unobtainable",limited:"Limited / Unknown",leaderboard:"Leaderboard Only",robux:"Robux Only"
 };
 
-/* PET BASE STATS (from decompiled Directory/Pets) */
+/* PET BASE STATS */
 const PET_STATS = {
 "1M Click":{Clicks:65000000},"1M Rebirth":{Clicks:125000000},"1M Star":{Clicks:1750000},"500K Overlord":{Clicks:650000},
-"Abyss":{Clicks:300000,Shells:15},"Acorn":{Shells:112.5},"Alien":{Clicks:95000},
+"Abyss":{Clicks:40000000,Shells:15},"Acorn":{Shells:112.5},"Alien":{Clicks:95000},
 "All Seeing Guardian":{Clicks:3000000,Gems:9},"Angel":{Clicks:30000,Gems:3},"Angel & Devil":{Clicks:70000,Gems:8},
 "Apex":{Clicks:600000000},"Astronaut":{Clicks:1800},"Aurelite Halo":{Clicks:175000},
 "Bear":{Clicks:19},"Bee":{Clicks:28},"Black Bear":{Clicks:3000},"Black Cat":{Clicks:11},"Black Dominus":{Clicks:4},
 "Black Hydominus":{Clicks:13200},"Blue Balloon":{Clicks:85000},"Blue Block":{Clicks:4},"Blue Dominus":{Clicks:4},
-"Blue Dragon":{Clicks:4},"Blue Gift":{Clicks:15000},"Blue Hydominus":{Clicks:11400},"Blue Jellyfish":{Shells:4.5},
+"Blue Dragon":{Clicks:4},"Blue Gift":{Clicks:15000},"Blue Hydominus":{Clicks:11400},"Blue Jellyfish":{Clicks:45000,Shells:4.5},
 "Blue Wizard":{Clicks:4},"Boombox":{Clicks:975000},"Bubble Gum":{Clicks:1650},"Bull":{Clicks:245},"Bunny":{Clicks:3},
 "Cactus":{Clicks:900},"Calf":{Clicks:11},"Camel":{Clicks:338},"Candy":{Clicks:820},"Candy Dominus":{Clicks:3000},
 "Candy Gun":{Clicks:2250},"Cat":{Clicks:2},"Cat In A Bucket":{Clicks:200000000,Shells:70},
@@ -1050,13 +778,13 @@ const PET_STATS = {
 "Chest Mimic":{Clicks:150000},"Chest Mimic In A Bucket":{Clicks:200000000,Shells:70},"Chicken":{Clicks:3},
 "Chocolate":{Clicks:780},"Chocolate Ice Cream":{Shells:18},"Clicker Tetra Cube":{Clicks:500000},
 "Cookieman":{Clicks:980},"Core Guardian":{Clicks:8000000},"Cosmic Crawler":{Clicks:100},"Cow":{Clicks:15},
-"Cowboy":{Clicks:1475},"Crab":{Shells:7.5},"Crimson Shard":{Clicks:1000000000},"Crimson Star":{Clicks:400000000},
+"Cowboy":{Clicks:1475},"Crab":{Clicks:75000,Shells:7.5},"Crimson Shard":{Clicks:1000000000},"Crimson Star":{Clicks:400000000},
 "Crimson Trophy":{Clicks:2250000000},"Cupcake":{Clicks:650},"Deer":{Clicks:53},
 "Diamond":{Clicks:2500000,Shells:30},"Disco Ball":{Clicks:125000},"Dog":{Clicks:2},
 "Dog In A Bucket":{Clicks:200000000,Shells:70},"Duck":{Clicks:3800},"Earth":{Clicks:2400},
 "Elephant":{Clicks:470},"Ember Champion":{Clicks:5000000},"Embercrest":{Clicks:850000,Gems:7},
 "Equalizer":{Clicks:20000000},"Eternal Shard":{Clicks:12500000},"Eternal Star":{Clicks:5000000},
-"Eternal Trophy":{Clicks:25000000},"Firecrackers":{Clicks:25000000},"Fish":{Shells:2},
+"Eternal Trophy":{Clicks:25000000},"Firecrackers":{Clicks:25000000},"Fish":{Clicks:10000,Shells:2},
 "Fox":{Clicks:388},"Frog":{Clicks:4200},"Frozen Eye Cube":{Clicks:3000000,Gems:9},
 "Giant Holy Egg":{Clicks:35000000},"Giraffe":{Clicks:188},"Goat":{Clicks:58},
 "Godly Gem":{Clicks:65000000},"Gold Fish":{Clicks:3200},"Gorilla":{Clicks:320},
@@ -1067,24 +795,24 @@ const PET_STATS = {
 "Magma":{Clicks:4},"Magma Cube":{Clicks:25000},"Midas":{Clicks:17000},"Molten Slime":{Clicks:35000},
 "Monkey":{Clicks:170},"Mouse":{Clicks:102},"Nebula Wyvern":{Clicks:1},"Ophanim":{Clicks:125000000},
 "Orange Block":{Clicks:4},"Orange Dominus":{Clicks:4},"Orange Hydominus":{Clicks:9800},"Orange Wizard":{Clicks:4},
-"Overseer":{Clicks:400000000,Shells:40},"Owl":{Clicks:32},"Panda":{Clicks:4},
+"Overseer":{Clicks:225000000,Shells:40},"Owl":{Clicks:32},"Panda":{Clicks:4},
 "Party Cogmower":{Clicks:350000},"Penguin":{Clicks:68},"Petal Moth":{Clicks:750000},
 "Pet Stack":{Clicks:200000},"Phoenix":{Clicks:90000},"Pig":{Clicks:4},"Pink Bunny":{Clicks:1},
 "Pink Dragon":{Clicks:4},"Polar Bear":{Clicks:78},"Police":{Clicks:4},
 "Poly":{Clicks:2250000,Shells:40},"Poseidon":{Clicks:125000},"Potion":{Clicks:4},
-"Pufferfish":{Shells:10.5},"Pumpkin":{Clicks:4},"Purple Block":{Clicks:4},
-"Purple Jellyfish":{Shells:3.75},"Purple Wizard":{Clicks:4},"Raccoon":{Clicks:24},
+"Pufferfish":{Clicks:150000,Shells:10.5},"Pumpkin":{Clicks:4},"Purple Block":{Clicks:4},
+"Purple Jellyfish":{Clicks:22500,Shells:3.75},"Purple Wizard":{Clicks:4},"Raccoon":{Clicks:24},
 "Red Balloon":{Clicks:65000},"Red Block":{Clicks:4},"Red Dominus":{Clicks:4},"Red Dragon":{Clicks:4},
 "Red Gift":{Clicks:10000},"Red Hydominus":{Clicks:8500},"Red Seahorse":{Clicks:275000,Shells:16},
 "Red Wizard":{Clicks:4},"Reversed Cat":{Clicks:35000},"Reversed Dog":{Clicks:50000},
 "Robot":{Clicks:4},"Rocket":{Clicks:3200},"Royal Trophy":{Clicks:6000000,Gems:18},
-"Sakura Turtle":{Clicks:15000},"Sea Serpent":{Clicks:1,Shells:15},"Seal":{Clicks:49},
+"Sakura Turtle":{Clicks:15000},"Sea Serpent":{Clicks:5000000,Shells:15},"Seal":{Clicks:49},
 "Seraph":{Clicks:1},"Shard":{Clicks:1300000},"Shark":{Clicks:3600},
 "Shattered Shard":{Clicks:175000},"Shell":{Clicks:650000,Shells:24},"Skier":{Clicks:86},
 "Slime":{Clicks:2400},"Snake":{Clicks:2600},"Snowman":{Clicks:140},
 "Solflare":{Clicks:2200000,Gems:13},"Spider":{Clicks:132},"Squirrel":{Clicks:20},
 "Star Fish":{Clicks:6400},"Starforge":{Clicks:1750000},"Starling Sprite":{Clicks:1},
-"Strawberry":{Clicks:1400},"Summer Cat":{Shells:1.5},"Summer Dog":{Shells:1.75},"Supernova":{Clicks:1},
+"Strawberry":{Clicks:1400},"Summer Cat":{Clicks:5000,Shells:1.5},"Summer Dog":{Clicks:7500,Shells:1.75},"Supernova":{Clicks:1},
 "Swimmer":{Clicks:5200},"Tanuki":{Clicks:12000},"The Clicker Trophy":{Clicks:55000000},
 "The Overlord":{Clicks:350000},"Tiger":{Clicks:207},"Tiny Firecracker":{Clicks:50000},
 "Turtle":{Clicks:2100},"Turtle In A Bucket":{Clicks:200000000,Shells:70},"UFO":{Clicks:150000},
@@ -1093,973 +821,682 @@ const PET_STATS = {
 "Yellow Seahorse":{Clicks:225000,Shells:14},"Yeti":{Clicks:90},"Zebra":{Clicks:281},"Zombie":{Clicks:4}
 };
 
-/* PET ICON ASSET IDs (normal + golden variants) */
+/* PET ICON ASSET IDs */
 const PET_ICONS = {
-"1M Click":{normal:"115221256771440",golden:"90864742005145"},
-"1M Rebirth":{normal:"99619770545365",golden:"113493597596824"},
-"1M Star":{normal:"91670232287122",golden:"100347796705597"},
-"500K Overlord":{normal:"132771239528746",golden:"98769372310118"},
-"Abyss":{normal:"114046874757017",golden:"123586548520045"},
-"Acorn":{normal:"121864183808487",golden:"98175882442528"},
-"Alien":{normal:"102018852402245",golden:"116952397211926"},
-"All Seeing Guardian":{normal:"99957352792320",golden:"85753631418756"},
-"Angel":{normal:"79850263086584",golden:"132579694091862"},
-"Angel & Devil":{normal:"114593019451267",golden:"92917914942776"},
-"Apex":{normal:"130353018367033",golden:"83219974076796"},
-"Astronaut":{normal:"78300643458253",golden:"133759611352695"},
-"Aurelite Halo":{normal:"70982658481418",golden:"96737415424429"},
-"Bear":{normal:"130466798991896",golden:"104166879620238"},
-"Bee":{normal:"75437677377369",golden:"102872117456307"},
-"Black Bear":{normal:"100849484124283",golden:"138236346708066"},
-"Black Cat":{normal:"81156479883478",golden:"94553022514698"},
-"Black Dominus":{normal:"111130354166220",golden:"109085650096191"},
-"Black Hydominus":{normal:"107558291664947",golden:"110172364885020"},
-"Blue Balloon":{normal:"117248431989127",golden:"135699155791884"},
-"Blue Block":{normal:"106447954275307",golden:"75023755779333"},
-"Blue Dominus":{normal:"111668931793453",golden:"112527202462754"},
-"Blue Dragon":{normal:"81517759035540",golden:"101341781865985"},
-"Blue Gift":{normal:"113085357548330",golden:"97546783595254"},
-"Blue Hydominus":{normal:"135125767670624",golden:"78926816355503"},
-"Blue Jellyfish":{normal:"88318732629648",golden:"100129341656229"},
-"Blue Wizard":{normal:"81453031678253",golden:"111783930746875"},
-"Boombox":{normal:"86349572042892",golden:"135971834461849"},
-"Bubble Gum":{normal:"84348209283744",golden:"106563784592022"},
-"Bull":{normal:"105852961774706",golden:"136068894617216"},
-"Bunny":{normal:"104763135259770",golden:"89929770010982"},
-"Cactus":{normal:"127314117919964",golden:"108091375807759"},
-"Calf":{normal:"97812410796433",golden:"87583637584278"},
-"Camel":{normal:"104897716469948",golden:"136646475792449"},
-"Candy":{normal:"95584489425177",golden:"80984692487740"},
-"Candy Dominus":{normal:"82795329520323",golden:"90014378054246"},
-"Candy Gun":{normal:"77766252091625",golden:"100416519006761"},
-"Cat":{normal:"90402349428850",golden:"80360476325756"},
-"Cat In A Bucket":{normal:"",golden:""},
-"Cataclysm Dragon":{normal:"95908721514885",golden:"77450018634808"},
-"Cheetah":{normal:"72914760626794",golden:"82381002936149"},
-"Cherubis Bloom":{normal:"124617723377564",golden:"80571650298006"},
-"Chest":{normal:"76001967586699",golden:"80994016155647"},
-"Chest Mimic":{normal:"92749426462005",golden:"124392809981127"},
-"Chest Mimic In A Bucket":{normal:"",golden:""},
-"Chicken":{normal:"70802139790796",golden:"119094017303614"},
-"Chocolate":{normal:"88579842245566",golden:"90511618175107"},
-"Chocolate Ice Cream":{normal:"103695890628134",golden:"72024172825656"},
-"Clicker Tetra Cube":{normal:"89055073709988",golden:"93440503249217"},
-"Cookieman":{normal:"113484920991712",golden:"133995032567061"},
-"Core Guardian":{normal:"98064774940672",golden:"120717968420758"},
-"Cosmic Crawler":{normal:"117395128818620",golden:"106158805909800"},
-"Cow":{normal:"116193935880630",golden:"125441340227128"},
-"Cowboy":{normal:"103727699693840",golden:"130062042546382"},
-"Crab":{normal:"106101390579826",golden:"118715050605162"},
-"Crimson Shard":{normal:"125620321891300",golden:"74604865056187"},
-"Crimson Star":{normal:"99572044860982",golden:"87579316182821"},
-"Crimson Trophy":{normal:"128185973881910",golden:"98185209156838"},
-"Cupcake":{normal:"128905816444157",golden:"110149487000964"},
-"Deer":{normal:"102567070166623",golden:"107080331179345"},
-"Diamond":{normal:"75274272264639",golden:"77917773464725"},
-"Disco Ball":{normal:"126155707363304",golden:"134213053106411"},
-"Dog":{normal:"84816537610420",golden:"112680445961518"},
-"Dog In A Bucket":{normal:"",golden:""},
-"Duck":{normal:"74730912211465",golden:"138920116849431"},
-"Earth":{normal:"70394668092797",golden:"139559674398229"},
-"Elephant":{normal:"127429039913734",golden:"135912773069366"},
-"Ember Champion":{normal:"112778131650646",golden:"119945383610046"},
-"Embercrest":{normal:"129002926817711",golden:""},
-"Equalizer":{normal:"101667041174340",golden:"124055380113625"},
-"Eternal Shard":{normal:"74219807991706",golden:"139135138229298"},
-"Eternal Star":{normal:"107559476222602",golden:"132438470389674"},
-"Eternal Trophy":{normal:"81386110522812",golden:"136621056781942"},
-"Firecrackers":{normal:"117145721492981",golden:"88539354411404"},
-"Fish":{normal:"105943860706214",golden:"90825862351413"},
-"Fox":{normal:"88839098262704",golden:"82553602858014"},
-"Frog":{normal:"84586002155513",golden:"128848896781116"},
-"Frozen Eye Cube":{normal:"92833074103894",golden:"116722455621588"},
-"Giant Holy Egg":{normal:"117640275356556",golden:"129816213188017"},
-"Giraffe":{normal:"124786611820303",golden:"107147128643150"},
-"Goat":{normal:"100840643293388",golden:"113121366121146"},
-"Godly Gem":{normal:"114654108504631",golden:"71935437699936"},
-"Gold Fish":{normal:"86590960041962",golden:"74362495630252"},
-"Gorilla":{normal:"111732465618458",golden:"88097523401696"},
-"Green Block":{normal:"140024145482936",golden:"93948569283029"},
-"Green Dragon":{normal:"102599896021116",golden:"86146867087179"},
-"Green Wizard":{normal:"98702917279600",golden:"123931333870488"},
-"Hellfire Bat":{normal:"102029048545841",golden:"139375759539849"},
-"Hellwing":{normal:"137075188552606",golden:"97375867983512"},
-"Holy Egg":{normal:"93430094725986",golden:"118841014173697"},
-"Ice Cream":{normal:"123120221719628",golden:"92766100479357"},
-"Kitsune":{normal:"130514860854088",golden:"124852857757017"},
-"Kraken":{normal:"87878967180615",golden:"117611114294229"},
-"Ktulhu":{normal:"111184864451932",golden:"134964665050565"},
-"Lion":{normal:"126606000761880",golden:"133759501297800"},
-"Lotus Serpent":{normal:"132051694605745",golden:"135116418351960"},
-"Magma":{normal:"136339404560615",golden:"105360547739164"},
-"Magma Cube":{normal:"72364434873752",golden:"135326803254599"},
-"Midas":{normal:"135557691575268",golden:"103109648069386"},
-"Molten Slime":{normal:"101193237026541",golden:"110385800001496"},
-"Monkey":{normal:"76566737639052",golden:"124684574732907"},
-"Mouse":{normal:"72274074632743",golden:"140499747437079"},
-"Nebula Wyvern":{normal:"99259889017315",golden:"81480200164858"},
-"Ophanim":{normal:"99580393209518",golden:"126965652919695"},
-"Orange Block":{normal:"109885680667646",golden:"136213235707881"},
-"Orange Dominus":{normal:"125028968714403",golden:"140457619655823"},
-"Orange Hydominus":{normal:"123278674791479",golden:"127555766130472"},
-"Orange Wizard":{normal:"109647125680437",golden:"139765804898065"},
-"Overseer":{normal:"118501325471758",golden:"125309096558067"},
-"Owl":{normal:"107483178343791",golden:"82084939256320"},
-"Panda":{normal:"101148954705786",golden:"106947522567911"},
-"Party Cogmower":{normal:"111691424014620",golden:"112942040863302"},
-"Penguin":{normal:"107610673949818",golden:"76355082444068"},
-"Petal Moth":{normal:"129488213450565",golden:"129795633049651"},
-"Pet Stack":{normal:"93856946694401",golden:"120521272308769"},
-"Phoenix":{normal:"124071335203484",golden:"128072341628669"},
-"Pig":{normal:"77488028236584",golden:"117707700633422"},
-"Pink Bunny":{normal:"74463526975864",golden:"136844178886904"},
-"Pink Dragon":{normal:"115514672741245",golden:"121332113256652"},
-"Polar Bear":{normal:"92922411418772",golden:"105939419440008"},
-"Police":{normal:"137503678494869",golden:"105372739907180"},
-"Poly":{normal:"72700884296344",golden:"93448317263355"},
-"Poseidon":{normal:"98743994253100",golden:"127645386595606"},
-"Potion":{normal:"104282855426601",golden:"92709504870381"},
-"Pufferfish":{normal:"102535973943066",golden:"82478976789958"},
-"Pumpkin":{normal:"122210713243779",golden:"78051815168026"},
-"Purple Block":{normal:"85197430643721",golden:"89522033885726"},
-"Purple Jellyfish":{normal:"106815127190613",golden:""},
-"Purple Wizard":{normal:"73708275676081",golden:"136041621955734"},
-"Raccoon":{normal:"133670805606540",golden:"116748290185469"},
-"Red Balloon":{normal:"85089096287772",golden:"123186267721451"},
-"Red Block":{normal:"72703734678126",golden:"93249015356323"},
-"Red Dominus":{normal:"80668814104411",golden:"140474216447875"},
-"Red Dragon":{normal:"81150664129187",golden:"139237924468100"},
-"Red Gift":{normal:"83024215739441",golden:"87303144794016"},
-"Red Hydominus":{normal:"87628019936527",golden:"98677711390032"},
-"Red Seahorse":{normal:"107005491414695",golden:"131209334640994"},
-"Red Wizard":{normal:"137646880451109",golden:"103489137221800"},
-"Reversed Cat":{normal:"73922675494304",golden:"81357439369166"},
-"Reversed Dog":{normal:"117279998342366",golden:"97215825622232"},
-"Robot":{normal:"90921981760627",golden:"85711280351756"},
-"Rocket":{normal:"128841860819708",golden:"109639481256119"},
-"Royal Trophy":{normal:"86641601932786",golden:"105437674254154"},
-"Sakura Turtle":{normal:"115616671857870",golden:"123926326820954"},
-"Sea Serpent":{normal:"71536090153177",golden:"130964729366215"},
-"Seal":{normal:"112684814892826",golden:"125099433521514"},
-"Seraph":{normal:"89893642524349",golden:"114337109149067"},
-"Shard":{normal:"84730751363511",golden:"122788500607555"},
-"Shark":{normal:"86472498546769",golden:"77018257077962"},
-"Shattered Shard":{normal:"79508552582319",golden:"122824710296680"},
-"Shell":{normal:"124964487894708",golden:"130422696730488"},
-"Skier":{normal:"133308426943862",golden:"120434292874646"},
-"Slime":{normal:"89345627737735",golden:"79904489822837"},
-"Snake":{normal:"123785830108382",golden:"134867555131264"},
-"Snowman":{normal:"93654987601779",golden:"122877337471961"},
-"Solflare":{normal:"92367578059457",golden:""},
-"Spider":{normal:"79349989622603",golden:"133256169068719"},
-"Squirrel":{normal:"75141867203901",golden:"134530383491041"},
-"Star Fish":{normal:"80877936356719",golden:"137763048135890"},
-"Starforge":{normal:"76782769566021",golden:"98578000298657"},
-"Starling Sprite":{normal:"76003912000017",golden:"135081584253373"},
-"Strawberry":{normal:"124916911644687",golden:"85706505195373"},
-"Summer Cat":{normal:"128065489833609",golden:"106475173582594"},
-"Summer Dog":{normal:"139895329802162",golden:"93908418706252"},
-"Supernova":{normal:"",golden:""},
-"Swimmer":{normal:"121290263315258",golden:"70941638635587"},
-"Tanuki":{normal:"124299252102658",golden:"81174950576677"},
-"The Clicker Trophy":{normal:"112276519898429",golden:"84069744741240"},
-"The Overlord":{normal:"97919633977640",golden:"112208344501153"},
-"Tiger":{normal:"95596298936664",golden:"130707019445781"},
-"Tiny Firecracker":{normal:"99747734877621",golden:"80547778168909"},
-"Turtle":{normal:"125290338866815",golden:"137952582924882"},
-"Turtle In A Bucket":{normal:"",golden:""},
-"UFO":{normal:"90296427751412",golden:"88551297638122"},
-"Unicorn":{normal:"94950279525592",golden:"86863473395481"},
-"Vault Keeper":{normal:"74028640057380",golden:"125432844673925"},
-"White Dominus":{normal:"107439658168566",golden:"104293526369135"},
-"White Hydominus":{normal:"91299199083695",golden:"103043848300099"},
-"Wolf":{normal:"138215752939932",golden:"79417623005113"},
-"Yellow Dragon":{normal:"84301727840608",golden:"105293219307738"},
-"Yellow Seahorse":{normal:"107722451853461",golden:""},
-"Yeti":{normal:"95091967341491",golden:"120696106923828"},
-"Zebra":{normal:"110421432076873",golden:"94133166454454"},
-"Zombie":{normal:"96637012052035",golden:"74777795511791"}
+"1M Click":{normal:"115221256771440",golden:"90864742005145"},"1M Rebirth":{normal:"99619770545365",golden:"113493597596824"},
+"1M Star":{normal:"91670232287122",golden:"100347796705597"},"500K Overlord":{normal:"132771239528746",golden:"98769372310118"},
+"Abyss":{normal:"114046874757017",golden:"123586548520045"},"Acorn":{normal:"121864183808487",golden:"98175882442528"},
+"Alien":{normal:"102018852402245",golden:"116952397211926"},"All Seeing Guardian":{normal:"99957352792320",golden:"85753631418756"},
+"Angel":{normal:"79850263086584",golden:"132579694091862"},"Angel & Devil":{normal:"114593019451267",golden:"92917914942776"},
+"Apex":{normal:"130353018367033",golden:"83219974076796"},"Astronaut":{normal:"78300643458253",golden:"133759611352695"},
+"Aurelite Halo":{normal:"70982658481418",golden:"96737415424429"},"Bear":{normal:"130466798991896",golden:"104166879620238"},
+"Bee":{normal:"75437677377369",golden:"102872117456307"},"Black Bear":{normal:"100849484124283",golden:"138236346708066"},
+"Black Cat":{normal:"81156479883478",golden:"94553022514698"},"Black Dominus":{normal:"111130354166220",golden:"109085650096191"},
+"Black Hydominus":{normal:"107558291664947",golden:"110172364885020"},"Blue Balloon":{normal:"117248431989127",golden:"135699155791884"},
+"Blue Block":{normal:"106447954275307",golden:"75023755779333"},"Blue Dominus":{normal:"111668931793453",golden:"112527202462754"},
+"Blue Dragon":{normal:"81517759035540",golden:"101341781865985"},"Blue Gift":{normal:"113085357548330",golden:"97546783595254"},
+"Blue Hydominus":{normal:"135125767670624",golden:"78926816355503"},"Blue Jellyfish":{normal:"88318732629648",golden:"100129341656229"},
+"Blue Wizard":{normal:"81453031678253",golden:"111783930746875"},"Boombox":{normal:"86349572042892",golden:"135971834461849"},
+"Bubble Gum":{normal:"84348209283744",golden:"106563784592022"},"Bull":{normal:"105852961774706",golden:"136068894617216"},
+"Bunny":{normal:"104763135259770",golden:"89929770010982"},"Cactus":{normal:"127314117919964",golden:"108091375807759"},
+"Calf":{normal:"97812410796433",golden:"87583637584278"},"Camel":{normal:"104897716469948",golden:"136646475792449"},
+"Candy":{normal:"95584489425177",golden:"80984692487740"},"Candy Dominus":{normal:"82795329520323",golden:"90014378054246"},
+"Candy Gun":{normal:"77766252091625",golden:"100416519006761"},"Cat":{normal:"90402349428850",golden:"80360476325756"},
+"Cat In A Bucket":{normal:"",golden:""},"Cataclysm Dragon":{normal:"95908721514885",golden:"77450018634808"},
+"Cheetah":{normal:"72914760626794",golden:"82381002936149"},"Cherubis Bloom":{normal:"124617723377564",golden:"80571650298006"},
+"Chest":{normal:"76001967586699",golden:"80994016155647"},"Chest Mimic":{normal:"92749426462005",golden:"124392809981127"},
+"Chest Mimic In A Bucket":{normal:"",golden:""},"Chicken":{normal:"70802139790796",golden:"119094017303614"},
+"Chocolate":{normal:"88579842245566",golden:"90511618175107"},"Chocolate Ice Cream":{normal:"103695890628134",golden:"72024172825656"},
+"Clicker Tetra Cube":{normal:"89055073709988",golden:"93440503249217"},"Cookieman":{normal:"113484920991712",golden:"133995032567061"},
+"Core Guardian":{normal:"98064774940672",golden:"120717968420758"},"Cosmic Crawler":{normal:"117395128818620",golden:"106158805909800"},
+"Cow":{normal:"116193935880630",golden:"125441340227128"},"Cowboy":{normal:"103727699693840",golden:"130062042546382"},
+"Crab":{normal:"106101390579826",golden:"118715050605162"},"Crimson Shard":{normal:"125620321891300",golden:"74604865056187"},
+"Crimson Star":{normal:"99572044860982",golden:"87579316182821"},"Crimson Trophy":{normal:"128185973881910",golden:"98185209156838"},
+"Cupcake":{normal:"128905816444157",golden:"110149487000964"},"Deer":{normal:"102567070166623",golden:"107080331179345"},
+"Diamond":{normal:"75274272264639",golden:"77917773464725"},"Disco Ball":{normal:"126155707363304",golden:"134213053106411"},
+"Dog":{normal:"84816537610420",golden:"112680445961518"},"Dog In A Bucket":{normal:"",golden:""},
+"Duck":{normal:"74730912211465",golden:"138920116849431"},"Earth":{normal:"70394668092797",golden:"139559674398229"},
+"Elephant":{normal:"127429039913734",golden:"135912773069366"},"Ember Champion":{normal:"112778131650646",golden:"119945383610046"},
+"Embercrest":{normal:"129002926817711",golden:""},"Equalizer":{normal:"101667041174340",golden:"124055380113625"},
+"Eternal Shard":{normal:"74219807991706",golden:"139135138229298"},"Eternal Star":{normal:"107559476222602",golden:"132438470389674"},
+"Eternal Trophy":{normal:"81386110522812",golden:"136621056781942"},"Firecrackers":{normal:"117145721492981",golden:"88539354411404"},
+"Fish":{normal:"105943860706214",golden:"90825862351413"},"Fox":{normal:"88839098262704",golden:"82553602858014"},
+"Frog":{normal:"84586002155513",golden:"128848896781116"},"Frozen Eye Cube":{normal:"92833074103894",golden:"116722455621588"},
+"Giant Holy Egg":{normal:"117640275356556",golden:"129816213188017"},"Giraffe":{normal:"124786611820303",golden:"107147128643150"},
+"Goat":{normal:"100840643293388",golden:"113121366121146"},"Godly Gem":{normal:"114654108504631",golden:"71935437699936"},
+"Gold Fish":{normal:"86590960041962",golden:"74362495630252"},"Gorilla":{normal:"111732465618458",golden:"88097523401696"},
+"Green Block":{normal:"140024145482936",golden:"93948569283029"},"Green Dragon":{normal:"102599896021116",golden:"86146867087179"},
+"Green Wizard":{normal:"98702917279600",golden:"123931333870488"},"Hellfire Bat":{normal:"102029048545841",golden:"139375759539849"},
+"Hellwing":{normal:"137075188552606",golden:"97375867983512"},"Holy Egg":{normal:"93430094725986",golden:"118841014173697"},
+"Ice Cream":{normal:"123120221719628",golden:"92766100479357"},"Kitsune":{normal:"130514860854088",golden:"124852857757017"},
+"Kraken":{normal:"87878967180615",golden:"117611114294229"},"Ktulhu":{normal:"111184864451932",golden:"134964665050565"},
+"Lion":{normal:"126606000761880",golden:"133759501297800"},"Lotus Serpent":{normal:"132051694605745",golden:"135116418351960"},
+"Magma":{normal:"136339404560615",golden:"105360547739164"},"Magma Cube":{normal:"72364434873752",golden:"135326803254599"},
+"Midas":{normal:"135557691575268",golden:"103109648069386"},"Molten Slime":{normal:"101193237026541",golden:"110385800001496"},
+"Monkey":{normal:"76566737639052",golden:"124684574732907"},"Mouse":{normal:"72274074632743",golden:"140499747437079"},
+"Nebula Wyvern":{normal:"99259889017315",golden:"81480200164858"},"Ophanim":{normal:"99580393209518",golden:"126965652919695"},
+"Orange Block":{normal:"109885680667646",golden:"136213235707881"},"Orange Dominus":{normal:"125028968714403",golden:"140457619655823"},
+"Orange Hydominus":{normal:"123278674791479",golden:"127555766130472"},"Orange Wizard":{normal:"109647125680437",golden:"139765804898065"},
+"Overseer":{normal:"118501325471758",golden:"125309096558067"},"Owl":{normal:"107483178343791",golden:"82084939256320"},
+"Panda":{normal:"101148954705786",golden:"106947522567911"},"Party Cogmower":{normal:"111691424014620",golden:"112942040863302"},
+"Penguin":{normal:"107610673949818",golden:"76355082444068"},"Petal Moth":{normal:"129488213450565",golden:"129795633049651"},
+"Pet Stack":{normal:"93856946694401",golden:"120521272308769"},"Phoenix":{normal:"124071335203484",golden:"128072341628669"},
+"Pig":{normal:"77488028236584",golden:"117707700633422"},"Pink Bunny":{normal:"74463526975864",golden:"136844178886904"},
+"Pink Dragon":{normal:"115514672741245",golden:"121332113256652"},"Polar Bear":{normal:"92922411418772",golden:"105939419440008"},
+"Police":{normal:"137503678494869",golden:"105372739907180"},"Poly":{normal:"72700884296344",golden:"93448317263355"},
+"Poseidon":{normal:"98743994253100",golden:"127645386595606"},"Potion":{normal:"104282855426601",golden:"92709504870381"},
+"Pufferfish":{normal:"102535973943066",golden:"82478976789958"},"Pumpkin":{normal:"122210713243779",golden:"78051815168026"},
+"Purple Block":{normal:"85197430643721",golden:"89522033885726"},"Purple Jellyfish":{normal:"106815127190613",golden:""},
+"Purple Wizard":{normal:"73708275676081",golden:"136041621955734"},"Raccoon":{normal:"133670805606540",golden:"116748290185469"},
+"Red Balloon":{normal:"85089096287772",golden:"123186267721451"},"Red Block":{normal:"72703734678126",golden:"93249015356323"},
+"Red Dominus":{normal:"80668814104411",golden:"140474216447875"},"Red Dragon":{normal:"81150664129187",golden:"139237924468100"},
+"Red Gift":{normal:"83024215739441",golden:"87303144794016"},"Red Hydominus":{normal:"87628019936527",golden:"98677711390032"},
+"Red Seahorse":{normal:"107005491414695",golden:"131209334640994"},"Red Wizard":{normal:"137646880451109",golden:"103489137221800"},
+"Reversed Cat":{normal:"73922675494304",golden:"81357439369166"},"Reversed Dog":{normal:"117279998342366",golden:"97215825622232"},
+"Robot":{normal:"90921981760627",golden:"85711280351756"},"Rocket":{normal:"128841860819708",golden:"109639481256119"},
+"Royal Trophy":{normal:"86641601932786",golden:"105437674254154"},"Sakura Turtle":{normal:"115616671857870",golden:"123926326820954"},
+"Sea Serpent":{normal:"71536090153177",golden:"130964729366215"},"Seal":{normal:"112684814892826",golden:"125099433521514"},
+"Seraph":{normal:"89893642524349",golden:"114337109149067"},"Shard":{normal:"84730751363511",golden:"122788500607555"},
+"Shark":{normal:"86472498546769",golden:"77018257077962"},"Shattered Shard":{normal:"79508552582319",golden:"122824710296680"},
+"Shell":{normal:"124964487894708",golden:"130422696730488"},"Skier":{normal:"133308426943862",golden:"120434292874646"},
+"Slime":{normal:"89345627737735",golden:"79904489822837"},"Snake":{normal:"123785830108382",golden:"134867555131264"},
+"Snowman":{normal:"93654987601779",golden:"122877337471961"},"Solflare":{normal:"92367578059457",golden:""},
+"Spider":{normal:"79349989622603",golden:"133256169068719"},"Squirrel":{normal:"75141867203901",golden:"134530383491041"},
+"Star Fish":{normal:"80877936356719",golden:"137763048135890"},"Starforge":{normal:"76782769566021",golden:"98578000298657"},
+"Starling Sprite":{normal:"76003912000017",golden:"135081584253373"},"Strawberry":{normal:"124916911644687",golden:"85706505195373"},
+"Summer Cat":{normal:"128065489833609",golden:"106475173582594"},"Summer Dog":{normal:"139895329802162",golden:"93908418706252"},
+"Supernova":{normal:"",golden:""},"Swimmer":{normal:"121290263315258",golden:"70941638635587"},
+"Tanuki":{normal:"124299252102658",golden:"81174950576677"},"The Clicker Trophy":{normal:"112276519898429",golden:"84069744741240"},
+"The Overlord":{normal:"97919633977640",golden:"112208344501153"},"Tiger":{normal:"95596298936664",golden:"130707019445781"},
+"Tiny Firecracker":{normal:"99747734877621",golden:"80547778168909"},"Turtle":{normal:"125290338866815",golden:"137952582924882"},
+"Turtle In A Bucket":{normal:"",golden:""},"UFO":{normal:"90296427751412",golden:"88551297638122"},
+"Unicorn":{normal:"94950279525592",golden:"86863473395481"},"Vault Keeper":{normal:"74028640057380",golden:"125432844673925"},
+"White Dominus":{normal:"107439658168566",golden:"104293526369135"},"White Hydominus":{normal:"91299199083695",golden:"103043848300099"},
+"Wolf":{normal:"138215752939932",golden:"79417623005113"},"Yellow Dragon":{normal:"84301727840608",golden:"105293219307738"},
+"Yellow Seahorse":{normal:"107722451853461",golden:""},"Yeti":{normal:"95091967341491",golden:"120696106923828"},
+"Zebra":{normal:"110421432076873",golden:"94133166454454"},"Zombie":{normal:"96637012052035",golden:"74777795511791"}
 };
 
-/* STATE */
+/* ═══════════════════ STATE ═══════════════════ */
 window.data = [];
 window.isAdmin = false;
 window.page = "home";
+window.currentPet = null;
+window.prevPage = "home";
+window.currentSort = "name-az";
 
-/* SAFETY CATCH */
-window.addEventListener("error", e => {
-console.log("JS ERROR:", e.message);
-});
+const DEMAND_RANK={"Super High":5,"High":4,"Medium":3,"Low":2,"No Demand":1,"?":0};
+function parseVal(v){if(!v||v==="?")return 0;const s=String(v).replace(/,/g,"");const m=s.match(/^([\d.]+)\s*([a-zA-Z]*)$/);if(!m)return parseFloat(s)||0;const n=parseFloat(m[1]);const u=m[2].toLowerCase();const units={k:1e3,m:1e6,b:1e9,t:1e12,q:1e15,qi:1e18};return n*(units[u]||1);}
+function sortPets(arr,mode){const a=[...arr];switch(mode){
+case"name-az":return a.sort((x,y)=>x.name.localeCompare(y.name));
+case"name-za":return a.sort((x,y)=>y.name.localeCompare(x.name));
+case"value-high":return a.sort((x,y)=>parseVal(y.normal)-parseVal(x.normal));
+case"value-low":return a.sort((x,y)=>parseVal(x.normal)-parseVal(y.normal));
+case"demand-high":return a.sort((x,y)=>(DEMAND_RANK[y.demand]||0)-(DEMAND_RANK[x.demand]||0));
+case"demand-low":return a.sort((x,y)=>(DEMAND_RANK[x.demand]||0)-(DEMAND_RANK[y.demand]||0));
+default:return a;}}
 
-/* XSS PROTECTION */
-function esc(str) {
-const d = document.createElement("div");
-d.textContent = String(str);
-return d.innerHTML;
+const RARITIES = ["Basic","Rare","Epic","Legendary","Mythical","Special","Secret","Mega","Exclusive"];
+const RARITY_COLORS = {Basic:"#9ca3af",Rare:"#60a5fa",Epic:"#a78bfa",Legendary:"#fbbf24",Mythical:"#fb923c",Special:"#34d399",Secret:"#f43f5e",Mega:"#e879f9",Exclusive:"#38bdf8"};
+
+window.addEventListener("error", e => console.log("JS ERROR:", e.message));
+
+function esc(str){ const d=document.createElement("div"); d.textContent=String(str); return d.innerHTML; }
+
+/* ═══════════════ UI HELPERS ═══════════════ */
+function demandBadge(demand){
+const colors={"No Demand":"#6b7280","Low":"#4ade80","Medium":"#fbbf24","High":"#f97316","Super High":"#ef4444"};
+const d=demand||"?"; return `<span style="color:${colors[d]||"#6b7280"};font-weight:600;font-size:12px;">${esc(d)}</span>`;
 }
 
-/* DEMAND BADGE */
-function demandBadge(demand) {
-const colors = {"No Demand":"#9ca3af","Low":"#4ade80","Medium":"#fbbf24","High":"#f97316","Super High":"#ef4444"};
-const d = demand || "?";
-const color = colors[d] || "#6b7280";
-return `<span style="color:${color};font-weight:bold;">${esc(d)}</span>`;
+function showInfo(petName){
+const info=PET_INFO[petName]; if(!info) return;
+const o=document.createElement("div"); o.className="info-popup";
+o.innerHTML=`<div class="info-bubble"><button class="info-close">&times;</button><h3>${esc(petName)}</h3><span class="info-status ${info.s}">${STATUS_LABELS[info.s]||info.s}</span><p>${esc(info.t)}</p></div>`;
+o.addEventListener("click",e=>{if(e.target===o)o.remove();}); o.querySelector(".info-close").addEventListener("click",()=>o.remove());
+document.body.appendChild(o);
 }
 
-/* INFO POPUP */
-function showInfo(petName) {
-const info = PET_INFO[petName];
-if (!info) return;
-const overlay = document.createElement("div");
-overlay.className = "info-popup";
-overlay.innerHTML = `<div class="info-bubble">
-<button class="info-close">&times;</button>
-<h3>${esc(petName)}</h3>
-<span class="info-status ${info.s}">${STATUS_LABELS[info.s] || info.s}</span>
-<p>${esc(info.t)}</p>
-</div>`;
-overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
-overlay.querySelector(".info-close").addEventListener("click", () => overlay.remove());
-document.body.appendChild(overlay);
+/* ═══════════════ ICON LOADING ═══════════════ */
+const iconCache=new Map();
+async function loadIcon(assetId,imgEl){
+if(!assetId){imgEl.style.display="none";return;}
+if(iconCache.has(assetId)){imgEl.src=iconCache.get(assetId);imgEl.style.display="block";return;}
+try{const r=await fetch(`https://devilish-keys.devilish-codes.workers.dev/api/thumbnails?ids=${assetId}`);const j=await r.json();
+const url=j.data&&j.data[0]&&j.data[0].imageUrl;
+if(url){iconCache.set(assetId,url);imgEl.src=url;imgEl.style.display="block";}else{imgEl.style.display="none";}
+}catch(e){imgEl.style.display="none";}
 }
 
-function getIconId(name) {
-const pd = window.data.find(p => p.name === name);
-if (pd && pd.iconId) return pd.iconId;
-const icons = PET_ICONS[name];
-return icons && icons.normal ? icons.normal : "";
+const iconObserver=new IntersectionObserver((entries)=>{
+entries.forEach(en=>{if(en.isIntersecting){const wrap=en.target;const img=wrap.querySelector("img[data-asset]");if(img&&img.dataset.asset)loadIcon(img.dataset.asset,img);iconObserver.unobserve(wrap);}});
+},{rootMargin:"200px"});
+
+/* ═══════════════ STAT CALCULATOR ═══════════════ */
+function calcStats(petName,level,variant,shiny,mutations){
+const base=PET_STATS[petName]; if(!base) return null;
+const lm=1+(level/50)*0.5, vm={Normal:1,Golden:2,Rainbow:4}[variant], sm=shiny?1.25:1;
+let mm=1; if(mutations.Wet)mm*=1.25; if(mutations.Bloodmoon)mm*=1.4; if(mutations.Thunderstorm)mm*=1.4; if(mutations.UpsideDown)mm*=1.4;
+const t=lm*vm*sm*mm;
+return{Clicks:base.Clicks?Math.floor(base.Clicks*t):0,Shells:base.Shells?Math.floor(base.Shells*t):0,Gems:base.Gems?Math.floor(base.Gems*t):0,multiplier:t};
 }
 
-function petNameCell(name) {
-const hasInfo = PET_INFO[name];
-const assetId = getIconId(name);
-return `<img class="row-icon" data-asset="${esc(assetId)}" alt="${esc(name)}">`+
-`<span class="pet-link" data-pet="${esc(name)}">${esc(name)}</span>${hasInfo ? `<button class="info-btn" data-pet="${esc(name)}" title="Pet info">i</button>` : ""}`;
+function formatNum(n){if(n>=1e12)return(n/1e12).toFixed(1)+"T";if(n>=1e9)return(n/1e9).toFixed(1)+"B";if(n>=1e6)return(n/1e6).toFixed(1)+"M";if(n>=1e3)return(n/1e3).toFixed(1)+"K";return n.toLocaleString();}
+
+function updateCalcResults(petName){
+const level=parseInt(document.getElementById("levelSlider").value);
+const variant=document.querySelector('input[name="variant"]:checked').value;
+const shiny=document.getElementById("shinyCheck").checked;
+const mutations={};document.querySelectorAll(".mut-check").forEach(c=>{mutations[c.value]=c.checked;});
+const result=calcStats(petName,level,variant,shiny,mutations);
+if(!result){document.getElementById("calcResults").innerHTML='<p style="color:var(--text-3);">No stat data available.</p>';document.getElementById("multBreakdown").textContent="";return;}
+const stats=PET_STATS[petName];let h="";
+if(stats.Clicks)h+=`<div class="stat-card"><div class="stat-label">Clicks</div><div class="stat-num">${formatNum(result.Clicks)}</div></div>`;
+if(stats.Shells)h+=`<div class="stat-card"><div class="stat-label">Shells</div><div class="stat-num">${formatNum(result.Shells)}</div></div>`;
+if(stats.Gems)h+=`<div class="stat-card"><div class="stat-label">Gems</div><div class="stat-num">${formatNum(result.Gems)}</div></div>`;
+document.getElementById("calcResults").innerHTML=h;
+const lm=(1+(level/50)*0.5).toFixed(2),vm={Normal:1,Golden:2,Rainbow:4}[variant],sm=shiny?1.25:1;
+const am=Object.entries(mutations).filter(([,v])=>v).map(([k])=>k);
+document.getElementById("multBreakdown").textContent=`Total: ${result.multiplier.toFixed(2)}\u00d7 (Level ${lm}\u00d7 \u00b7 Variant ${vm}\u00d7 \u00b7 Shiny ${sm}\u00d7 \u00b7 Muts: ${am.join(", ")||"none"})`;
+updateIconEffects(petName,variant,shiny,mutations);
 }
 
-function bindInfoButtons(container) {
-container.querySelectorAll(".info-btn").forEach(btn => {
-btn.addEventListener("click", (e) => { e.stopPropagation(); showInfo(btn.dataset.pet); });
-});
+function updateIconEffects(petName,variant,shiny,mutations){
+const icons=PET_ICONS[petName];const img=document.getElementById("petIcon");const wrap=document.getElementById("petIconWrap");
+if(!icons||!img)return;
+let assetId=icons.normal;if(variant==="Golden"&&icons.golden)assetId=icons.golden;
+if(assetId&&assetId!==img.dataset.assetId){img.dataset.assetId=assetId;loadIcon(assetId,img);}
+let f=[];
+if(variant==="Golden"&&!icons.golden)f.push("sepia(1) saturate(3) brightness(1.1) hue-rotate(15deg)");
+if(mutations.Wet)f.push("saturate(1.3) hue-rotate(20deg)");
+if(mutations.Bloodmoon)f.push("saturate(1.5) hue-rotate(-15deg)");
+if(mutations.Thunderstorm)f.push("brightness(1.2) contrast(1.1)");
+img.classList.toggle("icon-rainbow",variant==="Rainbow");
+img.style.filter=variant==="Rainbow"?"":(f.length?f.join(" "):"");
+img.style.transform=mutations.UpsideDown?"scaleY(-1)":"";
+wrap.style.animation=shiny?"shinyPulse 1.5s ease-in-out infinite":"";
 }
 
-function bindPetLinks(container) {
-container.querySelectorAll(".pet-link").forEach(link => {
-link.addEventListener("click", () => showPetPage(link.dataset.pet));
-});
-}
-
-/* ICON LOADING */
-const iconCache = new Map();
-let iconLoadId = 0;
-async function loadIcon(assetId, imgEl) {
-if (!assetId) { imgEl.style.display = "none"; return; }
-if (iconCache.has(assetId)) { imgEl.src = iconCache.get(assetId); imgEl.style.display = "block"; return; }
-const myId = ++iconLoadId;
-imgEl.dataset.loadId = myId;
-try {
-const res = await fetch(`https://devilish-keys.devilish-codes.workers.dev/api/thumbnails?ids=${assetId}`);
-const j = await res.json();
-if (String(imgEl.dataset.loadId) !== String(myId)) return;
-const url = j.data && j.data[0] && j.data[0].imageUrl;
-if (url) { iconCache.set(assetId, url); imgEl.src = url; imgEl.style.display = "block"; }
-else { imgEl.style.display = "none"; }
-} catch(e) { if (String(imgEl.dataset.loadId) === String(myId)) imgEl.style.display = "none"; }
-}
-
-function loadRowIcons(container) {
-container.querySelectorAll(".row-icon[data-asset]").forEach(img => {
-const id = img.dataset.asset;
-if (id) loadIcon(id, img);
-});
-}
-
-/* STAT CALCULATOR */
-function getBaseStats(petName) {
-const pd = window.data.find(p => p.name === petName);
-if (pd && (pd.statClicks || pd.statShells || pd.statGems)) {
-const s = {};
-if (pd.statClicks) s.Clicks = pd.statClicks;
-if (pd.statShells) s.Shells = pd.statShells;
-if (pd.statGems) s.Gems = pd.statGems;
-return s;
-}
-return PET_STATS[petName] || null;
-}
-
-function calcStats(petName, level, variant, shiny, mutations) {
-const base = getBaseStats(petName);
-if (!base) return null;
-const levelMult = 1 + (level / 50) * 0.5;
-const variantMult = {Normal:1,Golden:2,Rainbow:4}[variant];
-const shinyMult = shiny ? 1.25 : 1;
-let mutMult = 1;
-if (mutations.Wet) mutMult *= 1.25;
-if (mutations.Bloodmoon) mutMult *= 1.4;
-if (mutations.Thunderstorm) mutMult *= 1.4;
-if (mutations.UpsideDown) mutMult *= 1.4;
-const total = levelMult * variantMult * shinyMult * mutMult;
-return {
-Clicks: base.Clicks ? Math.floor(base.Clicks * total) : 0,
-Shells: base.Shells ? Math.floor(base.Shells * total) : 0,
-Gems: base.Gems ? Math.floor(base.Gems * total) : 0,
-multiplier: total
-};
-}
-
-function formatNum(n) {
-if (n >= 1e12) return (n/1e12).toFixed(2) + "T";
-if (n >= 1e9) return (n/1e9).toFixed(2) + "B";
-if (n >= 1e6) return (n/1e6).toFixed(2) + "M";
-if (n >= 1e3) return (n/1e3).toFixed(2) + "K";
-return n.toLocaleString();
-}
-
-function updateCalcResults(petName) {
-const level = parseInt(document.getElementById("levelSlider").value);
-const variant = document.querySelector('input[name="variant"]:checked').value;
-const shiny = document.getElementById("shinyCheck").checked;
-const mutations = {};
-document.querySelectorAll(".mut-check").forEach(c => { mutations[c.value] = c.checked; });
-
-const result = calcStats(petName, level, variant, shiny, mutations);
-if (!result) {
-document.getElementById("calcResults").innerHTML = '<p style="color:#6b7280;">No stat data available.</p>';
-document.getElementById("multBreakdown").textContent = "";
-return;
-}
-
-const stats = getBaseStats(petName);
-let html = "";
-if (stats.Clicks) html += `<div class="stat-card"><div class="stat-label">Clicks</div><div class="stat-num">${formatNum(result.Clicks)}</div></div>`;
-if (stats.Shells) html += `<div class="stat-card"><div class="stat-label">Shells</div><div class="stat-num">${formatNum(result.Shells)}</div></div>`;
-if (stats.Gems) html += `<div class="stat-card"><div class="stat-label">Gems</div><div class="stat-num">${formatNum(result.Gems)}</div></div>`;
-document.getElementById("calcResults").innerHTML = html;
-
-const lm = (1 + (level/50)*0.5).toFixed(2);
-const vm = {Normal:1,Golden:2,Rainbow:4}[variant];
-const sm = shiny ? 1.25 : 1;
-const activeMuts = Object.entries(mutations).filter(([,v])=>v).map(([k])=>k);
-document.getElementById("multBreakdown").textContent =
-`Total: ${result.multiplier.toFixed(2)}\u00d7 (Level ${lm}\u00d7 \u00b7 Variant ${vm}\u00d7 \u00b7 Shiny ${sm}\u00d7 \u00b7 Muts: ${activeMuts.join(", ")||"none"})`;
-
-updateIconEffects(petName, variant, shiny, mutations);
-}
-
-function updateIconEffects(petName, variant, shiny, mutations) {
-const icons = PET_ICONS[petName];
-const img = document.getElementById("petIcon");
-const wrap = document.getElementById("petIconWrap");
-if (!icons || !img) return;
-
-let assetId = icons.normal;
-if (variant === "Golden" && icons.golden) assetId = icons.golden;
-
-if (assetId && assetId !== img.dataset.assetId) {
-img.dataset.assetId = assetId;
-loadIcon(assetId, img);
-}
-
-let filters = [];
-if (variant === "Golden" && !icons.golden) filters.push("sepia(1) saturate(3) brightness(1.1) hue-rotate(15deg)");
-if (mutations.Wet) filters.push("saturate(1.3) hue-rotate(20deg)");
-if (mutations.Bloodmoon) filters.push("saturate(1.5) hue-rotate(-15deg)");
-if (mutations.Thunderstorm) filters.push("brightness(1.2) contrast(1.1)");
-
-img.classList.toggle("icon-rainbow", variant === "Rainbow");
-img.style.filter = variant === "Rainbow" ? "" : (filters.length ? filters.join(" ") : "");
-img.style.transform = mutations.UpsideDown ? "scaleY(-1)" : "";
-wrap.style.animation = shiny ? "shinyPulse 1.5s ease-in-out infinite" : "";
-}
-
-async function showPetPage(petName) {
-window.prevPage = window.page;
-window.page = "pet";
-window.currentPet = petName;
-
-document.getElementById("homePage").style.display = "none";
-document.getElementById("searchPage").style.display = "none";
-document.getElementById("listPage").style.display = "none";
-document.getElementById("petPage").style.display = "block";
-
-const pet = ALL_PETS.find(p => p.name === petName);
-const info = PET_INFO[petName];
-const petData = window.data.find(p => p.name === petName);
-
-document.getElementById("petNameTitle").textContent = petName;
-document.getElementById("petRarityLabel").textContent = pet ? pet.rarity : "Unknown";
-
-const statusLine = document.getElementById("petStatusLine");
-statusLine.innerHTML = info ? `Status: <span class="info-status ${info.s}">${STATUS_LABELS[info.s] || info.s}</span>` : "";
-document.getElementById("petDemandLine").innerHTML = petData && petData.demand ? `Demand: ${demandBadge(petData.demand)}` : "";
-document.getElementById("petDescLine").textContent = info ? info.t : "";
-
-const valRow = document.getElementById("petValuesRow");
-valRow.innerHTML = petData
-? `<div class="pet-val-card"><div class="val-label">Normal</div><div class="val-num">${esc(petData.normal)}</div></div>` +
-  `<div class="pet-val-card"><div class="val-label">Golden</div><div class="val-num">${esc(petData.golden)}</div></div>` +
-  `<div class="pet-val-card"><div class="val-label">Rainbow</div><div class="val-num">${esc(petData.rainbow)}</div></div>`
-: '<p style="color:#6b7280;">No value data yet.</p>';
-
-document.getElementById("levelSlider").value = 0;
-document.getElementById("levelDisplay").textContent = "0";
-document.querySelector('input[name="variant"][value="Normal"]').checked = true;
-document.getElementById("shinyCheck").checked = false;
-document.querySelectorAll(".mut-check").forEach(c => c.checked = false);
-
-const iconAsset = getIconId(petName);
-const icons = PET_ICONS[petName];
-const img = document.getElementById("petIcon");
-const wrap = document.getElementById("petIconWrap");
-img.style.display = "none";
-img.alt = petName;
-img.dataset.assetId = "";
-img.style.filter = "";
-img.style.transform = "";
-img.classList.remove("icon-rainbow");
-wrap.style.animation = "";
-img.onerror = () => { img.style.display = "none"; wrap.classList.remove("loading-icon"); };
-
-if (iconAsset) {
-img.dataset.assetId = iconAsset;
-wrap.classList.add("loading-icon");
-loadIcon(iconAsset, img).then(() => wrap.classList.remove("loading-icon"));
-}
-
+/* ═══════════════ PET DETAIL MODAL ═══════════════ */
+function showPetPage(petName){
+window.currentPet=petName;
+const pet=ALL_PETS.find(p=>p.name===petName);
+const info=PET_INFO[petName];
+const petData=window.data.find(p=>p.name===petName);
+document.getElementById("petNameTitle").textContent=petName;
+document.getElementById("petRarityLabel").textContent=pet?pet.rarity:"Unknown";
+document.getElementById("petRarityLabel").style.color=pet?RARITY_COLORS[pet.rarity]:"";
+const sl=document.getElementById("petStatusLine");
+sl.innerHTML=info?`Status: <span class="info-status ${info.s}">${STATUS_LABELS[info.s]||info.s}</span>`:"";
+document.getElementById("petDemandLine").innerHTML=petData&&petData.demand?`Demand: ${demandBadge(petData.demand)}`:"";
+document.getElementById("petDescLine").textContent=info?info.t:"";
+const vr=document.getElementById("petValuesRow");
+vr.innerHTML=petData
+?`<div class="pet-val-card"><div class="val-label">Normal</div><div class="val-num">${esc(petData.normal)}</div></div>`+
+`<div class="pet-val-card"><div class="val-label">Golden</div><div class="val-num">${esc(petData.golden)}</div></div>`+
+`<div class="pet-val-card"><div class="val-label">Rainbow</div><div class="val-num">${esc(petData.rainbow)}</div></div>`
+:'<p style="color:var(--text-3);">No value data yet.</p>';
+document.getElementById("levelSlider").value=0;document.getElementById("levelDisplay").textContent="0";
+document.querySelector('input[name="variant"][value="Normal"]').checked=true;
+document.getElementById("shinyCheck").checked=false;document.querySelectorAll(".mut-check").forEach(c=>c.checked=false);
+const icons=PET_ICONS[petName];const img=document.getElementById("petIcon");const wrap=document.getElementById("petIconWrap");
+img.style.display="none";img.dataset.assetId="";img.style.filter="";img.style.transform="";img.classList.remove("icon-rainbow");wrap.style.animation="";
+if(icons&&icons.normal){img.dataset.assetId=icons.normal;loadIcon(icons.normal,img);}
 updateCalcResults(petName);
+document.getElementById("petModal").style.display="flex";
 }
 
-/* PET PAGE CONTROLS */
-document.getElementById("petBackBtn").addEventListener("click", () => goPage(window.prevPage || "home"));
+function closePetModal(){document.getElementById("petModal").style.display="none";window.currentPet=null;}
+document.getElementById("modalClose").addEventListener("click",closePetModal);
+document.getElementById("petModal").addEventListener("click",e=>{if(e.target.id==="petModal")closePetModal();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.getElementById("petModal").style.display==="flex")closePetModal();});
 
-document.getElementById("levelSlider").addEventListener("input", (e) => {
-document.getElementById("levelDisplay").textContent = e.target.value;
-if (window.currentPet) updateCalcResults(window.currentPet);
-});
+document.getElementById("levelSlider").addEventListener("input",e=>{document.getElementById("levelDisplay").textContent=e.target.value;if(window.currentPet)updateCalcResults(window.currentPet);});
+document.querySelectorAll('input[name="variant"]').forEach(r=>{r.addEventListener("change",()=>{if(window.currentPet)updateCalcResults(window.currentPet);});});
+document.getElementById("shinyCheck").addEventListener("change",()=>{if(window.currentPet)updateCalcResults(window.currentPet);});
+document.querySelectorAll(".mut-check").forEach(c=>{c.addEventListener("change",()=>{if(window.currentPet)updateCalcResults(window.currentPet);});});
 
-document.querySelectorAll('input[name="variant"]').forEach(r => {
-r.addEventListener("change", () => { if (window.currentPet) updateCalcResults(window.currentPet); });
-});
-
-document.getElementById("shinyCheck").addEventListener("change", () => {
-if (window.currentPet) updateCalcResults(window.currentPet);
-});
-
-document.querySelectorAll(".mut-check").forEach(c => {
-c.addEventListener("change", () => { if (window.currentPet) updateCalcResults(window.currentPet); });
-});
-
-/* LOAD PETS FROM FIRESTORE */
-async function loadPets() {
-try {
-const snap = await getDocs(collection(db, "pets"));
-window.data = [];
-snap.forEach(d => {
-window.data.push({ id: d.id, ...d.data() });
-});
-document.getElementById("loadingMsg").style.display = "none";
-document.getElementById("petTable").style.display = "table";
-render(window.page);
-} catch (err) {
-console.log("Firestore load error:", err.message);
-document.getElementById("loadingMsg").textContent = "Failed to load pets.";
-}
+/* ═══════════════ RENDERING ═══════════════ */
+function staggerReveal(container,selector){
+container.querySelectorAll(selector).forEach((el,i)=>{el.classList.add("reveal");el.style.animationDelay=`${0.03+i*0.03}s`;});
 }
 
-/* SEED ALL PETS */
-window.seedPets = async function() {
-if (!window.isAdmin) { alert("Not admin"); return; }
-if (!confirm("Seed all 184 pets with '?' values? Existing pets will NOT be overwritten.")) return;
+function buildCard(p){
+const icons=PET_ICONS[p.name];const hasIcon=icons&&icons.normal;const hasInfo=PET_INFO[p.name];
+const card=document.createElement("div");card.className="pet-card";
+card.innerHTML=
+`<div class="pet-card-icon"><img data-asset="${hasIcon?icons.normal:""}" alt="${esc(p.name)}" style="display:none;"></div>`+
+`<div class="pet-card-name">${esc(p.name)}</div>`+
+`<div class="pet-card-values"><div class="pcv"><span class="pcv-label">N</span><span class="pcv-val">${esc(p.normal||"?")}</span></div><div class="pcv"><span class="pcv-label">G</span><span class="pcv-val">${esc(p.golden||"?")}</span></div><div class="pcv"><span class="pcv-label">R</span><span class="pcv-val">${esc(p.rainbow||"?")}</span></div></div>`+
+`<div class="pet-card-demand">${demandBadge(p.demand)}</div>`+
+(hasInfo?`<button class="pet-card-info" data-pet="${esc(p.name)}">i</button>`:"")+
+(window.isAdmin?`<button class="pet-card-del" data-id="${esc(p.id)}">&times;</button>`:"");
+card.addEventListener("click",e=>{if(!e.target.closest(".pet-card-info")&&!e.target.closest(".pet-card-del"))showPetPage(p.name);});
+const infoBtn=card.querySelector(".pet-card-info");if(infoBtn)infoBtn.addEventListener("click",e=>{e.stopPropagation();showInfo(p.name);});
+const delBtn=card.querySelector(".pet-card-del");if(delBtn)delBtn.addEventListener("click",e=>{e.stopPropagation();deletePet(p.id);});
+return card;
+}
 
-const existing = new Set(window.data.map(p => p.name.toLowerCase().replace(/[^a-z0-9]/g, "_")));
-let added = 0;
+function render(rarity){
+const grid=document.getElementById("petGrid");grid.innerHTML="";
+document.getElementById("rarityTitle").textContent=rarity;
+document.getElementById("rarityDot").style.background=RARITY_COLORS[rarity]||"#9ca3af";
+const pets=sortPets(window.data.filter(p=>p.rarity===rarity),window.currentSort);
+document.getElementById("listCount").textContent=`${pets.length} pets`;
+pets.forEach(p=>{grid.appendChild(buildCard(p));});
+grid.querySelectorAll(".pet-card-icon").forEach(wrap=>{if(wrap.querySelector("img").dataset.asset)iconObserver.observe(wrap);});
+staggerReveal(grid,".pet-card");
+}
 
-const batch = writeBatch(db);
-for (const pet of ALL_PETS) {
-const docId = pet.name.toLowerCase().replace(/[^a-z0-9]/g, "_");
-if (existing.has(docId)) continue;
-const isLow = ["Basic","Rare","Epic","Legendary"].includes(pet.rarity);
-batch.set(doc(db, "pets", docId), {
-name: pet.name, rarity: pet.rarity,
-normal: isLow ? "0" : "?", golden: isLow ? "0" : "?", rainbow: isLow ? "0" : "?",
-demand: isLow ? "No Demand" : "?"
+function renderSearch(query){
+const grid=document.getElementById("searchGrid");const nr=document.getElementById("noResults");const sh=document.getElementById("searchHeader");
+grid.innerHTML="";
+const q=query.toLowerCase();const matches=q?window.data.filter(p=>p.name.toLowerCase().includes(q)):[];
+if(!q){nr.style.display="none";sh.textContent="";return;}
+if(!matches.length){nr.style.display="block";sh.innerHTML=`No results for "<strong>${esc(query)}</strong>"`;return;}
+nr.style.display="none";sh.innerHTML=`<strong>${matches.length}</strong> results for "<strong>${esc(query)}</strong>"`;
+sortPets(matches,window.currentSort).forEach(p=>{grid.appendChild(buildCard(p));});
+grid.querySelectorAll(".pet-card-icon").forEach(wrap=>{if(wrap.querySelector("img").dataset.asset)iconObserver.observe(wrap);});
+staggerReveal(grid,".pet-card");
+}
+
+function renderAll(){
+const grid=document.getElementById("allGrid");grid.innerHTML="";
+const pets=sortPets(window.data,window.currentSort);
+document.getElementById("allCount").textContent=`${pets.length} pets`;
+pets.forEach(p=>{grid.appendChild(buildCard(p));});
+grid.querySelectorAll(".pet-card-icon").forEach(wrap=>{if(wrap.querySelector("img").dataset.asset)iconObserver.observe(wrap);});
+staggerReveal(grid,".pet-card");
+}
+
+/* ═══════════════ NAVIGATION ═══════════════ */
+function showPage(id){document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));const el=document.getElementById(id);if(el)el.classList.add("active");}
+
+function goPage(page,pushState){
+window.prevPage=window.page;window.page=page;
+document.getElementById("rarityMenu").classList.remove("open");
+updateActiveTabs(page);
+if(pushState!==false){const hash=page==="home"?"":page;history.pushState(null,"","#"+hash);}
+if(page==="home"){showPage("homePage");}
+else if(page==="all"){showPage("allPage");renderAll();}
+else if(page==="search"){showPage("searchPage");renderSearch("");}
+else{showPage("listPage");render(page);}
+}
+
+function updateActiveTabs(page){
+document.querySelectorAll(".nav-tab").forEach(t=>{t.classList.remove("active");if(t.dataset.page===page)t.classList.add("active");});
+}
+
+/* ═══════════════ BUILD NAV & HOME ═══════════════ */
+const rarityMenu=document.getElementById("rarityMenu");
+RARITIES.forEach(r=>{
+const btn=document.createElement("button");
+btn.innerHTML=`<span class="rarity-dot" style="background:${RARITY_COLORS[r]}"></span> ${r}`;
+btn.addEventListener("click",()=>goPage(r));
+rarityMenu.appendChild(btn);
 });
-added++;
+
+document.querySelectorAll(".nav-tab[data-page]").forEach(tab=>{tab.addEventListener("click",()=>goPage(tab.dataset.page));});
+document.getElementById("rarityBtn").addEventListener("click",e=>{e.stopPropagation();rarityMenu.classList.toggle("open");});
+document.addEventListener("click",e=>{if(!e.target.closest(".nav-dd"))rarityMenu.classList.remove("open");if(!e.target.closest(".sort-dd"))document.querySelectorAll(".sort-menu").forEach(m=>m.classList.remove("open"));});
+
+/* Sort buttons (all sort menus) */
+function applySort(mode){
+window.currentSort=mode;
+document.querySelectorAll(".sort-menu button").forEach(b=>{b.classList.toggle("active",b.dataset.sort===mode);});
+if(window.page==="all")renderAll();
+else if(window.page==="search"){const q=document.getElementById("headerSearch").value;if(q)renderSearch(q);}
+else if(window.page!=="home")render(window.page);
+}
+document.querySelectorAll(".sort-btn").forEach(btn=>{btn.addEventListener("click",e=>{e.stopPropagation();const menu=btn.nextElementSibling;document.querySelectorAll(".sort-menu").forEach(m=>{if(m!==menu)m.classList.remove("open");});menu.classList.toggle("open");});});
+document.querySelectorAll(".sort-menu button").forEach(btn=>{btn.addEventListener("click",e=>{e.stopPropagation();applySort(btn.dataset.sort);btn.closest(".sort-menu").classList.remove("open");});});
+
+const rarityGrid=document.getElementById("rarityGrid");
+RARITIES.forEach(r=>{
+const count=ALL_PETS.filter(p=>p.rarity===r).length;
+const card=document.createElement("button");card.className="rarity-card";
+card.innerHTML=`<span class="rarity-dot" style="background:${RARITY_COLORS[r]}"></span><span>${r}</span><span class="rarity-card-count">${count}</span>`;
+card.addEventListener("click",()=>goPage(r));
+rarityGrid.appendChild(card);
+});
+
+/* ═══════════════ SEARCH ═══════════════ */
+function syncSearch(v,source){
+document.getElementById("heroSearch").value=v;
+document.getElementById("headerSearch").value=v;
+document.getElementById("searchPageInput").value=v;
+if(!v.trim()){goPage("all");return;}
+if(window.page!=="search")goPage("search");
+const spi=document.getElementById("searchPageInput");
+if(source!=="searchPage"&&spi.offsetParent!==null)spi.focus();
+else{const hs=document.getElementById("headerSearch");if(source!=="header"&&hs.offsetParent!==null)hs.focus();}
+renderSearch(v);
+history.replaceState(null,"","#search?q="+encodeURIComponent(v));
+}
+document.getElementById("heroSearch").addEventListener("input",e=>syncSearch(e.target.value,"hero"));
+document.getElementById("headerSearch").addEventListener("input",e=>syncSearch(e.target.value,"header"));
+document.getElementById("searchPageInput").addEventListener("input",e=>syncSearch(e.target.value,"searchPage"));
+
+/* ═══════════════ FIRESTORE ═══════════════ */
+async function loadPets(){
+try{const snap=await getDocs(collection(db,"pets"));window.data=[];
+snap.forEach(d=>{window.data.push({id:d.id,...d.data()});});
+if(window.page==="all")renderAll();
+else if(window.page!=="home"&&window.page!=="search")render(window.page);
+}catch(err){console.log("Firestore load error:",err.message);}
 }
 
-if (added === 0) { alert("All pets already exist."); return; }
-
-try {
-await batch.commit();
-await loadPets();
-alert("Seeded " + added + " pets!");
-} catch (err) {
-alert("Seed failed: " + err.message);
-}
+window.seedPets=async function(){
+if(!window.isAdmin){alert("Not admin");return;}if(!confirm("Seed all 184 pets?"))return;
+const existing=new Set(window.data.map(p=>p.name.toLowerCase().replace(/[^a-z0-9]/g,"_")));let added=0;
+const batch=writeBatch(db);
+for(const pet of ALL_PETS){const docId=pet.name.toLowerCase().replace(/[^a-z0-9]/g,"_");if(existing.has(docId))continue;
+const isLow=["Basic","Rare","Epic","Legendary"].includes(pet.rarity);
+batch.set(doc(db,"pets",docId),{name:pet.name,rarity:pet.rarity,normal:isLow?"0":"?",golden:isLow?"0":"?",rainbow:isLow?"0":"?",demand:isLow?"No Demand":"?"});added++;}
+if(!added){alert("All pets already exist.");return;}
+try{await batch.commit();await loadPets();alert("Seeded "+added+" pets!");}catch(err){alert("Seed failed: "+err.message);}
 };
 
-/* SET DEMAND VALUES (MIGRATION) */
-window.setDemandValues = async function() {
-if (!window.isAdmin) { alert("Not admin"); return; }
-if (!confirm("Set Basic-Legendary values to 0 / No Demand, and ? demand for others?")) return;
-
-const lowRarities = new Set(["Basic","Rare","Epic","Legendary"]);
-const batch = writeBatch(db);
-
-for (const pet of window.data) {
-const docRef = doc(db, "pets", pet.id);
-if (lowRarities.has(pet.rarity)) {
-batch.set(docRef, { normal: "0", golden: "0", rainbow: "0", demand: "No Demand" }, { merge: true });
-} else {
-batch.set(docRef, { demand: pet.demand || "?" }, { merge: true });
-}
-}
-
-try {
-await batch.commit();
-await loadPets();
-alert("Updated demand values!");
-} catch (err) {
-alert("Update failed: " + err.message);
-}
+window.setDemandValues=async function(){
+if(!window.isAdmin){alert("Not admin");return;}if(!confirm("Set demand values?"))return;
+const low=new Set(["Basic","Rare","Epic","Legendary"]);const batch=writeBatch(db);
+for(const pet of window.data){const ref=doc(db,"pets",pet.id);
+if(low.has(pet.rarity))batch.set(ref,{normal:"0",golden:"0",rainbow:"0",demand:"No Demand"},{merge:true});
+else batch.set(ref,{demand:pet.demand||"?"},{merge:true});}
+try{await batch.commit();await loadPets();alert("Updated!");}catch(err){alert("Failed: "+err.message);}
 };
 
-window.fixQuestionMarks = async function() {
-if (!window.isAdmin) { alert("Not admin"); return; }
-const batch = writeBatch(db);
-let count = 0;
-for (const pet of window.data) {
-const updates = {};
-if (pet.normal === "?") updates.normal = "0";
-if (pet.golden === "?") updates.golden = "0";
-if (pet.rainbow === "?") updates.rainbow = "0";
-if (pet.demand === "?") updates.demand = "No Demand";
-if (Object.keys(updates).length > 0) {
-batch.set(doc(db, "pets", pet.id), updates, { merge: true });
-count++;
-}
-}
-if (count === 0) { alert("No pets with ? values found."); return; }
-if (!confirm(`Update ${count} pets?`)) return;
-try {
-await batch.commit();
-await loadPets();
-alert(`Updated ${count} pets!`);
-} catch (err) { alert("Failed: " + err.message); }
+window.addPet=async function(){
+if(!window.isAdmin){alert("Not admin");return;}
+const n=document.getElementById("name").value.trim(),no=document.getElementById("normal").value.trim();
+const g=document.getElementById("golden").value.trim(),r=document.getElementById("rainbow").value.trim();
+const ra=document.getElementById("rarity").value,dem=document.getElementById("demand").value;
+if(!n||!no){alert("Fill required fields");return;}
+const docId=n.toLowerCase().replace(/[^a-z0-9]/g,"_");
+try{await setDoc(doc(db,"pets",docId),{name:n,normal:no,golden:g,rainbow:r,rarity:ra,demand:dem});
+await loadPets();["name","normal","golden","rainbow"].forEach(id=>document.getElementById(id).value="");document.getElementById("demand").value="?";alert("Saved!");
+}catch(err){alert("Save failed: "+err.message);}
 };
 
-/* MENU */
-window.toggleMenu = function(){
-const m = document.getElementById("menu");
-if(!m) return;
-m.style.display = m.style.display === "block" ? "none" : "block";
-};
-
-window.goPage = function(page){
-if (window.page === "home" && page !== "home" && document.getElementById("editorToolbar").style.display === "flex") {
-cancelHomeEdit();
-}
-window.page = page;
-document.getElementById("menu").style.display = "none";
-document.getElementById("homePage").style.display = page === "home" ? "block" : "none";
-document.getElementById("searchPage").style.display = page === "search" ? "block" : "none";
-document.getElementById("petPage").style.display = "none";
-document.getElementById("listPage").style.display = (page !== "home" && page !== "search") ? "block" : "none";
-document.getElementById("homeEditBtn").style.display = (window.isAdmin && page === "home") ? "inline-block" : "none";
-if (page === "search") {
-document.getElementById("searchBar").value = "";
-renderSearch("");
-document.getElementById("searchBar").focus();
-} else if (page !== "home") {
-render(page);
-}
-};
-
-/* SORT STATE */
-window.sortKey = null;
-window.sortDir = 0;
-
-function parseVal(str) {
-  if (!str || str === "?") return 0;
-  const n = String(str).replace(/[^0-9.]/g, "");
-  return parseFloat(n) || 0;
+async function deletePet(id){
+if(!window.isAdmin)return;if(!confirm("Delete this pet?"))return;
+try{await deleteDoc(doc(db,"pets",id));await loadPets();}catch(err){alert("Delete failed: "+err.message);}
 }
 
-const DEMAND_RANK = {"No Demand":0,"Low":1,"Medium":2,"High":3,"Super High":4};
-function demandRankVal(d) { return DEMAND_RANK[d] ?? -1; }
+/* ═══════════════ ADMIN (HIDDEN) ═══════════════ */
+const adminPanel=document.getElementById("adminPanel");
+function toggleAdmin(){adminPanel.classList.toggle("open");}
 
-function sortPets(arr) {
-  if (!window.sortKey || window.sortDir === 0) return arr;
-  const k = window.sortKey, d = window.sortDir;
-  return arr.slice().sort((a, b) => {
-    let cmp;
-    if (k === "name") cmp = (a.name || "").localeCompare(b.name || "");
-    else if (k === "demand") cmp = demandRankVal(a.demand) - demandRankVal(b.demand);
-    else cmp = parseVal(a[k]) - parseVal(b[k]);
-    return cmp * d;
-  });
-}
+// Triple-tap logo = admin (touch/mobile only)
+(function(){let taps=0,timer;document.getElementById("logoArea").addEventListener("touchend",e=>{taps++;if(taps===1)timer=setTimeout(()=>{taps=0;},600);if(taps===3){clearTimeout(timer);taps=0;toggleAdmin();}});})();
 
-function updateSortArrows() {
-  document.querySelectorAll(".sortable").forEach(th => {
-    const arrow = th.querySelector(".sort-arrow");
-    if (th.dataset.sort === window.sortKey && window.sortDir !== 0) {
-      th.classList.add("sort-active");
-      arrow.textContent = window.sortDir === 1 ? "▲" : "▼";
-    } else {
-      th.classList.remove("sort-active");
-      arrow.textContent = "⇅";
-    }
-  });
-}
+// Mobile "Edit Home Page" button in admin panel
+document.getElementById("mobileEditHomeBtn").addEventListener("click",()=>{if(!window.isAdmin)return;adminPanel.classList.remove("open");toggleHomeEditor();});
 
-function cycleSortCol(key) {
-  if (window.sortKey === key) {
-    window.sortDir = window.sortDir === 1 ? -1 : window.sortDir === -1 ? 0 : 1;
-    if (window.sortDir === 0) window.sortKey = null;
-  } else {
-    window.sortKey = key;
-    window.sortDir = 1;
-  }
-  updateSortArrows();
-  if (window.page === "search") renderSearch(document.getElementById("searchBar").value);
-  else if (window.page !== "home" && window.page !== "pet") render(window.page);
-}
-
-document.querySelectorAll(".sortable").forEach(th => {
-  th.addEventListener("click", () => cycleSortCol(th.dataset.sort));
+// Alt+Shift+P = admin, Alt+Shift+M = super admin, Alt+Shift+E = home editor
+document.addEventListener("keydown",e=>{
+if(e.altKey&&e.shiftKey&&e.key==="P"){e.preventDefault();toggleAdmin();}
+if(e.altKey&&e.shiftKey&&e.key==="M"){e.preventDefault();document.getElementById("superAdminPanel").classList.toggle("open");}
+if(e.altKey&&e.shiftKey&&e.key==="E"){e.preventDefault();if(window.isAdmin)toggleHomeEditor();}
 });
 
-/* RENDER */
-function render(page){
-const tbody = document.getElementById("tableBody");
-if(!tbody) return;
-
-tbody.innerHTML = "";
-
-const deleteCol = document.getElementById("deleteCol");
-if (deleteCol) deleteCol.style.display = window.isAdmin ? "table-cell" : "none";
-
-const filtered = sortPets(window.data.filter(p => p.rarity === page));
-const listCount = document.getElementById("listCount");
-if (listCount) { listCount.textContent = `Showing ${filtered.length} pets`; listCount.style.display = filtered.length ? "block" : "none"; }
-
-filtered.forEach(p => {
-const tr = document.createElement("tr");
-tr.innerHTML =
-`<td>${petNameCell(p.name)}</td>` +
-`<td>${esc(p.normal)}</td>` +
-`<td>${esc(p.golden)}</td>` +
-`<td>${esc(p.rainbow)}</td>` +
-`<td>${demandBadge(p.demand)}</td>` +
-(window.isAdmin ? `<td><button class="delete-btn" data-id="${esc(p.id)}">Delete</button></td>` : "");
-tbody.appendChild(tr);
+document.getElementById("adminClose").addEventListener("click",()=>adminPanel.classList.remove("open"));
+document.getElementById("superAdminClose").addEventListener("click",()=>document.getElementById("superAdminPanel").classList.remove("open"));
+document.getElementById("loginBtn").addEventListener("click",()=>{
+const e=document.getElementById("email").value,p=document.getElementById("password").value;
+signInWithEmailAndPassword(auth,e,p).then(()=>{document.getElementById("email").value="";document.getElementById("password").value="";}).catch(err=>alert(err.message));
 });
+document.getElementById("logoutBtn").addEventListener("click",()=>signOut(auth).catch(err=>alert(err.message)));
+document.getElementById("addPetBtn").addEventListener("click",()=>window.addPet());
+document.getElementById("seedBtn").addEventListener("click",()=>window.seedPets());
+document.getElementById("demandBtn").addEventListener("click",()=>window.setDemandValues());
 
-bindInfoButtons(tbody);
-bindPetLinks(tbody);
-loadRowIcons(tbody);
-
-tbody.querySelectorAll(".delete-btn").forEach(btn => {
-btn.addEventListener("click", () => deletePet(btn.dataset.id));
+onAuthStateChanged(auth,user=>{
+window.isAdmin=!!user;document.getElementById("adminTools").style.display=user?"block":"none";
+document.getElementById("adminLogin").style.display=user?"none":"block";
+document.getElementById("adminTitle").textContent=user?"Admin Panel":"Admin Login";
+document.getElementById("mobileEditHomeBtn").classList.toggle("visible",!!user);
+document.getElementById("superAdminTools").style.display=user?"block":"none";
+document.getElementById("superAdminMsg").style.display=user?"none":"block";
+if(window.page==="all")renderAll();
+else if(window.page!=="home"&&window.page!=="search")render(window.page);
 });
-}
-
-/* ADD / UPDATE PET — SAVES TO FIRESTORE */
-window.addPet = async function(){
-if(!window.isAdmin){
-alert("Not admin");
-return;
-}
-
-const n = document.getElementById("name").value.trim();
-const no = document.getElementById("normal").value.trim();
-const g = document.getElementById("golden").value.trim();
-const r = document.getElementById("rainbow").value.trim();
-const ra = document.getElementById("rarity").value;
-
-if(!n || !no){
-alert("Fill required fields");
-return;
-}
-
-const dem = document.getElementById("demand").value;
-const iconId = document.getElementById("iconId").value.trim();
-const statClicks = document.getElementById("statClicks").value.trim();
-const statShells = document.getElementById("statShells").value.trim();
-const statGems = document.getElementById("statGems").value.trim();
-
-const petData = { name: n, normal: no, golden: g, rainbow: r, rarity: ra, demand: dem };
-if (iconId) petData.iconId = iconId;
-if (statClicks) petData.statClicks = Number(statClicks);
-if (statShells) petData.statShells = Number(statShells);
-if (statGems) petData.statGems = Number(statGems);
-
-const docId = n.toLowerCase().replace(/[^a-z0-9]/g, "_");
-
-try {
-await setDoc(doc(db, "pets", docId), petData);
-await loadPets();
-document.getElementById("name").value = "";
-document.getElementById("normal").value = "";
-document.getElementById("golden").value = "";
-document.getElementById("rainbow").value = "";
-document.getElementById("demand").value = "?";
-document.getElementById("iconId").value = "";
-document.getElementById("statClicks").value = "";
-document.getElementById("statShells").value = "";
-document.getElementById("statGems").value = "";
-alert("Saved!");
-} catch (err) {
-alert("Save failed: " + err.message);
-}
-};
-
-/* DELETE PET */
-async function deletePet(id) {
-if (!window.isAdmin) return;
-if (!confirm("Delete this pet?")) return;
-try {
-await deleteDoc(doc(db, "pets", id));
-await loadPets();
-} catch (err) {
-alert("Delete failed: " + err.message);
-}
-}
 
 /* NAME AUTOCOMPLETE */
-const nameInput = document.getElementById("name");
-const suggestions = document.getElementById("nameSuggestions");
-
-nameInput.addEventListener("input", () => {
-const q = nameInput.value.trim().toLowerCase();
-suggestions.innerHTML = "";
-if (!q) { suggestions.style.display = "none"; return; }
-
-const matches = window.data.filter(p => p.name.toLowerCase().includes(q)).slice(0, 8);
-if (!matches.length) { suggestions.style.display = "none"; return; }
-
-suggestions.style.display = "block";
-matches.forEach(p => {
-const div = document.createElement("div");
-div.textContent = p.name + " (" + p.rarity + ")";
-div.addEventListener("click", () => {
-nameInput.value = p.name;
-document.getElementById("normal").value = p.normal || "";
-document.getElementById("golden").value = p.golden || "";
-document.getElementById("rainbow").value = p.rainbow || "";
-document.getElementById("rarity").value = p.rarity || "Basic";
-document.getElementById("demand").value = p.demand || "?";
-document.getElementById("iconId").value = p.iconId || (PET_ICONS[p.name] && PET_ICONS[p.name].normal) || "";
-const stats = p.statClicks || p.statShells || p.statGems ? p : PET_STATS[p.name] || {};
-document.getElementById("statClicks").value = p.statClicks || stats.Clicks || "";
-document.getElementById("statShells").value = p.statShells || stats.Shells || "";
-document.getElementById("statGems").value = p.statGems || stats.Gems || "";
-suggestions.style.display = "none";
+const nameInput=document.getElementById("name");const suggestions=document.getElementById("nameSuggestions");
+nameInput.addEventListener("input",()=>{
+const q=nameInput.value.trim().toLowerCase();suggestions.innerHTML="";
+if(!q){suggestions.style.display="none";return;}
+const m=window.data.filter(p=>p.name.toLowerCase().includes(q)).slice(0,8);
+if(!m.length){suggestions.style.display="none";return;}
+suggestions.style.display="block";
+m.forEach(p=>{const d=document.createElement("div");d.textContent=p.name+" ("+p.rarity+")";
+d.addEventListener("click",()=>{nameInput.value=p.name;document.getElementById("normal").value=p.normal||"";
+document.getElementById("golden").value=p.golden||"";document.getElementById("rainbow").value=p.rainbow||"";
+document.getElementById("rarity").value=p.rarity||"Basic";document.getElementById("demand").value=p.demand||"?";suggestions.style.display="none";});
+suggestions.appendChild(d);});
 });
-suggestions.appendChild(div);
+nameInput.addEventListener("blur",()=>{setTimeout(()=>{suggestions.style.display="none";},150);});
+
+/* ═══════════════ HOME EDITOR ═══════════════ */
+const homeEditor=document.getElementById("homeEditor");
+const HE_DEFAULTS={title:"Clicker Sim|Value List",sub:"The definitive trading reference. Browse values, check stats, and master the market.",s1n:"184",s1l:"Total Pets",s2n:"9",s2l:"Rarities",s3n:"3",s3l:"Variants",banner:""};
+
+let toggleHomeEditor=function(){
+homeEditor.classList.toggle("open");
+if(homeEditor.classList.contains("open"))loadHomeConfig();
+};
+document.getElementById("homeEditorClose").addEventListener("click",()=>{homeEditor.classList.remove("open");setTbEditMode(false);document.getElementById("homeEditorBubble").classList.remove("visible");});
+// Minimize / bubble restore
+const heBubble=document.getElementById("homeEditorBubble");
+document.getElementById("homeEditorMin").addEventListener("click",()=>{homeEditor.classList.remove("open");heBubble.classList.add("visible");});
+heBubble.addEventListener("click",()=>{heBubble.classList.remove("visible");homeEditor.classList.add("open");});
+
+function applyHomeConfig(cfg){
+const c={...HE_DEFAULTS,...cfg};
+document.getElementById("heroTitle").innerHTML=esc(c.title).replace(/\|/g,"<br>");
+document.getElementById("heroSub").textContent=c.sub;
+document.getElementById("totalPets").textContent=c.s1n;document.getElementById("stat1Label").textContent=c.s1l;
+document.getElementById("stat2Num").textContent=c.s2n;document.getElementById("stat2Label").textContent=c.s2l;
+document.getElementById("stat3Num").textContent=c.s3n;document.getElementById("stat3Label").textContent=c.s3l;
+const banner=document.getElementById("homeBanner");
+if(c.banner){banner.textContent=c.banner;banner.style.display="block";}else{banner.style.display="none";}
+if(c.textBoxes&&Array.isArray(c.textBoxes)){
+const cw=tbContainer.getBoundingClientRect().width||document.getElementById("homePage").offsetWidth||800;
+textBoxes=c.textBoxes.map(t=>{
+const tb={...t};
+if(typeof tb.xPct==="number"){tb.x=Math.round(tb.xPct*cw);tb.w=Math.max(80,Math.round((tb.wPct||0.35)*cw));}
+else{tb.x=tb.x||0;tb.w=tb.w||420;}
+return tb;
 });
+renderTextBoxes();
+}
+}
+
+function fillEditorFields(cfg){
+const c={...HE_DEFAULTS,...cfg};
+document.getElementById("heTitle").value=c.title;document.getElementById("heSub").value=c.sub;
+document.getElementById("heStat1Num").value=c.s1n;document.getElementById("heStat1Label").value=c.s1l;
+document.getElementById("heStat2Num").value=c.s2n;document.getElementById("heStat2Label").value=c.s2l;
+document.getElementById("heStat3Num").value=c.s3n;document.getElementById("heStat3Label").value=c.s3l;
+document.getElementById("heBanner").value=c.banner;
+document.getElementById("heBannerPreview").textContent=c.banner||"No banner";
+}
+
+function readEditorFields(){
+return{title:document.getElementById("heTitle").value,sub:document.getElementById("heSub").value,
+s1n:document.getElementById("heStat1Num").value,s1l:document.getElementById("heStat1Label").value,
+s2n:document.getElementById("heStat2Num").value,s2l:document.getElementById("heStat2Label").value,
+s3n:document.getElementById("heStat3Num").value,s3l:document.getElementById("heStat3Label").value,
+banner:document.getElementById("heBanner").value};
+}
+
+async function loadHomeConfig(){
+try{const snap=await getDoc(doc(db,"config","home"));
+const cfg=snap.exists()?snap.data():{};fillEditorFields(cfg);applyHomeConfig(cfg);
+}catch(err){console.log("Load home config error:",err.message);fillEditorFields({});}
+}
+
+// Live preview on any input change
+["heTitle","heSub","heStat1Num","heStat1Label","heStat2Num","heStat2Label","heStat3Num","heStat3Label","heBanner"].forEach(id=>{
+document.getElementById(id).addEventListener("input",()=>{
+const cfg=readEditorFields();applyHomeConfig(cfg);
+document.getElementById("heBannerPreview").textContent=cfg.banner||"No banner";
+});});
+
+/* ─── TEXT BOXES ─── */
+let textBoxes=[];
+let tbEditMode=false;
+const tbContainer=document.getElementById("tbContainer");
+const TB_FONTS=["Inter","Space Grotesk","Georgia","Times New Roman","Courier New","Arial","Verdana","Impact","Comic Sans MS"];
+
+function tbId(){return"tb_"+Date.now()+"_"+Math.random().toString(36).slice(2,6);}
+
+function createTbEl(tb){
+const el=document.createElement("div");
+el.className="text-box"+(tbEditMode?" editing":"");
+el.id=tb.id;
+el.style.cssText=`left:${tb.x}px;top:${tb.y}px;width:${tb.w||250}px;${tb.h?'height:'+tb.h+'px;':''}`;
+el.innerHTML=`<div class="tb-handle">
+<select class="tb-font" title="Font">${TB_FONTS.map(f=>`<option value="${f}"${tb.font===f?' selected':''}>${f}</option>`).join("")}</select>
+<select class="tb-size" title="Size">${[10,12,14,16,18,20,24,28,32,40,48].map(s=>`<option value="${s}"${(tb.size||14)==s?' selected':''}>${s}</option>`).join("")}</select>
+<input type="color" class="tb-color" value="${tb.color||'#ffffff'}" title="Text color">
+<button class="tb-b" title="Bold"><b>B</b></button>
+<button class="tb-i" title="Italic"><i>I</i></button>
+<button class="tb-u" title="Underline"><u>U</u></button>
+<button class="tb-al" title="Align left">&#9776;</button>
+<button class="tb-ac" title="Align center">&#9776;</button>
+<button class="tb-del" title="Delete">&#215;</button>
+</div>
+<div class="tb-body" contenteditable="${tbEditMode}" style="font-family:'${tb.font||'Inter'}',sans-serif;font-size:${tb.size||14}px;color:${tb.color||'#ffffff'};outline:none;min-height:24px;">${tb.html||'Click to edit...'}</div>
+<div class="tb-resize"></div>`;
+return el;
+}
+
+function bindTbEvents(el,tb){
+const body=el.querySelector(".tb-body");
+const handle=el.querySelector(".tb-handle");
+// Toolbar buttons
+handle.querySelector(".tb-b").addEventListener("mousedown",e=>{e.preventDefault();document.execCommand("bold");});
+handle.querySelector(".tb-i").addEventListener("mousedown",e=>{e.preventDefault();document.execCommand("italic");});
+handle.querySelector(".tb-u").addEventListener("mousedown",e=>{e.preventDefault();document.execCommand("underline");});
+handle.querySelector(".tb-al").addEventListener("mousedown",e=>{e.preventDefault();document.execCommand("justifyLeft");});
+handle.querySelector(".tb-ac").addEventListener("mousedown",e=>{e.preventDefault();document.execCommand("justifyCenter");});
+handle.querySelector(".tb-font").addEventListener("change",e=>{body.style.fontFamily="'"+e.target.value+"',sans-serif";tb.font=e.target.value;});
+handle.querySelector(".tb-size").addEventListener("change",e=>{body.style.fontSize=e.target.value+"px";tb.size=parseInt(e.target.value);});
+handle.querySelector(".tb-color").addEventListener("input",e=>{document.execCommand("foreColor",false,e.target.value);tb.color=e.target.value;});
+handle.querySelector(".tb-del").addEventListener("click",()=>{if(!confirm("Delete this text box?"))return;textBoxes=textBoxes.filter(t=>t.id!==tb.id);el.remove();renderTbList();});
+// Content sync
+body.addEventListener("input",()=>{tb.html=body.innerHTML;});
+// Drag (mouse + touch)
+let dragging=false,dx=0,dy=0;
+function dragStart(cx,cy,e){if(e&&e.target.closest("button,select,input"))return;dragging=true;const r=el.getBoundingClientRect();dx=cx-r.left;dy=cy-r.top;}
+function dragMove(cx,cy){if(!dragging)return;const cr=tbContainer.getBoundingClientRect();tb.x=Math.max(0,cx-cr.left-dx);tb.y=Math.max(0,cy-cr.top-dy);el.style.left=tb.x+"px";el.style.top=tb.y+"px";}
+handle.addEventListener("mousedown",e=>{if(e.target.closest("button,select,input"))return;dragStart(e.clientX,e.clientY,e);e.preventDefault();});
+handle.addEventListener("touchstart",e=>{if(e.target.closest("button,select,input"))return;const t=e.touches[0];dragStart(t.clientX,t.clientY,e);},{passive:true});
+document.addEventListener("mousemove",e=>{dragMove(e.clientX,e.clientY);});
+document.addEventListener("touchmove",e=>{if(!dragging)return;const t=e.touches[0];dragMove(t.clientX,t.clientY);e.preventDefault();},{passive:false});
+document.addEventListener("mouseup",()=>{dragging=false;});
+document.addEventListener("touchend",()=>{dragging=false;});
+// Resize (mouse + touch)
+const resizeHandle=el.querySelector(".tb-resize");
+let resizing=false;
+function resizeMove(cx,cy){if(!resizing)return;const cr=el.getBoundingClientRect();tb.w=Math.max(80,cx-cr.left+4);tb.h=Math.max(30,cy-cr.top+4);el.style.width=tb.w+"px";el.style.height=tb.h+"px";}
+resizeHandle.addEventListener("mousedown",e=>{resizing=true;e.preventDefault();e.stopPropagation();});
+resizeHandle.addEventListener("touchstart",e=>{resizing=true;e.preventDefault();e.stopPropagation();});
+document.addEventListener("mousemove",e=>{resizeMove(e.clientX,e.clientY);});
+document.addEventListener("touchmove",e=>{if(!resizing)return;const t=e.touches[0];resizeMove(t.clientX,t.clientY);e.preventDefault();},{passive:false});
+document.addEventListener("mouseup",()=>{resizing=false;});
+document.addEventListener("touchend",()=>{resizing=false;});
+}
+
+function renderTextBoxes(){
+tbContainer.innerHTML="";
+textBoxes.forEach(tb=>{const el=createTbEl(tb);tbContainer.appendChild(el);if(tbEditMode)bindTbEvents(el,tb);});
+renderTbList();
+clampTextBoxes();
+}
+
+function renderTbList(){
+const list=document.getElementById("heTbList");list.innerHTML="";
+textBoxes.forEach((tb,i)=>{
+const item=document.createElement("div");item.className="he-tb-item";
+const preview=(tb.html||"").replace(/<[^>]*>/g,"").slice(0,30)||"Empty";
+item.innerHTML=`<span>Box ${i+1}: ${esc(preview)}</span><button class="tb-item-del" data-idx="${i}">&times;</button>`;
+item.querySelector(".tb-item-del").addEventListener("click",e=>{e.stopPropagation();if(!confirm("Delete text box?"))return;textBoxes.splice(i,1);renderTextBoxes();});
+item.addEventListener("click",()=>{const el=document.getElementById(tb.id);if(el)el.querySelector(".tb-body").focus();});
+list.appendChild(item);
+});
+}
+
+function setTbEditMode(on){
+tbEditMode=on;
+tbContainer.querySelectorAll(".text-box").forEach(el=>{el.classList.toggle("editing",on);el.querySelector(".tb-body").contentEditable=on;});
+if(on)renderTextBoxes();
+}
+
+function collectTbData(){
+const cw=tbContainer.getBoundingClientRect().width||1;
+return textBoxes.map(tb=>({id:tb.id,xPct:tb.x/cw,y:tb.y,wPct:tb.w/cw,h:tb.h||0,html:tb.html,font:tb.font,size:tb.size,color:tb.color}));
+}
+
+function clampTextBoxes(){
+const cw=tbContainer.getBoundingClientRect().width;
+if(!cw)return;
+textBoxes.forEach(tb=>{
+const el=document.getElementById(tb.id);if(!el)return;
+const maxW=cw-16;
+if(tb.w>maxW){tb.w=Math.max(80,maxW);el.style.width=tb.w+"px";}
+if(tb.x+tb.w>cw){tb.x=Math.max(0,cw-tb.w);el.style.left=tb.x+"px";}
+});
+}
+window.addEventListener("resize",clampTextBoxes);
+
+document.getElementById("heAddTbBtn").addEventListener("click",()=>{
+const rect=tbContainer.getBoundingClientRect();
+const cx=Math.max(0,Math.round((rect.width-420)/2));
+const cy=Math.max(0,Math.round(rect.height/2-30));
+const tb={id:tbId(),x:cx,y:cy,w:420,h:0,html:"New text box",font:"Inter",size:14,color:"#ffffff"};
+textBoxes.push(tb);renderTextBoxes();
+const el=document.getElementById(tb.id);if(el)el.querySelector(".tb-body").focus();
 });
 
-nameInput.addEventListener("blur", () => {
-setTimeout(() => { suggestions.style.display = "none"; }, 150);
-});
-
-/* LOGIN */
-window.login = function(){
-const e = document.getElementById("email").value;
-const p = document.getElementById("password").value;
-signInWithEmailAndPassword(auth, e, p)
-.then(() => {
-document.getElementById("email").value = "";
-document.getElementById("password").value = "";
-})
-.catch(err => alert(err.message));
+// Toggle edit mode when editor opens/closes
+const origToggleHE=toggleHomeEditor;
+toggleHomeEditor=function(){
+const wasOpen=homeEditor.classList.contains("open");
+origToggleHE();
+const isOpen=homeEditor.classList.contains("open");
+if(isOpen&&!wasOpen)setTbEditMode(true);
+if(!isOpen&&wasOpen&&!heBubble.classList.contains("visible"))setTbEditMode(false);
 };
 
-/* LOGOUT */
-window.logout = function(){
-signOut(auth).catch(err => alert(err.message));
-};
-
-/* ADMIN CHECK */
-onAuthStateChanged(auth, (user) => {
-window.isAdmin = !!user;
-document.getElementById("adminTools").style.display = user ? "block" : "none";
-document.getElementById("homeEditBtn").style.display = (user && window.page === "home") ? "inline-block" : "none";
-render(window.page);
+document.getElementById("heSaveBtn").addEventListener("click",async()=>{
+if(!window.isAdmin){alert("Not admin");return;}
+const cfg=readEditorFields();cfg.textBoxes=collectTbData();
+try{await setDoc(doc(db,"config","home"),cfg);alert("Home page saved!");}
+catch(err){alert("Save failed: "+err.message);}
 });
 
-/* ADMIN UI */
-window.openAdmin = function(){
-document.getElementById("adminPanel").style.display = "block";
-};
-
-window.closeAdmin = function(){
-document.getElementById("adminPanel").style.display = "none";
-};
-
-/* SEARCH */
-function renderSearch(query) {
-const tbody = document.getElementById("searchBody");
-const table = document.getElementById("searchTable");
-const noResults = document.getElementById("noResults");
-const hint = document.getElementById("searchHint");
-const countEl = document.getElementById("searchCount");
-if (!tbody) return;
-
-tbody.innerHTML = "";
-const q = query.toLowerCase();
-const matches = q ? window.data.filter(p => p.name.toLowerCase().includes(q)) : [];
-
-if (!q) {
-table.style.display = "none";
-noResults.style.display = "none";
-if (hint) hint.style.display = "block";
-if (countEl) countEl.style.display = "none";
-return;
-}
-
-if (hint) hint.style.display = "none";
-
-if (matches.length === 0) {
-table.style.display = "none";
-noResults.style.display = "block";
-if (countEl) countEl.style.display = "none";
-return;
-}
-
-noResults.style.display = "none";
-table.style.display = "table";
-if (countEl) { countEl.textContent = `Showing ${matches.length} pet${matches.length !== 1 ? "s" : ""}`; countEl.style.display = "block"; }
-
-sortPets(matches).forEach(p => {
-const tr = document.createElement("tr");
-tr.innerHTML =
-`<td>${petNameCell(p.name)}</td>` +
-`<td>${esc(p.normal)}</td>` +
-`<td>${esc(p.golden)}</td>` +
-`<td>${esc(p.rainbow)}</td>` +
-`<td>${demandBadge(p.demand)}</td>`;
-tbody.appendChild(tr);
+document.getElementById("heResetBtn").addEventListener("click",async()=>{
+if(!window.isAdmin){alert("Not admin");return;}
+if(!confirm("Reset home page to defaults?"))return;
+const resetCfg={...HE_DEFAULTS,textBoxes:[]};
+try{await setDoc(doc(db,"config","home"),resetCfg);textBoxes=[];applyHomeConfig(resetCfg);fillEditorFields(resetCfg);renderTextBoxes();alert("Reset to defaults!");}
+catch(err){alert("Reset failed: "+err.message);}
 });
 
-bindInfoButtons(tbody);
-bindPetLinks(tbody);
-loadRowIcons(tbody);
-}
+/* ═══════════════ ROUTING ═══════════════ */
+function readHash(){const raw=location.hash.replace("#","");const [h,qs]=raw.split("?");return{page:h||"home",query:new URLSearchParams(qs||"").get("q")||""};}
+window.addEventListener("popstate",()=>{const r=readHash();goPage(r.page,false);if(r.page==="search"&&r.query){document.getElementById("headerSearch").value=r.query;renderSearch(r.query);}});
 
-let searchTimer = null;
-function debouncedSearch(q) {
-clearTimeout(searchTimer);
-searchTimer = setTimeout(() => renderSearch(q), 200);
-}
-
-document.getElementById("searchBar").addEventListener("input", (e) => {
-document.getElementById("headerSearch").value = e.target.value;
-debouncedSearch(e.target.value);
-});
-
-document.getElementById("headerSearch").addEventListener("input", (e) => {
-const q = e.target.value;
-if (window.page !== "search") {
-window.page = "search";
-document.getElementById("homePage").style.display = "none";
-document.getElementById("listPage").style.display = "none";
-document.getElementById("searchPage").style.display = "block";
-}
-document.getElementById("searchBar").value = q;
-debouncedSearch(q);
-});
-
-/* CLOSE MENU ON OUTSIDE CLICK */
-document.addEventListener("click", (e) => {
-const menu = document.getElementById("menu");
-if (!e.target.closest("#menu") && !e.target.closest("[onclick*='toggleMenu']")) {
-menu.style.display = "none";
-}
-});
-
-/* HOME PAGE EDITOR */
-let _homeSnap = {};
-
-window.execFmt = function(cmd, val) {
-document.execCommand(cmd, false, val || null);
-};
-
-async function loadHomePage() {
-try {
-const snap = await getDoc(doc(db, "config", "homepage"));
-if (snap.exists()) {
-const d = snap.data();
-if (d.headerHtml) document.getElementById("homeHeader").innerHTML = d.headerHtml;
-if (d.motdHtml) document.getElementById("homeMotd").innerHTML = d.motdHtml;
-if (d.descriptionHtml) document.getElementById("homeDesc").innerHTML = d.descriptionHtml;
-if (d.customHtml) document.getElementById("homeCustom").innerHTML = d.customHtml;
-}
-} catch(e) { console.error("loadHomePage:", e); }
-}
-
-window.toggleHomeEdit = function() {
-const blocks = ["homeHeader","homeMotd","homeDesc","homeCustom"];
-blocks.forEach(id => {
-_homeSnap[id] = document.getElementById(id).innerHTML;
-document.getElementById(id).contentEditable = "true";
-});
-document.getElementById("editorToolbar").style.display = "flex";
-document.getElementById("homeEditBtn").style.display = "none";
-document.getElementById("homeContent").classList.add("editing");
-};
-
-window.saveHomePage = async function() {
-try {
-await setDoc(doc(db, "config", "homepage"), {
-headerHtml: document.getElementById("homeHeader").innerHTML,
-motdHtml: document.getElementById("homeMotd").innerHTML,
-descriptionHtml: document.getElementById("homeDesc").innerHTML,
-customHtml: document.getElementById("homeCustom").innerHTML,
-updatedAt: new Date().toISOString()
-});
-} catch(e) { alert("Save failed: " + e.message); return; }
-exitEditMode();
-};
-
-window.cancelHomeEdit = function() {
-const blocks = ["homeHeader","homeMotd","homeDesc","homeCustom"];
-blocks.forEach(id => {
-document.getElementById(id).innerHTML = _homeSnap[id] || "";
-});
-exitEditMode();
-};
-
-function exitEditMode() {
-const blocks = ["homeHeader","homeMotd","homeDesc","homeCustom"];
-blocks.forEach(id => {
-document.getElementById(id).contentEditable = "false";
-});
-document.getElementById("editorToolbar").style.display = "none";
-document.getElementById("homeContent").classList.remove("editing");
-if (window.isAdmin && window.page === "home") {
-document.getElementById("homeEditBtn").style.display = "inline-block";
-}
-}
-
-/* SCROLL TO TOP */
-const scrollBtn = document.getElementById("scrollTopBtn");
-window.addEventListener("scroll", () => {
-scrollBtn.classList.toggle("visible", window.scrollY > 200);
-});
-scrollBtn.addEventListener("click", () => {
-window.scrollTo({ top: 0, behavior: "smooth" });
-});
-
-/* START */
-goPage("home");
+/* ═══════════════ INIT ═══════════════ */
+const initRoute=readHash();
+goPage(initRoute.page,false);
+if(initRoute.page==="search"&&initRoute.query){document.getElementById("headerSearch").value=initRoute.query;renderSearch(initRoute.query);}
 loadPets();
-loadHomePage();
+getDoc(doc(db,"config","home")).then(snap=>{if(snap.exists())applyHomeConfig(snap.data());}).catch(()=>{});
 
 </script>
-
-<button id="scrollTopBtn" aria-label="Scroll to top">&#8593;</button>
 </body>
 </html>
