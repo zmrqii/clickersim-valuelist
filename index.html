@@ -760,7 +760,8 @@ getDocs,
 setDoc,
 deleteDoc,
 getDoc,
-writeBatch
+writeBatch,
+onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 /* FIREBASE */
@@ -1840,8 +1841,12 @@ else window.teamMembers=[];
 }catch(e){console.log("loadTeamMembers error:",e);window.teamMembers=[];}
 }
 
+let teamUnsubs=[];
 async function loadAllTeamData(){
+// Unsubscribe previous listeners
+teamUnsubs.forEach(fn=>fn());teamUnsubs=[];
 window.teamData={};
+// Initial load (one-time reads to populate immediately)
 for(const name of window.teamMembers){
 try{const snap=await getDoc(doc(db,"config","team_"+name));
 if(snap.exists())window.teamData[name]=snap.data();
@@ -1852,6 +1857,28 @@ try{const snap=await getDoc(doc(db,"config","team_inventory"));
 if(snap.exists())window.teamInventory=snap.data();
 else window.teamInventory={items:[],log:[]};
 }catch(e){window.teamInventory={items:[],log:[]};}
+// Live listeners for real-time sync
+for(const name of window.teamMembers){
+const unsub=onSnapshot(doc(db,"config","team_"+name),(snap)=>{
+if(snap.exists()){
+const incoming=snap.data();
+// Skip re-render if this is our own write (data already in memory)
+if(name===window.teamCurrentMember&&JSON.stringify(window.teamData[name])===JSON.stringify(incoming))return;
+window.teamData[name]=incoming;
+renderTeamDashboard();if(name===window.teamCurrentMember)renderMyTracker();
+}
+});
+teamUnsubs.push(unsub);
+}
+const invUnsub=onSnapshot(doc(db,"config","team_inventory"),(snap)=>{
+if(snap.exists()){
+const incoming=snap.data();
+if(JSON.stringify(window.teamInventory)===JSON.stringify(incoming))return;
+window.teamInventory=incoming;
+renderTeamInventory();renderTeamDashboard();
+}
+});
+teamUnsubs.push(invUnsub);
 }
 
 async function saveMyData(){
@@ -2042,6 +2069,7 @@ renderMyTracker();renderTeamDashboard();startClockTimer();
 document.getElementById("teamLogoutBtn").addEventListener("click",()=>{
 window.teamCurrentMember="";localStorage.removeItem("teamMemberName");
 if(teamClockTimer){clearInterval(teamClockTimer);teamClockTimer=null;}
+teamUnsubs.forEach(fn=>fn());teamUnsubs=[];
 document.getElementById("teamContent").style.display="none";
 document.getElementById("teamSetup").style.display="";
 const sel=document.getElementById("teamSetupSelect");
