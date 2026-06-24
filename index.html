@@ -571,6 +571,12 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;hei
 <div id="teamMy" class="team-sub-section">
 <button class="team-clock-btn clock-in" id="teamClockBtn">Clock In</button>
 <div class="team-clock-timer" id="teamClockTimerDisplay" style="display:none;"></div>
+<div class="team-dash-grid" style="margin-bottom:16px;">
+<div class="team-dash-card"><span class="dash-num" id="myTokensGained">0</span><span class="dash-label">Tokens Gained</span></div>
+<div class="team-dash-card"><span class="dash-num" id="myTokensSpent">0</span><span class="dash-label">Tokens Spent</span></div>
+<div class="team-dash-card"><span class="dash-num" id="myTokensNet">0</span><span class="dash-label">Net Tokens</span></div>
+<div class="team-dash-card"><span class="dash-num" id="myTradeCount">0</span><span class="dash-label">Trades</span></div>
+</div>
 <h3 class="team-section-header">Sessions</h3>
 <div class="table-wrap"><table class="team-table"><thead><tr><th>Date</th><th>In</th><th>Out</th><th>Duration</th></tr></thead><tbody id="teamSessionsBody"></tbody></table></div>
 <h3 class="team-section-header">Log Trade</h3>
@@ -582,7 +588,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;hei
 <div class="trade-side-header spend">Giving (OUT)</div>
 <div class="team-form" style="margin-bottom:6px;">
 <input id="tradeOutPet" placeholder="Pet name" data-team-ac>
-<input id="tradeOutVariant" placeholder="Variant">
+<select id="tradeOutVariant"><option value="">Normal</option><option value="Golden">Golden</option><option value="Rainbow">Rainbow</option></select>
 <input id="tradeOutQty" type="number" placeholder="Qty" value="1" min="1" style="max-width:60px;">
 <button id="tradeOutAddPet">+</button>
 </div>
@@ -598,7 +604,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;hei
 <div class="trade-side-header gain">Receiving (IN)</div>
 <div class="team-form" style="margin-bottom:6px;">
 <input id="tradeInPet" placeholder="Pet name" data-team-ac>
-<input id="tradeInVariant" placeholder="Variant">
+<select id="tradeInVariant"><option value="">Normal</option><option value="Golden">Golden</option><option value="Rainbow">Rainbow</option></select>
 <input id="tradeInQty" type="number" placeholder="Qty" value="1" min="1" style="max-width:60px;">
 <button id="tradeInAddPet">+</button>
 </div>
@@ -617,7 +623,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;hei
 <div id="teamInventory" class="team-sub-section">
 <div class="team-form" id="teamInvForm">
 <input id="teamInvName" placeholder="Item name" data-team-ac>
-<input id="teamInvVariant" placeholder="Variant (optional)">
+<select id="teamInvVariant"><option value="">Normal</option><option value="Golden">Golden</option><option value="Rainbow">Rainbow</option></select>
 <input id="teamInvQty" type="number" placeholder="Qty" value="1" min="1">
 <button id="teamInvAddBtn">Add Item</button>
 </div>
@@ -1977,6 +1983,13 @@ tbody.innerHTML=activities.slice(0,20).map(a=>`<tr><td>${fmtTs(a.ts)}</td><td>${
 
 function renderMyTracker(){
 const d=getMyData();
+// Per-member token stats
+let myGained=0,mySpent=0;
+(d.tokens||[]).forEach(t=>{if(t.type==="gain")myGained+=t.amount;else mySpent+=t.amount;});
+document.getElementById("myTokensGained").textContent=formatNum(myGained);
+document.getElementById("myTokensSpent").textContent=formatNum(mySpent);
+document.getElementById("myTokensNet").textContent=formatNum(myGained-mySpent);
+document.getElementById("myTradeCount").textContent=(d.trades||[]).length;
 const openSess=(d.sessions||[]).find(s=>!s.out);
 const clockBtn=document.getElementById("teamClockBtn");
 const timerDisp=document.getElementById("teamClockTimerDisplay");
