@@ -502,6 +502,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;hei
 <button class="admin-close" id="adminClose">&times;</button>
 <h3 id="adminTitle">Admin Login</h3>
 <button class="admin-btn mobile-edit-home" id="mobileEditHomeBtn">Edit Home Page</button>
+<button class="admin-btn mobile-edit-home" id="mobileEditFaqBtn">Edit FAQ Page</button>
 <div id="adminLogin">
 <input id="email" placeholder="Email"/>
 <input id="password" type="password" placeholder="Password"/>
@@ -1303,6 +1304,7 @@ function toggleAdmin(){adminPanel.classList.toggle("open");}
 
 // Mobile "Edit Home Page" button in admin panel
 document.getElementById("mobileEditHomeBtn").addEventListener("click",()=>{if(!window.isAdmin)return;adminPanel.classList.remove("open");toggleHomeEditor();});
+document.getElementById("mobileEditFaqBtn").addEventListener("click",()=>{if(!window.isAdmin)return;adminPanel.classList.remove("open");toggleFaqEditor();});
 
 // Alt+Shift+P = admin, Alt+Shift+M = super admin, Alt+Shift+E = home editor
 document.addEventListener("keydown",e=>{
@@ -1328,6 +1330,7 @@ window.isAdmin=!!user;document.getElementById("adminTools").style.display=user?"
 document.getElementById("adminLogin").style.display=user?"none":"block";
 document.getElementById("adminTitle").textContent=user?"Admin Panel":"Admin Login";
 document.getElementById("mobileEditHomeBtn").classList.toggle("visible",!!user);
+document.getElementById("mobileEditFaqBtn").classList.toggle("visible",!!user);
 document.getElementById("superAdminTools").style.display=user?"block":"none";
 document.getElementById("superAdminMsg").style.display=user?"none":"block";
 if(window.page==="all")renderAll();
