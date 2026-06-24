@@ -1810,9 +1810,9 @@ function fmtDuration(ms){if(!ms||ms<0)return"—";const s=Math.floor(ms/1000),m=
 
 function showTeamSection(id){
 document.querySelectorAll(".team-sub-section").forEach(s=>s.classList.remove("active"));
-document.querySelectorAll(".team-sub-tab").forEach(t=>t.classList.remove("active"));
+document.querySelectorAll(".team-sub-tab[data-team-tab]").forEach(t=>t.classList.remove("active"));
 const el=document.getElementById(id);if(el)el.classList.add("active");
-document.querySelectorAll(".team-sub-tab").forEach(t=>{if(t.dataset.teamTab===id)t.classList.add("active");});
+document.querySelectorAll(".team-sub-tab[data-team-tab]").forEach(t=>{if(t.dataset.teamTab===id)t.classList.add("active");});
 }
 
 async function initTeamTracker(){
@@ -2079,7 +2079,7 @@ document.getElementById("teamSetupNew").value="";
 });
 
 // Sub-nav tabs
-document.querySelectorAll(".team-sub-tab").forEach(tab=>{
+document.querySelectorAll(".team-sub-tab[data-team-tab]").forEach(tab=>{
 tab.addEventListener("click",()=>showTeamSection(tab.dataset.teamTab));
 });
 
