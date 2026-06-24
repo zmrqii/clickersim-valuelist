@@ -58,7 +58,13 @@ body::before{content:'';position:fixed;inset:0;background:linear-gradient(rgba(2
 /* Hero */
 .hero{text-align:center;padding:56px 0 20px;}
 .hero-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(2.5rem,1.5rem+4vw,4rem);font-weight:700;letter-spacing:-.03em;line-height:1.1;}
-.hero-sub{color:var(--text-2);font-size:15px;max-width:440px;margin:14px auto 32px;line-height:1.6;white-space:pre-line;}
+.hero-sub-dd{max-width:500px;margin:14px auto 32px;text-align:center;}
+.hero-sub-toggle{background:none;border:none;color:var(--text-2);font-family:'Inter',sans-serif;font-size:15px;line-height:1.6;cursor:pointer;padding:0;display:inline-flex;align-items:center;gap:6px;transition:color .2s;}
+.hero-sub-toggle:hover{color:var(--text-1);}
+.hero-sub-arrow{font-size:11px;transition:transform .3s;display:inline-block;}
+.hero-sub-dd.open .hero-sub-arrow{transform:rotate(180deg);}
+.hero-sub-content{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.16,1,.3,1),opacity .3s;opacity:0;color:var(--text-2);font-size:14px;line-height:1.7;white-space:pre-line;padding:0 10px;}
+.hero-sub-dd.open .hero-sub-content{max-height:500px;opacity:1;margin-top:10px;}
 .hero-stats{display:flex;justify-content:center;gap:48px;margin-bottom:36px;}
 .hero-stat-num{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;color:var(--accent-400);display:block;}
 .hero-stat-label{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;}
@@ -333,7 +339,10 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;hei
 <div id="homeBanner" style="display:none;text-align:center;padding:12px 18px;margin-bottom:12px;background:linear-gradient(135deg,rgba(168,85,247,.12),rgba(99,102,241,.08));border:1px solid rgba(192,132,252,.2);border-radius:14px;color:var(--accent-300);font-size:14px;line-height:1.5;white-space:pre-wrap;"></div>
 <div class="hero">
 <h1 class="hero-title gradient-text" id="heroTitle">Clicker Sim<br>Value List</h1>
-<p class="hero-sub" id="heroSub">The definitive trading reference. Browse values, check stats, and master the market.</p>
+<div class="hero-sub-dd" id="heroSubDd">
+<button class="hero-sub-toggle" id="heroSubToggle"><span id="heroSubLabel">The definitive trading reference.</span> <span class="hero-sub-arrow">&#9662;</span></button>
+<div class="hero-sub-content" id="heroSubContent">Browse values, check stats, and master the market.</div>
+</div>
 <div class="hero-stats" id="heroStats">
 <div><span class="hero-stat-num" id="totalPets">184</span><span class="hero-stat-label" id="stat1Label">Total Pets</span></div>
 <div><span class="hero-stat-num" id="stat2Num">9</span><span class="hero-stat-label" id="stat2Label">Rarities</span></div>
@@ -1180,6 +1189,8 @@ else{const hs=document.getElementById("headerSearch");if(source!=="header"&&hs.o
 renderSearch(v);
 history.replaceState(null,"","#search?q="+encodeURIComponent(v));
 }
+document.getElementById("heroSubToggle").addEventListener("click",()=>{document.getElementById("heroSubDd").classList.toggle("open");});
+
 document.getElementById("heroSearch").addEventListener("input",e=>syncSearch(e.target.value,"hero"));
 document.getElementById("headerSearch").addEventListener("input",e=>syncSearch(e.target.value,"header"));
 document.getElementById("searchPageInput").addEventListener("input",e=>syncSearch(e.target.value,"searchPage"));
@@ -1302,7 +1313,11 @@ heBubble.addEventListener("click",()=>{heBubble.classList.remove("visible");home
 function applyHomeConfig(cfg){
 const c={...HE_DEFAULTS,...cfg};
 document.getElementById("heroTitle").innerHTML=esc(c.title).replace(/\|/g,"<br>");
-document.getElementById("heroSub").textContent=c.sub;
+const subLines=(c.sub||"").split("\n");
+document.getElementById("heroSubLabel").textContent=subLines[0]||"";
+document.getElementById("heroSubContent").textContent=subLines.slice(1).join("\n");
+document.getElementById("heroSubContent").style.display=subLines.length>1?"":"none";
+document.querySelector(".hero-sub-arrow").style.display=subLines.length>1?"":"none";
 document.getElementById("totalPets").textContent=c.s1n;document.getElementById("stat1Label").textContent=c.s1l;
 document.getElementById("stat2Num").textContent=c.s2n;document.getElementById("stat2Label").textContent=c.s2l;
 document.getElementById("stat3Num").textContent=c.s3n;document.getElementById("stat3Label").textContent=c.s3l;
