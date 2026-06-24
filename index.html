@@ -237,6 +237,36 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;hei
 .he-tb-item .tb-item-del{margin-left:auto;background:none;border:none;color:var(--text-3);cursor:pointer;font-size:14px;padding:0 2px;}
 .he-tb-item .tb-item-del:hover{color:#f87171;}
 .admin-btn.teal:hover{background:#14b8a6;}
+
+/* FAQ accordion */
+.faq-item{background:var(--glass);backdrop-filter:blur(12px);border:1px solid var(--glass-border);border-radius:14px;margin-bottom:10px;overflow:hidden;transition:border-color .25s;}
+.faq-item:hover{border-color:rgba(192,132,252,.2);}
+.faq-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;background:none;border:none;padding:16px 18px;color:var(--text-1);font-family:'Inter',sans-serif;font-weight:500;font-size:14px;cursor:pointer;text-align:left;gap:12px;}
+.faq-arrow{font-size:11px;color:var(--text-3);transition:transform .3s;flex-shrink:0;}
+.faq-item.open .faq-arrow{transform:rotate(180deg);}
+.faq-content{max-height:0;overflow:hidden;opacity:0;transition:max-height .4s cubic-bezier(.16,1,.3,1),opacity .3s;padding:0 18px;color:var(--text-2);font-size:13px;line-height:1.7;white-space:pre-line;}
+.faq-item.open .faq-content{max-height:800px;opacity:1;padding-bottom:16px;}
+
+/* FAQ editor */
+.faq-editor{position:fixed;top:64px;right:0;width:380px;height:calc(100% - 64px);background:rgba(10,15,36,0.96);backdrop-filter:blur(24px);border-left:1px solid rgba(192,132,252,0.2);padding:20px;overflow-y:auto;z-index:700;transform:translateX(100%);transition:transform .4s cubic-bezier(.16,1,.3,1);}
+.faq-editor.open{transform:translateX(0);}
+.faq-editor h3{font-family:'Space Grotesk',sans-serif;color:var(--accent-400);font-size:15px;margin:0 0 14px;display:flex;align-items:center;justify-content:space-between;}
+.faq-editor textarea{width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg-surface);color:var(--text-1);font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:border-color .2s;resize:vertical;min-height:80px;line-height:1.5;margin-bottom:4px;}
+.faq-editor textarea:focus{border-color:var(--accent-700);}
+.faq-editor textarea::placeholder{color:var(--text-3);}
+.fe-header-btns{display:flex;gap:6px;align-items:center;}
+.fe-close-btn{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);color:var(--text-3);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.fe-close-btn:hover{color:#fff;background:rgba(255,255,255,0.1);}
+.fe-minimize{display:none;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);color:var(--text-3);font-size:16px;cursor:pointer;width:28px;height:28px;border-radius:50%;align-items:center;justify-content:center;flex-shrink:0;}
+.fe-minimize:hover{color:#fff;background:rgba(255,255,255,0.1);}
+.fe-bubble{display:none;position:fixed;bottom:24px;left:24px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--accent-500),var(--accent-700));color:#fff;font-size:24px;border:none;cursor:pointer;z-index:701;box-shadow:0 4px 20px rgba(168,85,247,0.5);transition:transform .2s;}
+.fe-bubble:active{transform:scale(0.9);}
+.fe-bubble.visible{display:flex;align-items:center;justify-content:center;}
+.fe-item{position:relative;margin-bottom:10px;}
+.fe-item-del{position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:50%;background:rgba(220,38,38,0.15);border:1px solid rgba(220,38,38,0.3);color:#f87171;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:1;}
+.fe-item-del:hover{background:rgba(220,38,38,0.3);}
+.fe-actions{display:flex;gap:8px;margin-top:16px;}
+.fe-actions button{flex:1;}
 .admin-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);color:var(--text-3);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .admin-close:hover{color:#fff;background:rgba(255,255,255,0.1);}
 .name-wrap{position:relative;}
@@ -281,6 +311,8 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;hei
 .admin-panel{width:100%;}
 .home-editor{width:100%;}
 .he-minimize{display:flex;}
+.faq-editor{width:100%;}
+.fe-minimize{display:flex;}
 .mobile-edit-home.visible{display:block!important;margin-bottom:12px;}
 .rarity-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));max-width:none;}
 .sort-menu{right:auto;left:0;}
@@ -320,6 +352,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;hei
 <nav class="nav-tabs">
 <button class="nav-tab active" data-page="home">Home</button>
 <button class="nav-tab" data-page="all">All Pets</button>
+<button class="nav-tab" data-page="faq">FAQ</button>
 <div class="nav-dd" id="navDd">
 <button class="nav-tab" id="rarityBtn">Rarity &#9662;</button>
 </div>
@@ -403,6 +436,13 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;hei
 <p class="search-header" id="searchHeader"></p>
 <div class="pet-grid" id="searchGrid"></div>
 <p class="no-results" id="noResults" style="display:none;">No pets found.</p>
+</section>
+
+<!-- FAQ -->
+<section id="faqPage" class="page">
+<div class="list-header"><h2><span class="gradient-text">FAQ</span></h2></div>
+<div id="faqContent"></div>
+<p class="no-results" id="noFaq" style="display:none;">No FAQ items yet.</p>
 </section>
 
 </div>
@@ -530,6 +570,18 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;hei
 </div>
 </div>
 <button class="he-bubble" id="homeEditorBubble">&#9998;</button>
+
+<!-- FAQ EDITOR PANEL -->
+<div class="faq-editor" id="faqEditor">
+<h3>Edit FAQ <span class="fe-header-btns"><button class="fe-minimize" id="faqEditorMin" title="Minimize">&#x2015;</button><button class="fe-close-btn" id="faqEditorClose">&times;</button></span></h3>
+<button class="admin-btn" id="feAddBtn" style="margin-bottom:12px;font-size:12px;padding:8px;">+ Add FAQ Item</button>
+<div id="feList"></div>
+<div class="fe-actions">
+<button class="admin-btn" id="feSaveBtn">Save</button>
+<button class="admin-btn danger" id="feResetBtn">Reset</button>
+</div>
+</div>
+<button class="fe-bubble" id="faqEditorBubble">&#9998;</button>
 
 <script type="module">
 
@@ -1128,6 +1180,7 @@ if(pushState!==false){const hash=page==="home"?"":page;history.pushState(null,""
 if(page==="home"){showPage("homePage");}
 else if(page==="all"){showPage("allPage");renderAll();}
 else if(page==="search"){showPage("searchPage");renderSearch("");}
+else if(page==="faq"){showPage("faqPage");renderFaq();}
 else{showPage("listPage");render(page);}
 }
 
@@ -1256,6 +1309,7 @@ document.addEventListener("keydown",e=>{
 if(e.altKey&&e.shiftKey&&e.key==="P"){e.preventDefault();toggleAdmin();}
 if(e.altKey&&e.shiftKey&&e.key==="M"){e.preventDefault();document.getElementById("superAdminPanel").classList.toggle("open");}
 if(e.altKey&&e.shiftKey&&e.key==="E"){e.preventDefault();if(window.isAdmin)toggleHomeEditor();}
+if(e.altKey&&e.shiftKey&&e.key==="F"){e.preventDefault();if(window.isAdmin)toggleFaqEditor();}
 });
 
 document.getElementById("adminClose").addEventListener("click",()=>adminPanel.classList.remove("open"));
@@ -1508,6 +1562,74 @@ try{await setDoc(doc(db,"config","home"),resetCfg);textBoxes=[];applyHomeConfig(
 catch(err){alert("Reset failed: "+err.message);}
 });
 
+/* ═══════════════ FAQ ═══════════════ */
+let faqItems=[];
+
+function renderFaq(){
+const container=document.getElementById("faqContent");
+const noFaq=document.getElementById("noFaq");
+container.innerHTML="";
+if(!faqItems.length){noFaq.style.display="block";return;}
+noFaq.style.display="none";
+faqItems.forEach((item,i)=>{
+const nl=item.indexOf("\n");
+const label=nl>-1?item.substring(0,nl):item;
+const content=nl>-1?item.substring(nl+1):"";
+const div=document.createElement("div");div.className="faq-item";
+div.innerHTML=`<button class="faq-toggle"><span>${esc(label)}</span><span class="faq-arrow">&#9662;</span></button><div class="faq-content">${esc(content)}</div>`;
+div.querySelector(".faq-toggle").addEventListener("click",()=>div.classList.toggle("open"));
+container.appendChild(div);
+});
+}
+
+const faqEditor=document.getElementById("faqEditor");
+const feBubble=document.getElementById("faqEditorBubble");
+
+function toggleFaqEditor(){
+faqEditor.classList.toggle("open");
+if(faqEditor.classList.contains("open"))loadFaqConfig();
+}
+
+async function loadFaqConfig(){
+try{const snap=await getDoc(doc(db,"config","faq"));
+if(snap.exists()&&snap.data().items)faqItems=snap.data().items;
+else faqItems=[];
+renderFaqEditorList();
+}catch(err){console.log("Load FAQ config error:",err.message);}
+}
+
+function renderFaqEditorList(){
+const list=document.getElementById("feList");
+list.innerHTML="";
+faqItems.forEach((item,i)=>{
+const wrap=document.createElement("div");wrap.className="fe-item";
+const ta=document.createElement("textarea");ta.value=item;ta.placeholder="Question (first line)\nAnswer (remaining lines)";ta.rows=3;
+ta.addEventListener("input",()=>{faqItems[i]=ta.value;});
+const del=document.createElement("button");del.className="fe-item-del";del.innerHTML="&times;";del.title="Delete";
+del.addEventListener("click",()=>{faqItems.splice(i,1);renderFaqEditorList();});
+wrap.appendChild(ta);wrap.appendChild(del);list.appendChild(wrap);
+});
+}
+
+document.getElementById("faqEditorClose").addEventListener("click",()=>{faqEditor.classList.remove("open");feBubble.classList.remove("visible");});
+document.getElementById("faqEditorMin").addEventListener("click",()=>{faqEditor.classList.remove("open");feBubble.classList.add("visible");});
+feBubble.addEventListener("click",()=>{feBubble.classList.remove("visible");faqEditor.classList.add("open");});
+document.getElementById("feAddBtn").addEventListener("click",()=>{faqItems.push("");renderFaqEditorList();});
+
+document.getElementById("feSaveBtn").addEventListener("click",async()=>{
+if(!window.isAdmin){alert("Not admin");return;}
+const clean=faqItems.filter(s=>s.trim());
+try{await setDoc(doc(db,"config","faq"),{items:clean});faqItems=clean;renderFaqEditorList();if(window.page==="faq")renderFaq();alert("FAQ saved!");}
+catch(err){alert("Save failed: "+err.message);}
+});
+
+document.getElementById("feResetBtn").addEventListener("click",async()=>{
+if(!window.isAdmin){alert("Not admin");return;}
+if(!confirm("Delete all FAQ items?"))return;
+try{await setDoc(doc(db,"config","faq"),{items:[]});faqItems=[];renderFaqEditorList();if(window.page==="faq")renderFaq();alert("FAQ cleared!");}
+catch(err){alert("Reset failed: "+err.message);}
+});
+
 /* ═══════════════ ROUTING ═══════════════ */
 function readHash(){const raw=location.hash.replace("#","");const [h,qs]=raw.split("?");return{page:h||"home",query:new URLSearchParams(qs||"").get("q")||""};}
 window.addEventListener("popstate",()=>{const r=readHash();goPage(r.page,false);if(r.page==="search"&&r.query){document.getElementById("headerSearch").value=r.query;renderSearch(r.query);}});
@@ -1518,6 +1640,7 @@ goPage(initRoute.page,false);
 if(initRoute.page==="search"&&initRoute.query){document.getElementById("headerSearch").value=initRoute.query;renderSearch(initRoute.query);}
 loadPets();
 getDoc(doc(db,"config","home")).then(snap=>{if(snap.exists())applyHomeConfig(snap.data());}).catch(()=>{});
+getDoc(doc(db,"config","faq")).then(snap=>{if(snap.exists()&&snap.data().items){faqItems=snap.data().items;if(window.page==="faq")renderFaq();}}).catch(()=>{});
 
 </script>
 </body>
