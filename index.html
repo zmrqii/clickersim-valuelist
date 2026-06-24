@@ -1968,16 +1968,16 @@ const trades=[...(d.trades||[])].sort((a,b)=>(b.ts||0)-(a.ts||0));
 document.getElementById("teamTradesBody").innerHTML=trades.map(t=>`<tr><td>${fmtTs(t.ts)}</td><td class="${t.dir==="in"?"gain":"spend"}">${t.dir==="in"?"IN":"OUT"}</td><td>${esc(t.pet)}</td><td>${esc(t.with||"")}</td></tr>`).join("");
 }
 
-let teamInvFilter="";
+let teamInvFilter=null;
 function renderTeamInventory(){
 const allItems=window.teamInventory.items||[];
 // Build filter buttons
 const owners=[...new Set(allItems.map(i=>i.owner||"Unknown"))];
 const filterBtns=document.getElementById("teamInvFilterBtns");
 filterBtns.innerHTML=owners.map(o=>`<button class="team-sub-tab${teamInvFilter===o?" active":""}" data-inv-filter="${esc(o)}" style="padding:6px 14px;font-size:12px;">${esc(o)}</button>`).join("");
-document.getElementById("teamInvFilterAll").classList.toggle("active",teamInvFilter==="");
+document.getElementById("teamInvFilterAll").classList.toggle("active",teamInvFilter===null);
 // Filter items
-const items=teamInvFilter?allItems.filter(i=>(i.owner||"Unknown")===teamInvFilter):allItems;
+const items=teamInvFilter!==null?allItems.filter(i=>(i.owner||"Unknown")===teamInvFilter):allItems;
 const grid=document.getElementById("teamInvGrid");
 grid.innerHTML=items.map(i=>`<div class="inv-card"><div class="inv-name">${esc(i.name)}</div>${i.variant?`<div class="inv-variant">${esc(i.variant)}</div>`:""}<div class="inv-qty">${i.qty}</div><div style="font-size:10px;color:var(--text-3);margin-bottom:4px;">${esc(i.owner||"Unknown")}</div><button class="inv-remove" data-inv-name="${esc(i.name)}" data-inv-variant="${esc(i.variant||"")}" data-inv-owner="${esc(i.owner||"")}">-1</button></div>`).join("");
 const log=[...(window.teamInventory.log||[])].sort((a,b)=>(b.ts||0)-(a.ts||0));
@@ -2182,7 +2182,7 @@ renderTeamInventory();renderTeamDashboard();
 // Inventory filter (delegated on parent container)
 document.getElementById("teamInventory").addEventListener("click",(e)=>{
 const btn=e.target.closest("[data-inv-filter]");if(!btn)return;
-teamInvFilter=btn.dataset.invFilter;
+teamInvFilter=btn.id==="teamInvFilterAll"?null:btn.dataset.invFilter;
 renderTeamInventory();
 });
 
