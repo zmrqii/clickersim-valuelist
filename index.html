@@ -1467,8 +1467,8 @@ function toggleAdmin(){adminPanel.classList.toggle("open");}
 // Triple-tap logo = admin (touch/mobile only)
 (function(){let taps=0,timer;document.getElementById("logoArea").addEventListener("touchend",e=>{taps++;if(taps===1)timer=setTimeout(()=>{taps=0;},600);if(taps===3){clearTimeout(timer);taps=0;toggleAdmin();}});})();
 
-// Triple-tap hero title = team tracker (touch/mobile only)
-(function(){let taps=0,timer;document.getElementById("heroTitle").addEventListener("touchend",e=>{taps++;if(taps===1)timer=setTimeout(()=>{taps=0;},600);if(taps===3){clearTimeout(timer);taps=0;if(window.isAdmin)goPage("team");}});})();
+// Triple-tap pet count = team tracker (touch/mobile only)
+(function(){let taps=0,timer;document.getElementById("totalPets").addEventListener("touchend",e=>{taps++;if(taps===1)timer=setTimeout(()=>{taps=0;},600);if(taps===3){clearTimeout(timer);taps=0;if(window.isAdmin)goPage("team");}});})();
 
 // Mobile "Edit Home Page" button in admin panel
 document.getElementById("mobileEditHomeBtn").addEventListener("click",()=>{if(!window.isAdmin)return;adminPanel.classList.remove("open");toggleHomeEditor();});
