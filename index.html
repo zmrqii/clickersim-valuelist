@@ -396,10 +396,22 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;hei
 .team-sub-section{display:none;}
 .team-sub-section.active{display:block;}
 .team-clock-timer{font-size:13px;color:var(--accent-300);margin-bottom:12px;}
-.team-sold-btn{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#34d399;font-size:11px;padding:3px 10px;border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;}
-.team-sold-btn:hover{background:rgba(34,197,94,0.3);}
-.team-sold-btn.sold{background:rgba(255,255,255,0.05);border-color:var(--border);color:var(--text-3);cursor:default;}
+.trade-builder{display:grid;grid-template-columns:1fr auto 1fr;gap:0;margin-bottom:4px;}
+.trade-side{background:var(--glass);backdrop-filter:blur(12px);border:1px solid var(--glass-border);border-radius:14px;padding:14px;}
+.trade-side-header{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;text-align:center;padding-bottom:10px;margin-bottom:10px;border-bottom:1px solid var(--border);}
+.trade-divider{width:2px;background:var(--border);margin:30px 8px;border-radius:1px;align-self:stretch;}
+.trade-side-items{display:flex;flex-direction:column;gap:4px;margin-bottom:8px;min-height:20px;}
+.trade-item{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--text-2);}
+.trade-item .trade-item-name{flex:1;}
+.trade-item .trade-item-variant{color:var(--text-3);font-size:11px;}
+.trade-item .trade-item-del{background:none;border:none;color:var(--text-3);cursor:pointer;font-size:14px;padding:0 2px;line-height:1;}
+.trade-item .trade-item-del:hover{color:#f87171;}
+.trade-side-tokens{font-size:12px;margin-top:6px;color:var(--text-2);}
+.trade-side .team-form button{padding:8px 12px;min-width:auto;flex:0;}
 @media(max-width:768px){
+.trade-builder{grid-template-columns:1fr;gap:8px;}
+.trade-divider{width:auto;height:2px;margin:0;}
+.trade-side .team-form{flex-direction:row;}
 .team-member-bar{flex-wrap:wrap;gap:8px;}
 .team-member-bar .clock-status{width:100%;justify-content:center;margin-left:0;margin-top:4px;}
 .team-member-bar select{flex:1;min-width:0;}
@@ -569,21 +581,44 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;hei
 <button id="teamTokenAddBtn">Add</button>
 </div>
 <div class="table-wrap"><table class="team-table"><thead><tr><th>Date</th><th>Amount</th><th>Type</th><th>Note</th></tr></thead><tbody id="teamTokensBody"></tbody></table></div>
-<h3 class="team-section-header">Pet Shop</h3>
-<div class="team-form" id="teamShopForm">
-<input id="teamShopPet" placeholder="Pet name" data-team-ac>
-<input id="teamShopPrice" type="number" placeholder="Price (tokens)">
-<button id="teamShopAddBtn">List Pet</button>
+<h3 class="team-section-header">Log Trade</h3>
+<div class="team-form" style="margin-bottom:8px;">
+<input id="teamTradeWith" placeholder="Traded with... (optional)">
 </div>
-<div class="table-wrap"><table class="team-table"><thead><tr><th>Date</th><th>Pet</th><th>Price</th><th>Status</th></tr></thead><tbody id="teamShopBody"></tbody></table></div>
-<h3 class="team-section-header">Trades</h3>
-<div class="team-form" id="teamTradeForm">
-<select id="teamTradeDir"><option value="in">Received (IN)</option><option value="out">Given (OUT)</option></select>
-<input id="teamTradePet" placeholder="Pet name" data-team-ac>
-<input id="teamTradeWith" placeholder="Traded with...">
-<button id="teamTradeAddBtn">Log Trade</button>
+<div class="trade-builder">
+<div class="trade-side trade-out">
+<div class="trade-side-header spend">Giving (OUT)</div>
+<div class="team-form" style="margin-bottom:6px;">
+<input id="tradeOutPet" placeholder="Pet name" data-team-ac>
+<input id="tradeOutVariant" placeholder="Variant">
+<button id="tradeOutAddPet">+</button>
 </div>
-<div class="table-wrap"><table class="team-table"><thead><tr><th>Date</th><th>Direction</th><th>Pet</th><th>With</th></tr></thead><tbody id="teamTradesBody"></tbody></table></div>
+<div class="trade-side-items" id="tradeOutPets"></div>
+<div class="team-form" style="margin-bottom:0;">
+<input id="tradeOutTokens" type="number" placeholder="Tokens" min="0">
+<button id="tradeOutAddTokens">+ Tokens</button>
+</div>
+<div class="trade-side-tokens" id="tradeOutTokenDisplay"></div>
+</div>
+<div class="trade-divider"></div>
+<div class="trade-side trade-in">
+<div class="trade-side-header gain">Receiving (IN)</div>
+<div class="team-form" style="margin-bottom:6px;">
+<input id="tradeInPet" placeholder="Pet name" data-team-ac>
+<input id="tradeInVariant" placeholder="Variant">
+<button id="tradeInAddPet">+</button>
+</div>
+<div class="trade-side-items" id="tradeInPets"></div>
+<div class="team-form" style="margin-bottom:0;">
+<input id="tradeInTokens" type="number" placeholder="Tokens" min="0">
+<button id="tradeInAddTokens">+ Tokens</button>
+</div>
+<div class="trade-side-tokens" id="tradeInTokenDisplay"></div>
+</div>
+</div>
+<button class="team-clock-btn clock-in" id="teamTradeSubmit" style="margin-top:12px;font-size:14px;padding:12px;">Confirm Trade</button>
+<h3 class="team-section-header">Trade History</h3>
+<div class="table-wrap"><table class="team-table"><thead><tr><th>Date</th><th>With</th><th>Out</th><th>In</th></tr></thead><tbody id="teamTradesBody"></tbody></table></div>
 </div>
 <div id="teamInventory" class="team-sub-section">
 <div class="team-form" id="teamInvForm">
@@ -1917,8 +1952,11 @@ for(const name of window.teamMembers){
 const d=window.teamData[name]||{tokens:[],sessions:[],shopPets:[],trades:[]};
 (d.tokens||[]).forEach(t=>{if(t.type==="gain")totalGained+=t.amount;else totalSpent+=t.amount;
 activities.push({ts:t.ts,member:name,action:t.type==="gain"?"Gained tokens":"Spent tokens",detail:(t.type==="gain"?"+":"-")+formatNum(t.amount)+(t.note?" — "+t.note:"")});});
-(d.trades||[]).forEach(t=>{tradeCount++;activities.push({ts:t.ts,member:name,action:t.dir==="in"?"Trade IN":"Trade OUT",detail:t.pet+(t.with?" ("+t.with+")":"")});});
-(d.shopPets||[]).forEach(p=>{activities.push({ts:p.ts,member:name,action:p.sold?"Sold pet":"Listed pet",detail:p.pet+" — "+formatNum(p.price)+" tokens"});});
+(d.trades||[]).forEach(t=>{tradeCount++;
+const outSummary=(t.outPets||[]).map(p=>p.name).join(", ")+(t.outTokens?" +"+formatNum(t.outTokens)+"t":"");
+const inSummary=(t.inPets||[]).map(p=>p.name).join(", ")+(t.inTokens?" +"+formatNum(t.inTokens)+"t":"");
+activities.push({ts:t.ts,member:name,action:"Trade"+(t.with?" w/ "+t.with:""),detail:(outSummary||"—")+" → "+(inSummary||"—")});
+});
 const openSess=d.sessions&&d.sessions.find(s=>!s.out);if(openSess)activeNow++;
 }
 (window.teamInventory.items||[]).forEach(i=>invTotal+=i.qty);
@@ -1962,10 +2000,15 @@ let balance=0;(d.tokens||[]).forEach(t=>{if(t.type==="gain")balance+=t.amount;el
 document.getElementById("teamTokenBadge").textContent=formatNum(balance);
 const tokens=[...(d.tokens||[])].sort((a,b)=>(b.ts||0)-(a.ts||0));
 document.getElementById("teamTokensBody").innerHTML=tokens.map(t=>`<tr><td>${fmtTs(t.ts)}</td><td class="${t.type==="gain"?"gain":"spend"}">${t.type==="gain"?"+":"-"}${formatNum(t.amount)}</td><td>${t.type==="gain"?"Gained":"Spent"}</td><td>${esc(t.note||"")}</td></tr>`).join("");
-const shop=[...(d.shopPets||[])].sort((a,b)=>(b.ts||0)-(a.ts||0));
-document.getElementById("teamShopBody").innerHTML=shop.map(p=>`<tr><td>${fmtTs(p.ts)}</td><td>${esc(p.pet)}</td><td>${formatNum(p.price)}</td><td>${p.sold?'<span class="team-sold-btn sold">Sold</span>':`<button class="team-sold-btn" data-shop-id="${p.id}">Mark Sold</button>`}</td></tr>`).join("");
 const trades=[...(d.trades||[])].sort((a,b)=>(b.ts||0)-(a.ts||0));
-document.getElementById("teamTradesBody").innerHTML=trades.map(t=>`<tr><td>${fmtTs(t.ts)}</td><td class="${t.dir==="in"?"gain":"spend"}">${t.dir==="in"?"IN":"OUT"}</td><td>${esc(t.pet)}</td><td>${esc(t.with||"")}</td></tr>`).join("");
+document.getElementById("teamTradesBody").innerHTML=trades.map(t=>{
+const outParts=[];const inParts=[];
+(t.outPets||[]).forEach(p=>outParts.push(esc(p.name)+(p.variant?" ("+esc(p.variant)+")":"")));
+if(t.outTokens)outParts.push(formatNum(t.outTokens)+" tokens");
+(t.inPets||[]).forEach(p=>inParts.push(esc(p.name)+(p.variant?" ("+esc(p.variant)+")":"")));
+if(t.inTokens)inParts.push(formatNum(t.inTokens)+" tokens");
+return`<tr><td>${fmtTs(t.ts)}</td><td>${esc(t.with||"—")}</td><td class="spend">${outParts.join(", ")||"—"}</td><td class="gain">${inParts.join(", ")||"—"}</td></tr>`;
+}).join("");
 }
 
 let teamInvFilter=null;
@@ -2108,41 +2151,95 @@ renderMyTracker();renderTeamDashboard();
 await saveMyData();
 });
 
-// List Shop Pet
-document.getElementById("teamShopAddBtn").addEventListener("click",async()=>{
-const pet=document.getElementById("teamShopPet").value.trim();
-const price=parseInt(document.getElementById("teamShopPrice").value);
-if(!pet){alert("Enter a pet name.");return;}if(!price||price<=0){alert("Enter a valid price.");return;}
-const d=getMyData();if(!d.shopPets)d.shopPets=[];
-d.shopPets.push({id:teamId("shop"),pet:pet,price:price,sold:false,ts:Date.now()});
-window.teamData[window.teamCurrentMember]=d;
-document.getElementById("teamShopPet").value="";document.getElementById("teamShopPrice").value="";
-renderMyTracker();renderTeamDashboard();
-await saveMyData();
+// Trade builder state
+let tradeOutPets=[],tradeInPets=[],tradeOutTokenAmt=0,tradeInTokenAmt=0;
+
+function renderTradeSide(list,containerId){
+const el=document.getElementById(containerId);
+el.innerHTML=list.map((p,i)=>`<div class="trade-item"><span class="trade-item-name">${esc(p.name)}</span>${p.variant?`<span class="trade-item-variant">${esc(p.variant)}</span>`:""}<button class="trade-item-del" data-trade-rm="${i}">&times;</button></div>`).join("");
+}
+
+function renderTradeTokens(){
+document.getElementById("tradeOutTokenDisplay").textContent=tradeOutTokenAmt?formatNum(tradeOutTokenAmt)+" tokens":"";
+document.getElementById("tradeInTokenDisplay").textContent=tradeInTokenAmt?formatNum(tradeInTokenAmt)+" tokens":"";
+}
+
+function clearTradeBuilder(){
+tradeOutPets=[];tradeInPets=[];tradeOutTokenAmt=0;tradeInTokenAmt=0;
+renderTradeSide(tradeOutPets,"tradeOutPets");renderTradeSide(tradeInPets,"tradeInPets");renderTradeTokens();
+document.getElementById("tradeOutPet").value="";document.getElementById("tradeOutVariant").value="";
+document.getElementById("tradeInPet").value="";document.getElementById("tradeInVariant").value="";
+document.getElementById("tradeOutTokens").value="";document.getElementById("tradeInTokens").value="";
+document.getElementById("teamTradeWith").value="";
+}
+
+// Add pet to outgoing
+document.getElementById("tradeOutAddPet").addEventListener("click",()=>{
+const name=document.getElementById("tradeOutPet").value.trim();if(!name)return;
+const variant=document.getElementById("tradeOutVariant").value.trim();
+tradeOutPets.push({name,variant});
+document.getElementById("tradeOutPet").value="";document.getElementById("tradeOutVariant").value="";
+renderTradeSide(tradeOutPets,"tradeOutPets");
 });
 
-// Mark Sold (delegated)
-document.getElementById("teamShopBody").addEventListener("click",async(e)=>{
-const btn=e.target.closest(".team-sold-btn");if(!btn||btn.classList.contains("sold"))return;
-const sid=btn.dataset.shopId;const d=getMyData();
-const pet=d.shopPets.find(p=>p.id===sid);if(pet){pet.sold=true;}
-window.teamData[window.teamCurrentMember]=d;
-renderMyTracker();renderTeamDashboard();
-await saveMyData();
+// Add pet to incoming
+document.getElementById("tradeInAddPet").addEventListener("click",()=>{
+const name=document.getElementById("tradeInPet").value.trim();if(!name)return;
+const variant=document.getElementById("tradeInVariant").value.trim();
+tradeInPets.push({name,variant});
+document.getElementById("tradeInPet").value="";document.getElementById("tradeInVariant").value="";
+renderTradeSide(tradeInPets,"tradeInPets");
 });
 
-// Log Trade
-document.getElementById("teamTradeAddBtn").addEventListener("click",async()=>{
-const pet=document.getElementById("teamTradePet").value.trim();
-if(!pet){alert("Enter a pet name.");return;}
-const dir=document.getElementById("teamTradeDir").value;
+// Add tokens out/in
+document.getElementById("tradeOutAddTokens").addEventListener("click",()=>{
+const v=parseInt(document.getElementById("tradeOutTokens").value);if(!v||v<=0)return;
+tradeOutTokenAmt+=v;document.getElementById("tradeOutTokens").value="";renderTradeTokens();
+});
+document.getElementById("tradeInAddTokens").addEventListener("click",()=>{
+const v=parseInt(document.getElementById("tradeInTokens").value);if(!v||v<=0)return;
+tradeInTokenAmt+=v;document.getElementById("tradeInTokens").value="";renderTradeTokens();
+});
+
+// Remove pet from trade sides (delegated)
+document.getElementById("tradeOutPets").addEventListener("click",(e)=>{
+const btn=e.target.closest("[data-trade-rm]");if(!btn)return;
+tradeOutPets.splice(parseInt(btn.dataset.tradeRm),1);renderTradeSide(tradeOutPets,"tradeOutPets");
+});
+document.getElementById("tradeInPets").addEventListener("click",(e)=>{
+const btn=e.target.closest("[data-trade-rm]");if(!btn)return;
+tradeInPets.splice(parseInt(btn.dataset.tradeRm),1);renderTradeSide(tradeInPets,"tradeInPets");
+});
+
+// Confirm trade
+document.getElementById("teamTradeSubmit").addEventListener("click",async()=>{
+if(!tradeOutPets.length&&!tradeInPets.length&&!tradeOutTokenAmt&&!tradeInTokenAmt){alert("Add at least one item or tokens to the trade.");return;}
 const withWho=document.getElementById("teamTradeWith").value.trim();
-const d=getMyData();if(!d.trades)d.trades=[];
-d.trades.push({id:teamId("trd"),dir:dir,pet:pet,with:withWho,ts:Date.now()});
+const d=getMyData();if(!d.trades)d.trades=[];if(!d.tokens)d.tokens=[];
+// Log trade
+d.trades.push({id:teamId("trd"),outPets:[...tradeOutPets],inPets:[...tradeInPets],outTokens:tradeOutTokenAmt,inTokens:tradeInTokenAmt,with:withWho,ts:Date.now()});
+// Token adjustments
+if(tradeOutTokenAmt)d.tokens.push({id:teamId("tok"),amount:tradeOutTokenAmt,type:"spend",note:"Trade out"+(withWho?" w/ "+withWho:""),ts:Date.now()});
+if(tradeInTokenAmt)d.tokens.push({id:teamId("tok"),amount:tradeInTokenAmt,type:"gain",note:"Trade in"+(withWho?" w/ "+withWho:""),ts:Date.now()});
 window.teamData[window.teamCurrentMember]=d;
-document.getElementById("teamTradePet").value="";document.getElementById("teamTradeWith").value="";
-renderMyTracker();renderTeamDashboard();
+// Update inventory — remove outgoing, add incoming
+if(!window.teamInventory.items)window.teamInventory.items=[];
+if(!window.teamInventory.log)window.teamInventory.log=[];
+const owner=window.teamCurrentMember;
+tradeOutPets.forEach(p=>{
+const idx=window.teamInventory.items.findIndex(i=>i.name===p.name&&(i.variant||"")===(p.variant||"")&&(i.owner||"")===owner);
+if(idx>=0){window.teamInventory.items[idx].qty--;if(window.teamInventory.items[idx].qty<=0)window.teamInventory.items.splice(idx,1);}
+window.teamInventory.log.push({ts:Date.now(),member:owner,action:"remove",item:p.name+(p.variant?" ("+p.variant+")":""),qty:1});
+});
+tradeInPets.forEach(p=>{
+const existing=window.teamInventory.items.find(i=>i.name===p.name&&(i.variant||"")===(p.variant||"")&&(i.owner||"")===owner);
+if(existing){existing.qty++;}else{window.teamInventory.items.push({name:p.name,variant:p.variant||"",qty:1,owner:owner});}
+window.teamInventory.log.push({ts:Date.now(),member:owner,action:"add",item:p.name+(p.variant?" ("+p.variant+")":""),qty:1});
+});
+clearTradeBuilder();
+renderMyTracker();renderTeamDashboard();renderTeamInventory();
 await saveMyData();
+await saveTeamInventory();
 });
 
 // Add Inventory Item
