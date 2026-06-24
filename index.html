@@ -573,14 +573,6 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;hei
 <div class="team-clock-timer" id="teamClockTimerDisplay" style="display:none;"></div>
 <h3 class="team-section-header">Sessions</h3>
 <div class="table-wrap"><table class="team-table"><thead><tr><th>Date</th><th>In</th><th>Out</th><th>Duration</th></tr></thead><tbody id="teamSessionsBody"></tbody></table></div>
-<h3 class="team-section-header">Tokens <span class="badge" id="teamTokenBadge">0</span></h3>
-<div class="team-form" id="teamTokenForm">
-<input id="teamTokenAmt" type="number" placeholder="Amount">
-<select id="teamTokenType"><option value="gain">Gained</option><option value="spend">Spent</option></select>
-<input id="teamTokenNote" placeholder="Note (optional)">
-<button id="teamTokenAddBtn">Add</button>
-</div>
-<div class="table-wrap"><table class="team-table"><thead><tr><th>Date</th><th>Amount</th><th>Type</th><th>Note</th></tr></thead><tbody id="teamTokensBody"></tbody></table></div>
 <h3 class="team-section-header">Log Trade</h3>
 <div class="team-form" style="margin-bottom:8px;">
 <input id="teamTradeWith" placeholder="Traded with... (optional)">
@@ -591,6 +583,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;hei
 <div class="team-form" style="margin-bottom:6px;">
 <input id="tradeOutPet" placeholder="Pet name" data-team-ac>
 <input id="tradeOutVariant" placeholder="Variant">
+<input id="tradeOutQty" type="number" placeholder="Qty" value="1" min="1" style="max-width:60px;">
 <button id="tradeOutAddPet">+</button>
 </div>
 <div class="trade-side-items" id="tradeOutPets"></div>
@@ -606,6 +599,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;hei
 <div class="team-form" style="margin-bottom:6px;">
 <input id="tradeInPet" placeholder="Pet name" data-team-ac>
 <input id="tradeInVariant" placeholder="Variant">
+<input id="tradeInQty" type="number" placeholder="Qty" value="1" min="1" style="max-width:60px;">
 <button id="tradeInAddPet">+</button>
 </div>
 <div class="trade-side-items" id="tradeInPets"></div>
@@ -1953,8 +1947,8 @@ const d=window.teamData[name]||{tokens:[],sessions:[],shopPets:[],trades:[]};
 (d.tokens||[]).forEach(t=>{if(t.type==="gain")totalGained+=t.amount;else totalSpent+=t.amount;
 activities.push({ts:t.ts,member:name,action:t.type==="gain"?"Gained tokens":"Spent tokens",detail:(t.type==="gain"?"+":"-")+formatNum(t.amount)+(t.note?" — "+t.note:"")});});
 (d.trades||[]).forEach(t=>{tradeCount++;
-const outSummary=(t.outPets||[]).map(p=>p.name).join(", ")+(t.outTokens?" +"+formatNum(t.outTokens)+"t":"");
-const inSummary=(t.inPets||[]).map(p=>p.name).join(", ")+(t.inTokens?" +"+formatNum(t.inTokens)+"t":"");
+const outSummary=(t.outPets||[]).map(p=>(p.qty>1?p.qty+"x ":"")+p.name).join(", ")+(t.outTokens?" +"+formatNum(t.outTokens)+"t":"");
+const inSummary=(t.inPets||[]).map(p=>(p.qty>1?p.qty+"x ":"")+p.name).join(", ")+(t.inTokens?" +"+formatNum(t.inTokens)+"t":"");
 activities.push({ts:t.ts,member:name,action:"Trade"+(t.with?" w/ "+t.with:""),detail:(outSummary||"—")+" → "+(inSummary||"—")});
 });
 const openSess=d.sessions&&d.sessions.find(s=>!s.out);if(openSess)activeNow++;
@@ -1996,16 +1990,12 @@ timerDisp.style.display="none";
 updateClockStatus();
 const sessions=[...(d.sessions||[])].sort((a,b)=>(b.in||0)-(a.in||0));
 document.getElementById("teamSessionsBody").innerHTML=sessions.map(s=>`<tr><td>${fmtTs(s.in)}</td><td>${new Date(s.in).toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"})}</td><td>${s.out?new Date(s.out).toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"}):"—"}</td><td>${s.out?fmtDuration(s.out-s.in):"Active"}</td></tr>`).join("");
-let balance=0;(d.tokens||[]).forEach(t=>{if(t.type==="gain")balance+=t.amount;else balance-=t.amount;});
-document.getElementById("teamTokenBadge").textContent=formatNum(balance);
-const tokens=[...(d.tokens||[])].sort((a,b)=>(b.ts||0)-(a.ts||0));
-document.getElementById("teamTokensBody").innerHTML=tokens.map(t=>`<tr><td>${fmtTs(t.ts)}</td><td class="${t.type==="gain"?"gain":"spend"}">${t.type==="gain"?"+":"-"}${formatNum(t.amount)}</td><td>${t.type==="gain"?"Gained":"Spent"}</td><td>${esc(t.note||"")}</td></tr>`).join("");
 const trades=[...(d.trades||[])].sort((a,b)=>(b.ts||0)-(a.ts||0));
 document.getElementById("teamTradesBody").innerHTML=trades.map(t=>{
 const outParts=[];const inParts=[];
-(t.outPets||[]).forEach(p=>outParts.push(esc(p.name)+(p.variant?" ("+esc(p.variant)+")":"")));
+(t.outPets||[]).forEach(p=>outParts.push((p.qty>1?p.qty+"x ":"")+esc(p.name)+(p.variant?" ("+esc(p.variant)+")":"")));
 if(t.outTokens)outParts.push(formatNum(t.outTokens)+" tokens");
-(t.inPets||[]).forEach(p=>inParts.push(esc(p.name)+(p.variant?" ("+esc(p.variant)+")":"")));
+(t.inPets||[]).forEach(p=>inParts.push((p.qty>1?p.qty+"x ":"")+esc(p.name)+(p.variant?" ("+esc(p.variant)+")":"")));
 if(t.inTokens)inParts.push(formatNum(t.inTokens)+" tokens");
 return`<tr><td>${fmtTs(t.ts)}</td><td>${esc(t.with||"—")}</td><td class="spend">${outParts.join(", ")||"—"}</td><td class="gain">${inParts.join(", ")||"—"}</td></tr>`;
 }).join("");
@@ -2137,26 +2127,13 @@ renderMyTracker();renderTeamDashboard();
 await saveMyData();
 });
 
-// Add Token
-document.getElementById("teamTokenAddBtn").addEventListener("click",async()=>{
-const amt=parseInt(document.getElementById("teamTokenAmt").value);
-if(!amt||amt<=0){alert("Enter a valid amount.");return;}
-const type=document.getElementById("teamTokenType").value;
-const note=document.getElementById("teamTokenNote").value.trim();
-const d=getMyData();if(!d.tokens)d.tokens=[];
-d.tokens.push({id:teamId("tok"),amount:amt,type:type,note:note,ts:Date.now()});
-window.teamData[window.teamCurrentMember]=d;
-document.getElementById("teamTokenAmt").value="";document.getElementById("teamTokenNote").value="";
-renderMyTracker();renderTeamDashboard();
-await saveMyData();
-});
 
 // Trade builder state
 let tradeOutPets=[],tradeInPets=[],tradeOutTokenAmt=0,tradeInTokenAmt=0;
 
 function renderTradeSide(list,containerId){
 const el=document.getElementById(containerId);
-el.innerHTML=list.map((p,i)=>`<div class="trade-item"><span class="trade-item-name">${esc(p.name)}</span>${p.variant?`<span class="trade-item-variant">${esc(p.variant)}</span>`:""}<button class="trade-item-del" data-trade-rm="${i}">&times;</button></div>`).join("");
+el.innerHTML=list.map((p,i)=>`<div class="trade-item"><span class="trade-item-name">${p.qty>1?p.qty+"x ":""}${esc(p.name)}</span>${p.variant?`<span class="trade-item-variant">${esc(p.variant)}</span>`:""}<button class="trade-item-del" data-trade-rm="${i}">&times;</button></div>`).join("");
 }
 
 function renderTradeTokens(){
@@ -2167,8 +2144,8 @@ document.getElementById("tradeInTokenDisplay").textContent=tradeInTokenAmt?forma
 function clearTradeBuilder(){
 tradeOutPets=[];tradeInPets=[];tradeOutTokenAmt=0;tradeInTokenAmt=0;
 renderTradeSide(tradeOutPets,"tradeOutPets");renderTradeSide(tradeInPets,"tradeInPets");renderTradeTokens();
-document.getElementById("tradeOutPet").value="";document.getElementById("tradeOutVariant").value="";
-document.getElementById("tradeInPet").value="";document.getElementById("tradeInVariant").value="";
+document.getElementById("tradeOutPet").value="";document.getElementById("tradeOutVariant").value="";document.getElementById("tradeOutQty").value="1";
+document.getElementById("tradeInPet").value="";document.getElementById("tradeInVariant").value="";document.getElementById("tradeInQty").value="1";
 document.getElementById("tradeOutTokens").value="";document.getElementById("tradeInTokens").value="";
 document.getElementById("teamTradeWith").value="";
 }
@@ -2177,8 +2154,9 @@ document.getElementById("teamTradeWith").value="";
 document.getElementById("tradeOutAddPet").addEventListener("click",()=>{
 const name=document.getElementById("tradeOutPet").value.trim();if(!name)return;
 const variant=document.getElementById("tradeOutVariant").value.trim();
-tradeOutPets.push({name,variant});
-document.getElementById("tradeOutPet").value="";document.getElementById("tradeOutVariant").value="";
+const qty=parseInt(document.getElementById("tradeOutQty").value)||1;
+tradeOutPets.push({name,variant,qty});
+document.getElementById("tradeOutPet").value="";document.getElementById("tradeOutVariant").value="";document.getElementById("tradeOutQty").value="1";
 renderTradeSide(tradeOutPets,"tradeOutPets");
 });
 
@@ -2186,8 +2164,9 @@ renderTradeSide(tradeOutPets,"tradeOutPets");
 document.getElementById("tradeInAddPet").addEventListener("click",()=>{
 const name=document.getElementById("tradeInPet").value.trim();if(!name)return;
 const variant=document.getElementById("tradeInVariant").value.trim();
-tradeInPets.push({name,variant});
-document.getElementById("tradeInPet").value="";document.getElementById("tradeInVariant").value="";
+const qty=parseInt(document.getElementById("tradeInQty").value)||1;
+tradeInPets.push({name,variant,qty});
+document.getElementById("tradeInPet").value="";document.getElementById("tradeInVariant").value="";document.getElementById("tradeInQty").value="1";
 renderTradeSide(tradeInPets,"tradeInPets");
 });
 
@@ -2227,14 +2206,16 @@ if(!window.teamInventory.items)window.teamInventory.items=[];
 if(!window.teamInventory.log)window.teamInventory.log=[];
 const owner=window.teamCurrentMember;
 tradeOutPets.forEach(p=>{
+const q=p.qty||1;
 const idx=window.teamInventory.items.findIndex(i=>i.name===p.name&&(i.variant||"")===(p.variant||"")&&(i.owner||"")===owner);
-if(idx>=0){window.teamInventory.items[idx].qty--;if(window.teamInventory.items[idx].qty<=0)window.teamInventory.items.splice(idx,1);}
-window.teamInventory.log.push({ts:Date.now(),member:owner,action:"remove",item:p.name+(p.variant?" ("+p.variant+")":""),qty:1});
+if(idx>=0){window.teamInventory.items[idx].qty-=q;if(window.teamInventory.items[idx].qty<=0)window.teamInventory.items.splice(idx,1);}
+window.teamInventory.log.push({ts:Date.now(),member:owner,action:"remove",item:p.name+(p.variant?" ("+p.variant+")":""),qty:q});
 });
 tradeInPets.forEach(p=>{
+const q=p.qty||1;
 const existing=window.teamInventory.items.find(i=>i.name===p.name&&(i.variant||"")===(p.variant||"")&&(i.owner||"")===owner);
-if(existing){existing.qty++;}else{window.teamInventory.items.push({name:p.name,variant:p.variant||"",qty:1,owner:owner});}
-window.teamInventory.log.push({ts:Date.now(),member:owner,action:"add",item:p.name+(p.variant?" ("+p.variant+")":""),qty:1});
+if(existing){existing.qty+=q;}else{window.teamInventory.items.push({name:p.name,variant:p.variant||"",qty:q,owner:owner});}
+window.teamInventory.log.push({ts:Date.now(),member:owner,action:"add",item:p.name+(p.variant?" ("+p.variant+")":""),qty:q});
 });
 clearTradeBuilder();
 renderMyTracker();renderTeamDashboard();renderTeamInventory();
