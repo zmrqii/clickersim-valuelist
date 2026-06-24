@@ -335,6 +335,88 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;hei
 .pet-values{flex-direction:column;}
 .calc-checks{flex-direction:column;gap:6px;}
 }
+
+/* ═══════════════ TEAM TRACKER ═══════════════ */
+.team-sub-nav{display:flex;gap:4px;padding:8px;background:var(--glass);backdrop-filter:blur(12px);border:1px solid var(--glass-border);border-radius:14px;margin-bottom:20px;}
+.team-sub-tab{flex:1;background:none;border:none;color:var(--text-2);font-family:'Inter',sans-serif;font-weight:500;font-size:13px;padding:10px 16px;border-radius:10px;cursor:pointer;transition:all .2s;text-align:center;}
+.team-sub-tab:hover{color:var(--text-1);background:var(--glass-hover);}
+.team-sub-tab.active{color:#fff;background:var(--accent-700);}
+.team-member-bar{display:flex;align-items:center;gap:12px;padding:12px 18px;background:var(--glass);backdrop-filter:blur(12px);border:1px solid var(--glass-border);border-radius:14px;margin-bottom:16px;}
+.team-member-bar select{background:var(--bg-surface);border:1px solid var(--border);color:var(--text-1);font-family:'Inter',sans-serif;font-size:13px;padding:6px 10px;border-radius:8px;outline:none;}
+.team-member-bar select:focus{border-color:var(--accent-700);}
+.team-member-bar .clock-status{margin-left:auto;font-size:12px;color:var(--text-2);display:flex;align-items:center;gap:6px;}
+.team-member-bar .clock-dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+.clock-dot.online{background:#34d399;}
+.clock-dot.offline{background:var(--text-3);}
+.team-dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:20px;}
+.team-dash-card{background:var(--glass);backdrop-filter:blur(12px);border:1px solid var(--glass-border);border-radius:14px;padding:18px;text-align:center;transition:border-color .25s;}
+.team-dash-card:hover{border-color:rgba(192,132,252,.3);}
+.team-dash-card .dash-num{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--accent-400);display:block;}
+.team-dash-card .dash-label{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;margin-top:4px;}
+.team-active-list{margin-bottom:20px;}
+.team-active-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--glass);border:1px solid var(--glass-border);border-radius:10px;margin-bottom:6px;font-size:13px;color:var(--text-2);}
+.team-active-item .member-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.team-active-item .member-duration{margin-left:auto;font-size:11px;color:var(--text-3);}
+.team-table{width:100%;border-collapse:collapse;font-size:13px;}
+.team-table th{text-align:left;padding:10px 12px;color:var(--text-3);font-size:11px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border);}
+.team-table td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.03);color:var(--text-2);}
+.team-table tr:hover td{background:var(--glass-hover);}
+.team-table .gain{color:#34d399;}
+.team-table .spend{color:#f87171;}
+.team-form{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.team-form input,.team-form select{background:var(--bg-surface);border:1px solid var(--border);color:var(--text-1);font-family:'Inter',sans-serif;font-size:13px;padding:8px 12px;border-radius:10px;outline:none;transition:border-color .2s;flex:1;min-width:100px;}
+.team-form input:focus,.team-form select:focus{border-color:var(--accent-700);}
+.team-form input::placeholder{color:var(--text-3);}
+.team-form button{background:var(--accent-700);color:#fff;border:none;padding:8px 16px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;white-space:nowrap;transition:background .2s;}
+.team-form button:hover{background:var(--accent-600);}
+.team-clock-btn{display:block;width:100%;padding:16px;border:none;border-radius:14px;font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:#fff;cursor:pointer;transition:all .2s;margin-bottom:20px;}
+.team-clock-btn.clock-in{background:linear-gradient(135deg,#059669,#10b981);}
+.team-clock-btn.clock-in:hover{background:linear-gradient(135deg,#047857,#059669);}
+.team-clock-btn.clock-out{background:linear-gradient(135deg,#dc2626,#ef4444);}
+.team-clock-btn.clock-out:hover{background:linear-gradient(135deg,#b91c1c,#dc2626);}
+.team-section-header{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600;color:var(--text-1);margin:24px 0 12px;display:flex;align-items:center;gap:10px;}
+.team-section-header .badge{font-size:12px;font-weight:500;color:var(--accent-400);background:rgba(168,85,247,0.15);padding:3px 10px;border-radius:20px;}
+.inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:20px;}
+.inv-card{background:var(--glass);backdrop-filter:blur(12px);border:1px solid var(--glass-border);border-radius:14px;padding:14px;text-align:center;transition:border-color .25s;}
+.inv-card:hover{border-color:rgba(192,132,252,.3);}
+.inv-card .inv-name{font-weight:600;font-size:13px;color:var(--text-1);margin-bottom:2px;}
+.inv-card .inv-variant{font-size:11px;color:var(--text-3);}
+.inv-card .inv-qty{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--accent-400);margin:6px 0;}
+.inv-card .inv-remove{background:rgba(220,38,38,0.15);border:1px solid rgba(220,38,38,0.3);color:#f87171;font-size:11px;padding:4px 12px;border-radius:8px;cursor:pointer;transition:background .2s;font-family:'Inter',sans-serif;}
+.inv-card .inv-remove:hover{background:rgba(220,38,38,0.3);}
+.team-setup{text-align:center;padding:60px 20px;max-width:400px;margin:0 auto;}
+.team-setup h2{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;margin-bottom:8px;}
+.team-setup p{color:var(--text-2);font-size:14px;margin-bottom:24px;}
+.team-setup select,.team-setup input{width:100%;padding:10px 14px;margin-bottom:10px;border-radius:10px;border:1px solid var(--border);background:var(--bg-surface);color:var(--text-1);font-family:'Inter',sans-serif;font-size:14px;outline:none;}
+.team-setup select:focus,.team-setup input:focus{border-color:var(--accent-700);}
+.team-setup input::placeholder{color:var(--text-3);}
+.team-setup button{width:100%;padding:12px;border:none;border-radius:10px;background:var(--accent-700);color:#fff;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s;}
+.team-setup button:hover{background:var(--accent-600);}
+.table-wrap{overflow-x:auto;border-radius:12px;background:var(--glass);border:1px solid var(--glass-border);margin-bottom:20px;}
+.team-sub-section{display:none;}
+.team-sub-section.active{display:block;}
+.team-clock-timer{font-size:13px;color:var(--accent-300);margin-bottom:12px;}
+.team-sold-btn{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#34d399;font-size:11px;padding:3px 10px;border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;}
+.team-sold-btn:hover{background:rgba(34,197,94,0.3);}
+.team-sold-btn.sold{background:rgba(255,255,255,0.05);border-color:var(--border);color:var(--text-3);cursor:default;}
+@media(max-width:768px){
+.team-member-bar{flex-wrap:wrap;gap:8px;}
+.team-member-bar .clock-status{width:100%;justify-content:center;margin-left:0;margin-top:4px;}
+.team-member-bar select{flex:1;min-width:0;}
+.team-table th,.team-table td{padding:8px 8px;font-size:12px;white-space:nowrap;}
+}
+@media(max-width:480px){
+.team-sub-nav{flex-direction:column;}
+.team-form{flex-direction:column;}
+.team-form input,.team-form select,.team-form button{min-width:100%;}
+.team-dash-grid{grid-template-columns:1fr;}
+.inv-grid{grid-template-columns:1fr;}
+.team-member-bar{flex-wrap:wrap;}
+.team-section-header{font-size:14px;flex-wrap:wrap;}
+.team-clock-btn{font-size:16px;padding:14px;}
+.team-setup{padding:40px 16px;}
+.team-setup h2{font-size:20px;}
+}
 </style>
 </head>
 <body>
@@ -443,6 +525,83 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;hei
 <div class="list-header"><h2><span class="gradient-text">FAQ</span></h2></div>
 <div id="faqContent"></div>
 <p class="no-results" id="noFaq" style="display:none;">No FAQ items yet.</p>
+</section>
+
+<!-- TEAM TRACKER -->
+<section id="teamPage" class="page">
+<div id="teamSetup" class="team-setup">
+<h2 class="gradient-text">Team Tracker</h2>
+<p>Select your name or create a new member profile to get started.</p>
+<select id="teamSetupSelect"><option value="">-- Select Member --</option></select>
+<input id="teamSetupNew" placeholder="Or enter a new name...">
+<button id="teamSetupBtn">Continue</button>
+</div>
+<div id="teamContent" style="display:none;">
+<div class="team-member-bar">
+<span style="font-size:13px;color:var(--text-3);">Member:</span>
+<select id="teamMemberSelect"></select>
+<button id="teamLogoutBtn" style="background:rgba(220,38,38,0.15);border:1px solid rgba(220,38,38,0.3);color:#f87171;font-size:11px;padding:5px 12px;border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif;">Logout</button>
+<div class="clock-status"><span class="clock-dot" id="teamClockDot"></span><span id="teamClockLabel">Offline</span></div>
+</div>
+<datalist id="teamPetList"></datalist>
+<div class="team-sub-nav">
+<button class="team-sub-tab active" data-team-tab="teamDash">Dashboard</button>
+<button class="team-sub-tab" data-team-tab="teamMy">My Tracker</button>
+<button class="team-sub-tab" data-team-tab="teamInventory">Inventory</button>
+</div>
+<div id="teamDash" class="team-sub-section active">
+<div class="team-dash-grid" id="teamDashGrid"></div>
+<h3 class="team-section-header">Active Members</h3>
+<div class="team-active-list" id="teamActiveList"></div>
+<h3 class="team-section-header">Recent Activity</h3>
+<div class="table-wrap"><table class="team-table"><thead><tr><th>Time</th><th>Member</th><th>Action</th><th>Details</th></tr></thead><tbody id="teamActivityBody"></tbody></table></div>
+</div>
+<div id="teamMy" class="team-sub-section">
+<button class="team-clock-btn clock-in" id="teamClockBtn">Clock In</button>
+<div class="team-clock-timer" id="teamClockTimerDisplay" style="display:none;"></div>
+<h3 class="team-section-header">Sessions</h3>
+<div class="table-wrap"><table class="team-table"><thead><tr><th>Date</th><th>In</th><th>Out</th><th>Duration</th></tr></thead><tbody id="teamSessionsBody"></tbody></table></div>
+<h3 class="team-section-header">Tokens <span class="badge" id="teamTokenBadge">0</span></h3>
+<div class="team-form" id="teamTokenForm">
+<input id="teamTokenAmt" type="number" placeholder="Amount">
+<select id="teamTokenType"><option value="gain">Gained</option><option value="spend">Spent</option></select>
+<input id="teamTokenNote" placeholder="Note (optional)">
+<button id="teamTokenAddBtn">Add</button>
+</div>
+<div class="table-wrap"><table class="team-table"><thead><tr><th>Date</th><th>Amount</th><th>Type</th><th>Note</th></tr></thead><tbody id="teamTokensBody"></tbody></table></div>
+<h3 class="team-section-header">Pet Shop</h3>
+<div class="team-form" id="teamShopForm">
+<input id="teamShopPet" placeholder="Pet name" list="teamPetList">
+<input id="teamShopPrice" type="number" placeholder="Price (tokens)">
+<button id="teamShopAddBtn">List Pet</button>
+</div>
+<div class="table-wrap"><table class="team-table"><thead><tr><th>Date</th><th>Pet</th><th>Price</th><th>Status</th></tr></thead><tbody id="teamShopBody"></tbody></table></div>
+<h3 class="team-section-header">Trades</h3>
+<div class="team-form" id="teamTradeForm">
+<select id="teamTradeDir"><option value="in">Received (IN)</option><option value="out">Given (OUT)</option></select>
+<input id="teamTradePet" placeholder="Pet name" list="teamPetList">
+<input id="teamTradeWith" placeholder="Traded with...">
+<button id="teamTradeAddBtn">Log Trade</button>
+</div>
+<div class="table-wrap"><table class="team-table"><thead><tr><th>Date</th><th>Direction</th><th>Pet</th><th>With</th></tr></thead><tbody id="teamTradesBody"></tbody></table></div>
+</div>
+<div id="teamInventory" class="team-sub-section">
+<div class="team-form" id="teamInvForm">
+<input id="teamInvName" placeholder="Item name" list="teamPetList">
+<input id="teamInvVariant" placeholder="Variant (optional)">
+<input id="teamInvQty" type="number" placeholder="Qty" value="1" min="1">
+<button id="teamInvAddBtn">Add Item</button>
+</div>
+<div style="margin-bottom:12px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+<span style="font-size:12px;color:var(--text-3);">Filter:</span>
+<button class="team-sub-tab active" id="teamInvFilterAll" data-inv-filter="" style="padding:6px 14px;font-size:12px;">All</button>
+<div id="teamInvFilterBtns" style="display:contents;"></div>
+</div>
+<div class="inv-grid" id="teamInvGrid"></div>
+<h3 class="team-section-header">Inventory Log</h3>
+<div class="table-wrap"><table class="team-table"><thead><tr><th>Time</th><th>Member</th><th>Action</th><th>Item</th><th>Qty</th></tr></thead><tbody id="teamInvLogBody"></tbody></table></div>
+</div>
+</div>
 </section>
 
 </div>
@@ -985,6 +1144,11 @@ window.page = "home";
 window.currentPet = null;
 window.prevPage = "home";
 window.currentSort = "name-az";
+window.teamMembers = [];
+window.teamCurrentMember = localStorage.getItem("teamMemberName") || "";
+window.teamData = {};
+window.teamInventory = { items: [], log: [] };
+let teamClockTimer = null;
 
 const DEMAND_RANK={"Super High":5,"High":4,"Medium":3,"Low":2,"No Demand":1,"?":0};
 function parseVal(v){if(!v||v==="?")return 0;const s=String(v).replace(/,/g,"");const m=s.match(/^([\d.]+)\s*([a-zA-Z]*)$/);if(!m)return parseFloat(s)||0;const n=parseFloat(m[1]);const u=m[2].toLowerCase();const units={k:1e3,m:1e6,b:1e9,t:1e12,q:1e15,qi:1e18};return n*(units[u]||1);}
@@ -1182,6 +1346,7 @@ if(page==="home"){showPage("homePage");}
 else if(page==="all"){showPage("allPage");renderAll();}
 else if(page==="search"){showPage("searchPage");renderSearch("");}
 else if(page==="faq"){showPage("faqPage");renderFaq();}
+else if(page==="team"||page==="team-my"||page==="team-inventory"){if(!window.isAdmin){goPage("home");return;}showPage("teamPage");initTeamTracker().then(()=>{if(page==="team-my")showTeamSection("teamMy");else if(page==="team-inventory")showTeamSection("teamInventory");else showTeamSection("teamDash");});}
 else{showPage("listPage");render(page);}
 }
 
@@ -1302,6 +1467,9 @@ function toggleAdmin(){adminPanel.classList.toggle("open");}
 // Triple-tap logo = admin (touch/mobile only)
 (function(){let taps=0,timer;document.getElementById("logoArea").addEventListener("touchend",e=>{taps++;if(taps===1)timer=setTimeout(()=>{taps=0;},600);if(taps===3){clearTimeout(timer);taps=0;toggleAdmin();}});})();
 
+// Triple-tap hero title = team tracker (touch/mobile only)
+(function(){let taps=0,timer;document.getElementById("heroTitle").addEventListener("touchend",e=>{taps++;if(taps===1)timer=setTimeout(()=>{taps=0;},600);if(taps===3){clearTimeout(timer);taps=0;if(window.isAdmin)goPage("team");}});})();
+
 // Mobile "Edit Home Page" button in admin panel
 document.getElementById("mobileEditHomeBtn").addEventListener("click",()=>{if(!window.isAdmin)return;adminPanel.classList.remove("open");toggleHomeEditor();});
 document.getElementById("mobileEditFaqBtn").addEventListener("click",()=>{if(!window.isAdmin)return;adminPanel.classList.remove("open");toggleFaqEditor();});
@@ -1312,6 +1480,7 @@ if(e.altKey&&e.shiftKey&&e.key==="P"){e.preventDefault();toggleAdmin();}
 if(e.altKey&&e.shiftKey&&e.key==="M"){e.preventDefault();document.getElementById("superAdminPanel").classList.toggle("open");}
 if(e.altKey&&e.shiftKey&&e.key==="E"){e.preventDefault();if(window.isAdmin)toggleHomeEditor();}
 if(e.altKey&&e.shiftKey&&e.key==="F"){e.preventDefault();if(window.isAdmin)toggleFaqEditor();}
+if(e.altKey&&e.shiftKey&&e.key==="T"){e.preventDefault();if(window.isAdmin)goPage("team");}
 });
 
 document.getElementById("adminClose").addEventListener("click",()=>adminPanel.classList.remove("open"));
@@ -1631,6 +1800,326 @@ if(!window.isAdmin){alert("Not admin");return;}
 if(!confirm("Delete all FAQ items?"))return;
 try{await setDoc(doc(db,"config","faq"),{items:[]});faqItems=[];renderFaqEditorList();if(window.page==="faq")renderFaq();alert("FAQ cleared!");}
 catch(err){alert("Reset failed: "+err.message);}
+});
+
+/* ═══════════════ TEAM TRACKER ═══════════════ */
+function teamId(prefix){return prefix+"_"+Date.now()+"_"+Math.random().toString(36).slice(2,7);}
+function fmtTs(ts){if(!ts)return"—";const d=new Date(ts);return d.toLocaleDateString("en-US",{month:"short",day:"numeric"})+" "+d.toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"});}
+function fmtDuration(ms){if(!ms||ms<0)return"—";const s=Math.floor(ms/1000),m=Math.floor(s/60),h=Math.floor(m/60);if(h>0)return h+"h "+String(m%60).padStart(2,"0")+"m";return m+"m "+String(s%60).padStart(2,"0")+"s";}
+
+function showTeamSection(id){
+document.querySelectorAll(".team-sub-section").forEach(s=>s.classList.remove("active"));
+document.querySelectorAll(".team-sub-tab").forEach(t=>t.classList.remove("active"));
+const el=document.getElementById(id);if(el)el.classList.add("active");
+document.querySelectorAll(".team-sub-tab").forEach(t=>{if(t.dataset.teamTab===id)t.classList.add("active");});
+}
+
+async function initTeamTracker(){
+await loadTeamMembers();
+const setup=document.getElementById("teamSetup");
+const content=document.getElementById("teamContent");
+if(!window.teamCurrentMember||!window.teamMembers.includes(window.teamCurrentMember)){
+setup.style.display="";content.style.display="none";
+const sel=document.getElementById("teamSetupSelect");
+sel.innerHTML='<option value="">-- Select Member --</option>';
+window.teamMembers.forEach(n=>{sel.innerHTML+=`<option value="${esc(n)}">${esc(n)}</option>`;});
+}else{
+setup.style.display="none";content.style.display="";
+await loadAllTeamData();
+populateMemberSelect();
+renderTeamDashboard();renderMyTracker();renderTeamInventory();
+startClockTimer();
+}
+const dl=document.getElementById("teamPetList");
+dl.innerHTML=ALL_PETS.map(p=>`<option value="${esc(p.name)}">`).join("");
+}
+
+async function loadTeamMembers(){
+try{const snap=await getDoc(doc(db,"config","team_members"));
+if(snap.exists()&&snap.data().list)window.teamMembers=snap.data().list;
+else window.teamMembers=[];
+}catch(e){console.log("loadTeamMembers error:",e);window.teamMembers=[];}
+}
+
+async function loadAllTeamData(){
+window.teamData={};
+for(const name of window.teamMembers){
+try{const snap=await getDoc(doc(db,"config","team_"+name));
+if(snap.exists())window.teamData[name]=snap.data();
+else window.teamData[name]={tokens:[],sessions:[],shopPets:[],trades:[]};
+}catch(e){window.teamData[name]={tokens:[],sessions:[],shopPets:[],trades:[]};}
+}
+try{const snap=await getDoc(doc(db,"config","team_inventory"));
+if(snap.exists())window.teamInventory=snap.data();
+else window.teamInventory={items:[],log:[]};
+}catch(e){window.teamInventory={items:[],log:[]};}
+}
+
+async function saveMyData(){
+if(!window.teamCurrentMember)return;
+await setDoc(doc(db,"config","team_"+window.teamCurrentMember),window.teamData[window.teamCurrentMember]);
+}
+
+async function saveTeamInventory(){
+await setDoc(doc(db,"config","team_inventory"),window.teamInventory);
+}
+
+async function saveTeamMembers(){
+await setDoc(doc(db,"config","team_members"),{list:window.teamMembers});
+}
+
+function populateMemberSelect(){
+const sel=document.getElementById("teamMemberSelect");
+sel.innerHTML="";
+window.teamMembers.forEach(n=>{const o=document.createElement("option");o.value=n;o.textContent=n;if(n===window.teamCurrentMember)o.selected=true;sel.appendChild(o);});
+updateClockStatus();
+}
+
+function getMyData(){return window.teamData[window.teamCurrentMember]||{tokens:[],sessions:[],shopPets:[],trades:[]};}
+
+function updateClockStatus(){
+const d=getMyData();const dot=document.getElementById("teamClockDot");const lbl=document.getElementById("teamClockLabel");
+const openSession=d.sessions&&d.sessions.find(s=>!s.out);
+if(openSession){dot.className="clock-dot online";lbl.textContent="Clocked In";}
+else{dot.className="clock-dot offline";lbl.textContent="Offline";}
+}
+
+function renderTeamDashboard(){
+let totalGained=0,totalSpent=0,tradeCount=0,activeNow=0,invTotal=0;
+const activities=[];
+for(const name of window.teamMembers){
+const d=window.teamData[name]||{tokens:[],sessions:[],shopPets:[],trades:[]};
+(d.tokens||[]).forEach(t=>{if(t.type==="gain")totalGained+=t.amount;else totalSpent+=t.amount;
+activities.push({ts:t.ts,member:name,action:t.type==="gain"?"Gained tokens":"Spent tokens",detail:(t.type==="gain"?"+":"-")+formatNum(t.amount)+(t.note?" — "+t.note:"")});});
+(d.trades||[]).forEach(t=>{tradeCount++;activities.push({ts:t.ts,member:name,action:t.dir==="in"?"Trade IN":"Trade OUT",detail:t.pet+(t.with?" ("+t.with+")":"")});});
+(d.shopPets||[]).forEach(p=>{activities.push({ts:p.ts,member:name,action:p.sold?"Sold pet":"Listed pet",detail:p.pet+" — "+formatNum(p.price)+" tokens"});});
+const openSess=d.sessions&&d.sessions.find(s=>!s.out);if(openSess)activeNow++;
+}
+(window.teamInventory.items||[]).forEach(i=>invTotal+=i.qty);
+const grid=document.getElementById("teamDashGrid");
+grid.innerHTML=`
+<div class="team-dash-card"><span class="dash-num">${formatNum(totalGained)}</span><span class="dash-label">Tokens Gained</span></div>
+<div class="team-dash-card"><span class="dash-num">${formatNum(totalSpent)}</span><span class="dash-label">Tokens Spent</span></div>
+<div class="team-dash-card"><span class="dash-num">${formatNum(totalGained-totalSpent)}</span><span class="dash-label">Net Balance</span></div>
+<div class="team-dash-card"><span class="dash-num">${tradeCount}</span><span class="dash-label">Total Trades</span></div>
+<div class="team-dash-card"><span class="dash-num">${activeNow}</span><span class="dash-label">Active Now</span></div>
+<div class="team-dash-card"><span class="dash-num">${invTotal}</span><span class="dash-label">Inventory Items</span></div>`;
+const activeList=document.getElementById("teamActiveList");
+activeList.innerHTML="";
+for(const name of window.teamMembers){
+const d=window.teamData[name]||{sessions:[]};
+const openSess=(d.sessions||[]).find(s=>!s.out);
+if(openSess){activeList.innerHTML+=`<div class="team-active-item" style="border-color:rgba(52,211,153,0.3);"><span class="member-dot" style="background:#34d399"></span><strong style="color:var(--text-1)">${esc(name)}</strong><span class="member-duration" style="color:#34d399">${fmtDuration(Date.now()-openSess.in)}</span></div>`;}
+else{activeList.innerHTML+=`<div class="team-active-item"><span class="member-dot" style="background:var(--text-3)"></span>${esc(name)}<span class="member-duration">Offline</span></div>`;}
+}
+activities.sort((a,b)=>(b.ts||0)-(a.ts||0));
+const tbody=document.getElementById("teamActivityBody");
+tbody.innerHTML=activities.slice(0,20).map(a=>`<tr><td>${fmtTs(a.ts)}</td><td>${esc(a.member)}</td><td>${esc(a.action)}</td><td>${esc(a.detail)}</td></tr>`).join("");
+}
+
+function renderMyTracker(){
+const d=getMyData();
+const openSess=(d.sessions||[]).find(s=>!s.out);
+const clockBtn=document.getElementById("teamClockBtn");
+const timerDisp=document.getElementById("teamClockTimerDisplay");
+if(openSess){
+clockBtn.textContent="Clock Out";clockBtn.className="team-clock-btn clock-out";
+timerDisp.style.display="";timerDisp.textContent="Session: "+fmtDuration(Date.now()-openSess.in);
+}else{
+clockBtn.textContent="Clock In";clockBtn.className="team-clock-btn clock-in";
+timerDisp.style.display="none";
+}
+updateClockStatus();
+const sessions=[...(d.sessions||[])].sort((a,b)=>(b.in||0)-(a.in||0));
+document.getElementById("teamSessionsBody").innerHTML=sessions.map(s=>`<tr><td>${fmtTs(s.in)}</td><td>${new Date(s.in).toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"})}</td><td>${s.out?new Date(s.out).toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"}):"—"}</td><td>${s.out?fmtDuration(s.out-s.in):"Active"}</td></tr>`).join("");
+let balance=0;(d.tokens||[]).forEach(t=>{if(t.type==="gain")balance+=t.amount;else balance-=t.amount;});
+document.getElementById("teamTokenBadge").textContent=formatNum(balance);
+const tokens=[...(d.tokens||[])].sort((a,b)=>(b.ts||0)-(a.ts||0));
+document.getElementById("teamTokensBody").innerHTML=tokens.map(t=>`<tr><td>${fmtTs(t.ts)}</td><td class="${t.type==="gain"?"gain":"spend"}">${t.type==="gain"?"+":"-"}${formatNum(t.amount)}</td><td>${t.type==="gain"?"Gained":"Spent"}</td><td>${esc(t.note||"")}</td></tr>`).join("");
+const shop=[...(d.shopPets||[])].sort((a,b)=>(b.ts||0)-(a.ts||0));
+document.getElementById("teamShopBody").innerHTML=shop.map(p=>`<tr><td>${fmtTs(p.ts)}</td><td>${esc(p.pet)}</td><td>${formatNum(p.price)}</td><td>${p.sold?'<span class="team-sold-btn sold">Sold</span>':`<button class="team-sold-btn" data-shop-id="${p.id}">Mark Sold</button>`}</td></tr>`).join("");
+const trades=[...(d.trades||[])].sort((a,b)=>(b.ts||0)-(a.ts||0));
+document.getElementById("teamTradesBody").innerHTML=trades.map(t=>`<tr><td>${fmtTs(t.ts)}</td><td class="${t.dir==="in"?"gain":"spend"}">${t.dir==="in"?"IN":"OUT"}</td><td>${esc(t.pet)}</td><td>${esc(t.with||"")}</td></tr>`).join("");
+}
+
+let teamInvFilter="";
+function renderTeamInventory(){
+const allItems=window.teamInventory.items||[];
+// Build filter buttons
+const owners=[...new Set(allItems.map(i=>i.owner||"Unknown"))];
+const filterBtns=document.getElementById("teamInvFilterBtns");
+filterBtns.innerHTML=owners.map(o=>`<button class="team-sub-tab${teamInvFilter===o?" active":""}" data-inv-filter="${esc(o)}" style="padding:6px 14px;font-size:12px;">${esc(o)}</button>`).join("");
+document.getElementById("teamInvFilterAll").classList.toggle("active",teamInvFilter==="");
+// Filter items
+const items=teamInvFilter?allItems.filter(i=>(i.owner||"Unknown")===teamInvFilter):allItems;
+const grid=document.getElementById("teamInvGrid");
+grid.innerHTML=items.map(i=>`<div class="inv-card"><div class="inv-name">${esc(i.name)}</div>${i.variant?`<div class="inv-variant">${esc(i.variant)}</div>`:""}<div class="inv-qty">${i.qty}</div><div style="font-size:10px;color:var(--text-3);margin-bottom:4px;">${esc(i.owner||"Unknown")}</div><button class="inv-remove" data-inv-name="${esc(i.name)}" data-inv-variant="${esc(i.variant||"")}" data-inv-owner="${esc(i.owner||"")}">-1</button></div>`).join("");
+const log=[...(window.teamInventory.log||[])].sort((a,b)=>(b.ts||0)-(a.ts||0));
+document.getElementById("teamInvLogBody").innerHTML=log.slice(0,50).map(l=>`<tr><td>${fmtTs(l.ts)}</td><td>${esc(l.member)}</td><td class="${l.action==="add"?"gain":"spend"}">${l.action==="add"?"+":"-"}</td><td>${esc(l.item)}</td><td>${l.qty}</td></tr>`).join("");
+}
+
+function startClockTimer(){
+if(teamClockTimer)clearInterval(teamClockTimer);
+teamClockTimer=setInterval(()=>{
+const d=getMyData();const openSess=(d.sessions||[]).find(s=>!s.out);
+if(openSess){
+document.getElementById("teamClockTimerDisplay").textContent="Session: "+fmtDuration(Date.now()-openSess.in);
+document.getElementById("teamClockTimerDisplay").style.display="";
+}
+// Update dashboard active members durations
+const activeList=document.getElementById("teamActiveList");
+if(activeList){
+activeList.innerHTML="";
+for(const name of window.teamMembers){
+const md=window.teamData[name]||{sessions:[]};
+const os=(md.sessions||[]).find(s=>!s.out);
+if(os){activeList.innerHTML+=`<div class="team-active-item" style="border-color:rgba(52,211,153,0.3);"><span class="member-dot" style="background:#34d399"></span><strong style="color:var(--text-1)">${esc(name)}</strong><span class="member-duration" style="color:#34d399">${fmtDuration(Date.now()-os.in)}</span></div>`;}
+else{activeList.innerHTML+=`<div class="team-active-item"><span class="member-dot" style="background:var(--text-3)"></span>${esc(name)}<span class="member-duration">Offline</span></div>`;}
+}
+}
+},1000);
+}
+
+// Team setup handler
+document.getElementById("teamSetupBtn").addEventListener("click",async()=>{
+const sel=document.getElementById("teamSetupSelect").value;
+const newName=document.getElementById("teamSetupNew").value.trim();
+const name=newName||sel;
+if(!name){alert("Please select or enter a name.");return;}
+if(!window.teamMembers.includes(name)){
+window.teamMembers.push(name);
+await saveTeamMembers();
+window.teamData[name]={tokens:[],sessions:[],shopPets:[],trades:[]};
+await setDoc(doc(db,"config","team_"+name),window.teamData[name]);
+}
+window.teamCurrentMember=name;localStorage.setItem("teamMemberName",name);
+await initTeamTracker();
+});
+
+// Member switch
+document.getElementById("teamMemberSelect").addEventListener("change",async(e)=>{
+window.teamCurrentMember=e.target.value;localStorage.setItem("teamMemberName",e.target.value);
+renderMyTracker();renderTeamDashboard();startClockTimer();
+});
+
+// Logout
+document.getElementById("teamLogoutBtn").addEventListener("click",()=>{
+window.teamCurrentMember="";localStorage.removeItem("teamMemberName");
+if(teamClockTimer){clearInterval(teamClockTimer);teamClockTimer=null;}
+document.getElementById("teamContent").style.display="none";
+document.getElementById("teamSetup").style.display="";
+const sel=document.getElementById("teamSetupSelect");
+sel.innerHTML='<option value="">-- Select Member --</option>';
+window.teamMembers.forEach(n=>{sel.innerHTML+=`<option value="${esc(n)}">${esc(n)}</option>`;});
+document.getElementById("teamSetupNew").value="";
+});
+
+// Sub-nav tabs
+document.querySelectorAll(".team-sub-tab").forEach(tab=>{
+tab.addEventListener("click",()=>showTeamSection(tab.dataset.teamTab));
+});
+
+// Clock In/Out
+document.getElementById("teamClockBtn").addEventListener("click",async()=>{
+const d=getMyData();if(!d.sessions)d.sessions=[];
+const openIdx=d.sessions.findIndex(s=>!s.out);
+if(openIdx>=0){d.sessions[openIdx].out=Date.now();}
+else{d.sessions.push({id:teamId("sess"),in:Date.now(),out:null});}
+window.teamData[window.teamCurrentMember]=d;
+renderMyTracker();renderTeamDashboard();
+await saveMyData();
+});
+
+// Add Token
+document.getElementById("teamTokenAddBtn").addEventListener("click",async()=>{
+const amt=parseInt(document.getElementById("teamTokenAmt").value);
+if(!amt||amt<=0){alert("Enter a valid amount.");return;}
+const type=document.getElementById("teamTokenType").value;
+const note=document.getElementById("teamTokenNote").value.trim();
+const d=getMyData();if(!d.tokens)d.tokens=[];
+d.tokens.push({id:teamId("tok"),amount:amt,type:type,note:note,ts:Date.now()});
+window.teamData[window.teamCurrentMember]=d;
+document.getElementById("teamTokenAmt").value="";document.getElementById("teamTokenNote").value="";
+renderMyTracker();renderTeamDashboard();
+await saveMyData();
+});
+
+// List Shop Pet
+document.getElementById("teamShopAddBtn").addEventListener("click",async()=>{
+const pet=document.getElementById("teamShopPet").value.trim();
+const price=parseInt(document.getElementById("teamShopPrice").value);
+if(!pet){alert("Enter a pet name.");return;}if(!price||price<=0){alert("Enter a valid price.");return;}
+const d=getMyData();if(!d.shopPets)d.shopPets=[];
+d.shopPets.push({id:teamId("shop"),pet:pet,price:price,sold:false,ts:Date.now()});
+window.teamData[window.teamCurrentMember]=d;
+document.getElementById("teamShopPet").value="";document.getElementById("teamShopPrice").value="";
+renderMyTracker();renderTeamDashboard();
+await saveMyData();
+});
+
+// Mark Sold (delegated)
+document.getElementById("teamShopBody").addEventListener("click",async(e)=>{
+const btn=e.target.closest(".team-sold-btn");if(!btn||btn.classList.contains("sold"))return;
+const sid=btn.dataset.shopId;const d=getMyData();
+const pet=d.shopPets.find(p=>p.id===sid);if(pet){pet.sold=true;}
+window.teamData[window.teamCurrentMember]=d;
+renderMyTracker();renderTeamDashboard();
+await saveMyData();
+});
+
+// Log Trade
+document.getElementById("teamTradeAddBtn").addEventListener("click",async()=>{
+const pet=document.getElementById("teamTradePet").value.trim();
+if(!pet){alert("Enter a pet name.");return;}
+const dir=document.getElementById("teamTradeDir").value;
+const withWho=document.getElementById("teamTradeWith").value.trim();
+const d=getMyData();if(!d.trades)d.trades=[];
+d.trades.push({id:teamId("trd"),dir:dir,pet:pet,with:withWho,ts:Date.now()});
+window.teamData[window.teamCurrentMember]=d;
+document.getElementById("teamTradePet").value="";document.getElementById("teamTradeWith").value="";
+renderMyTracker();renderTeamDashboard();
+await saveMyData();
+});
+
+// Add Inventory Item
+document.getElementById("teamInvAddBtn").addEventListener("click",async()=>{
+const name=document.getElementById("teamInvName").value.trim();
+if(!name){alert("Enter an item name.");return;}
+const variant=document.getElementById("teamInvVariant").value.trim();
+const qty=parseInt(document.getElementById("teamInvQty").value)||1;
+if(!window.teamInventory.items)window.teamInventory.items=[];
+if(!window.teamInventory.log)window.teamInventory.log=[];
+const owner=window.teamCurrentMember;
+const existing=window.teamInventory.items.find(i=>i.name===name&&(i.variant||"")===(variant||"")&&(i.owner||"")===owner);
+if(existing){existing.qty+=qty;}
+else{window.teamInventory.items.push({name:name,variant:variant||"",qty:qty,owner:owner});}
+window.teamInventory.log.push({ts:Date.now(),member:window.teamCurrentMember,action:"add",item:name+(variant?" ("+variant+")":""),qty:qty});
+await saveTeamInventory();
+document.getElementById("teamInvName").value="";document.getElementById("teamInvVariant").value="";document.getElementById("teamInvQty").value="1";
+renderTeamInventory();renderTeamDashboard();
+});
+
+// Remove Inventory (-1) (delegated)
+document.getElementById("teamInvGrid").addEventListener("click",async(e)=>{
+const btn=e.target.closest(".inv-remove");if(!btn)return;
+const iName=btn.dataset.invName;const iVariant=btn.dataset.invVariant||"";const iOwner=btn.dataset.invOwner||"";
+if(!window.teamInventory.items)return;
+const idx=window.teamInventory.items.findIndex(i=>i.name===iName&&(i.variant||"")===iVariant&&(i.owner||"")===iOwner);
+if(idx<0)return;
+window.teamInventory.items[idx].qty--;
+const removed=window.teamInventory.items[idx].qty<=0;
+if(removed)window.teamInventory.items.splice(idx,1);
+if(!window.teamInventory.log)window.teamInventory.log=[];
+window.teamInventory.log.push({ts:Date.now(),member:window.teamCurrentMember,action:"remove",item:iName+(iVariant?" ("+iVariant+")":""),qty:1});
+await saveTeamInventory();
+renderTeamInventory();renderTeamDashboard();
+});
+
+// Inventory filter (delegated on parent container)
+document.getElementById("teamInventory").addEventListener("click",(e)=>{
+const btn=e.target.closest("[data-inv-filter]");if(!btn)return;
+teamInvFilter=btn.dataset.invFilter;
+renderTeamInventory();
 });
 
 /* ═══════════════ ROUTING ═══════════════ */
