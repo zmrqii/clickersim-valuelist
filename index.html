@@ -2233,10 +2233,16 @@ if(!window.teamInventory.items)window.teamInventory.items=[];
 if(!window.teamInventory.log)window.teamInventory.log=[];
 const owner=window.teamCurrentMember;
 tradeOutPets.forEach(p=>{
-const q=p.qty||1;
-const idx=window.teamInventory.items.findIndex(i=>i.name===p.name&&(i.variant||"")===(p.variant||"")&&(i.owner||"")===owner);
-if(idx>=0){window.teamInventory.items[idx].qty-=q;if(window.teamInventory.items[idx].qty<=0)window.teamInventory.items.splice(idx,1);}
-window.teamInventory.log.push({ts:Date.now(),member:owner,action:"remove",item:p.name+(p.variant?" ("+p.variant+")":""),qty:q});
+let remaining=p.qty||1;
+const matches=window.teamInventory.items.filter(i=>i.name===p.name&&(i.variant||"")===(p.variant||""));
+const ownFirst=matches.sort((a,b)=>((a.owner||"")===owner?0:1)-((b.owner||"")===owner?0:1));
+for(const inv of ownFirst){
+if(remaining<=0)break;
+const take=Math.min(remaining,inv.qty);
+inv.qty-=take;remaining-=take;
+window.teamInventory.log.push({ts:Date.now(),member:inv.owner||owner,action:"remove",item:p.name+(p.variant?" ("+p.variant+")":""),qty:take});
+}
+window.teamInventory.items=window.teamInventory.items.filter(i=>i.qty>0);
 });
 tradeInPets.forEach(p=>{
 const q=p.qty||1;
