@@ -2663,24 +2663,23 @@ if(snap.exists())tradeReqSettings={webhookUrl:"",roleId:"",discounts:[],...snap.
 }
 
 async function loadTradeOrders(){
-try{const snap=await getDoc(doc(db,"config","trade_orders"));
-if(snap.exists()&&snap.data().orders)tradeReqOrders=snap.data().orders;
-else tradeReqOrders=[];
+try{const snap=await getDocs(collection(db,"trade_requests"));
+tradeReqOrders=snap.docs.map(d=>d.data());
 }catch(e){console.log("loadTradeOrders error:",e.message);tradeReqOrders=[];}
 }
 
-async function saveTradeOrders(){
-await setDoc(doc(db,"config","trade_orders"),{orders:tradeReqOrders});
+async function saveTradeOrder(order){
+await setDoc(doc(db,"trade_requests",order.id),order);
+}
+
+async function deleteTradeOrder(orderId){
+await deleteDoc(doc(db,"trade_requests",orderId));
 }
 
 function startTradeOrdersListener(){
 if(tradeOrdersUnsub)return;
-tradeOrdersUnsub=onSnapshot(doc(db,"config","trade_orders"),(snap)=>{
-if(snap.exists()&&snap.data().orders){
-const incoming=snap.data().orders;
-if(JSON.stringify(tradeReqOrders)===JSON.stringify(incoming))return;
-tradeReqOrders=incoming;
-}else{tradeReqOrders=[];}
+tradeOrdersUnsub=onSnapshot(collection(db,"trade_requests"),(snap)=>{
+tradeReqOrders=snap.docs.map(d=>d.data());
 renderTradeOrders();
 });
 }
@@ -2840,7 +2839,7 @@ totalValue:formatValueFull(total),totalValueRaw:total,baseTotalRaw:total,
 status:"pending",createdAt:Date.now(),completedAt:null,completedBy:null
 };
 let saved=false;
-try{await loadTradeOrders();tradeReqOrders.push(order);await saveTradeOrders();saved=true;}
+try{await setDoc(doc(db,"trade_requests",order.id),order);saved=true;}
 catch(err){console.log("Save order error:",err.message);}
 try{await sendTradeWebhook(order);}catch(err){console.log("Webhook error:",err.message);}
 overlay.remove();
@@ -2946,7 +2945,7 @@ if(processBtn){
 const id=processBtn.dataset.orderProcess;
 const order=tradeReqOrders.find(o=>o.id===id);
 if(order){order.status="processing";order.processedBy=window.teamCurrentMember;
-renderTradeOrders();await saveTradeOrders();}return;}
+renderTradeOrders();await saveTradeOrder(order);}return;}
 const completeBtn=e.target.closest("[data-order-complete]");
 if(completeBtn){
 const id=completeBtn.dataset.orderComplete;
@@ -2977,20 +2976,20 @@ item:p.name+(p.variant?" ("+p.variant+")":""),qty:take});}
 window.teamInventory.items=window.teamInventory.items.filter(i=>i.qty>0);
 });
 renderTradeOrders();renderMyTracker();renderTeamDashboard();renderTeamInventory();
-await saveTradeOrders();await saveMyData();await saveTeamInventory();
+await saveTradeOrder(order);await saveMyData();await saveTeamInventory();
 return;}
 const deleteBtn=e.target.closest("[data-order-delete]");
 if(deleteBtn&&window.teamEditMode){
 const id=deleteBtn.dataset.orderDelete;
 tradeReqOrders=tradeReqOrders.filter(o=>o.id!==id);
-renderTradeOrders();await saveTradeOrders();return;}
+renderTradeOrders();await deleteTradeOrder(id);return;}
 const cancelBtn=e.target.closest("[data-order-cancel]");
 if(cancelBtn){
 const id=cancelBtn.dataset.orderCancel;
 const order=tradeReqOrders.find(o=>o.id===id);
 if(!order||!confirm("Cancel order for "+order.username+"?"))return;
 order.status="cancelled";order.cancelledAt=Date.now();order.cancelledBy=window.teamCurrentMember;
-renderTradeOrders();await saveTradeOrders();return;}
+renderTradeOrders();await saveTradeOrder(order);return;}
 const discBtn=e.target.closest("[data-disc-apply]");
 if(discBtn){
 const id=discBtn.dataset.discApply;
@@ -3004,7 +3003,7 @@ order.adminDiscountPct=pct;
 order.totalValueRaw=pct?Math.round(order.baseTotalRaw*(1-pct/100)):order.baseTotalRaw;
 order.totalValue=formatValueFull(order.totalValueRaw);
 order.manualCost=null;
-renderTradeOrders();await saveTradeOrders();return;}
+renderTradeOrders();await saveTradeOrder(order);return;}
 const costBtn=e.target.closest("[data-cost-apply]");
 if(costBtn){
 const id=costBtn.dataset.costApply;
@@ -3017,7 +3016,7 @@ if(!order.baseTotalRaw)order.baseTotalRaw=order.totalValueRaw||0;
 order.manualCost=val;order.totalValueRaw=val;
 order.totalValue=formatValueFull(val);
 order.adminDiscountPct=0;
-renderTradeOrders();await saveTradeOrders();return;}
+renderTradeOrders();await saveTradeOrder(order);return;}
 });
 
 // Trade settings save
