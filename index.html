@@ -834,6 +834,10 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;hei
 <label>Roblox Username <span style="color:#f87171;">*</span></label>
 <input type="text" id="tradeReqUsername" placeholder="Enter your Roblox username...">
 </div>
+<div class="trade-req-username">
+<label>Discord Username <span style="color:#f87171;">*</span></label>
+<input type="text" id="tradeReqDiscord" placeholder="Enter your Discord username...">
+</div>
 <button class="trade-req-submit" id="tradeReqSubmit" disabled>Submit Trade Request</button>
 </div>
 </div>
@@ -2752,7 +2756,9 @@ document.getElementById("tradeReqSearch").addEventListener("input",()=>renderTra
 // Submit trade request
 document.getElementById("tradeReqSubmit").addEventListener("click",()=>{
 const username=document.getElementById("tradeReqUsername").value.trim();
+const discordUser=document.getElementById("tradeReqDiscord").value.trim();
 if(!username){alert("Please enter your Roblox username.");document.getElementById("tradeReqUsername").focus();return;}
+if(!discordUser){alert("Please enter your Discord username.");document.getElementById("tradeReqDiscord").focus();return;}
 if(!tradeReqCart.length){alert("Add at least one item to your trade request.");return;}
 let total=0;
 const rules=tradeReqSettings.discounts||[];
@@ -2774,6 +2780,7 @@ ${items.map(i=>`<div class="trade-confirm-item"><span>${i.qty}x ${esc(i.name)}${
 </div>
 <div class="trade-confirm-total"><span>Total Value</span><span>${formatValueFull(total)}</span></div>
 <div class="trade-confirm-user">Roblox Username: <strong>${esc(username)}</strong></div>
+<div class="trade-confirm-user">Discord Username: <strong>${esc(discordUser)}</strong></div>
 <div class="trade-confirm-btns">
 <button class="confirm-no">Cancel</button>
 <button class="confirm-yes">Confirm Request</button>
@@ -2786,7 +2793,7 @@ const btn=overlay.querySelector(".confirm-yes");
 btn.disabled=true;btn.textContent="Submitting...";
 const order={
 id:"ord_"+Date.now()+"_"+Math.random().toString(36).slice(2,7),
-username,
+username,discord:discordUser,
 items:items.map(i=>({name:i.name,variant:i.variant,qty:i.qty,unitValue:i.unitValue,discountPct:i.discountPct||0})),
 totalValue:formatValueFull(total),totalValueRaw:total,baseTotalRaw:total,
 status:"pending",createdAt:Date.now(),completedAt:null,completedBy:null
@@ -2796,7 +2803,7 @@ try{tradeReqOrders.push(order);await saveTradeOrders();saved=true;}
 catch(err){console.log("Save order error:",err.message);}
 try{await sendTradeWebhook(order);}catch(err){console.log("Webhook error:",err.message);}
 overlay.remove();
-tradeReqCart=[];document.getElementById("tradeReqUsername").value="";
+tradeReqCart=[];document.getElementById("tradeReqUsername").value="";document.getElementById("tradeReqDiscord").value="";
 renderTradeCart();renderTradeInventory();
 const sOverlay=document.createElement("div");
 sOverlay.className="trade-confirm-overlay";
@@ -2824,6 +2831,7 @@ title:"\ud83d\udd14 New Trade Request",
 color:0xa855f7,
 fields:[
 {name:"Roblox Username",value:order.username,inline:true},
+{name:"Discord",value:order.discord||"N/A",inline:true},
 {name:"Total Value",value:order.totalValue,inline:true},
 {name:"Items Requested",value:itemsList||"None",inline:false}
 ],
@@ -2873,7 +2881,7 @@ const discountRow=isActive
 const discBadge=order.adminDiscountPct?`<span class="order-discount-badge">-${order.adminDiscountPct}% admin discount</span>`:"";
 return`<div class="order-card">
 <div class="order-card-header">
-<span class="order-card-user">${esc(order.username)}</span>
+<span class="order-card-user">${esc(order.username)}${order.discord?` <span style="color:var(--text-3);font-weight:400;font-size:12px;">(@${esc(order.discord)})</span>`:""}</span>
 <span class="trade-status ${order.status}">${order.status.charAt(0).toUpperCase()+order.status.slice(1)}</span>
 </div>
 <div class="order-card-time">${fmtTs(order.createdAt)}${order.completedAt?" \u2014 Completed "+fmtTs(order.completedAt)+(order.completedBy?" by "+esc(order.completedBy):""):""}</div>
