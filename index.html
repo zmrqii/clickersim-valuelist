@@ -114,6 +114,14 @@ body::before{content:'';position:fixed;inset:0;background:linear-gradient(rgba(2
 .pcv{text-align:center;}
 .pcv-label{display:block;font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.04em;}
 .pcv-val{font-size:12px;font-weight:600;color:var(--text-2);}
+.pcv-trend{display:block;font-size:9px;font-weight:600;letter-spacing:.03em;margin-top:2px;}
+.trend-stable{color:#fbbf24;}
+.trend-trending{color:#34d399;}
+.trend-declining{color:#ef4444;}
+.val-trend{font-size:12px;font-weight:600;margin-top:4px;}
+.val-trend.trend-stable{color:#fbbf24;}
+.val-trend.trend-trending{color:#34d399;}
+.val-trend.trend-declining{color:#ef4444;}
 .pet-card-demand{text-align:center;margin-top:6px;font-size:12px;}
 .pet-card-info{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--text-3);font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;font-family:'Inter',sans-serif;}
 .pet-card:hover .pet-card-info{opacity:1;}
@@ -914,6 +922,15 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;hei
 <option value="?">? (Unknown)</option><option value="No Demand">No Demand</option><option value="Low">Low</option>
 <option value="Medium">Medium</option><option value="High">High</option><option value="Super High">Super High</option>
 </select>
+<select id="normalTrend">
+<option value="(none)">Normal Trend…</option><option value="Stable">Stable</option><option value="Trending">Trending</option><option value="Declining">Declining</option>
+</select>
+<select id="goldenTrend">
+<option value="(none)">Golden Trend…</option><option value="Stable">Stable</option><option value="Trending">Trending</option><option value="Declining">Declining</option>
+</select>
+<select id="rainbowTrend">
+<option value="(none)">Rainbow Trend…</option><option value="Stable">Stable</option><option value="Trending">Trending</option><option value="Declining">Declining</option>
+</select>
 <button class="admin-btn" id="addPetBtn">Add / Update</button>
 <button class="admin-btn danger" id="logoutBtn" style="margin-top:14px;">Logout</button>
 </div>
@@ -926,6 +943,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;hei
 <div id="superAdminTools" style="display:none;">
 <button class="admin-btn teal" id="seedBtn">Seed All Pets (184)</button>
 <button class="admin-btn teal" id="demandBtn">Set Demand Values</button>
+<button class="admin-btn teal" id="trendStableBtn">Set All Trends → Stable</button>
 </div>
 <p id="superAdminMsg" style="color:var(--text-3);font-size:12px;margin-top:10px;">Login via admin panel first.</p>
 </div>
@@ -1399,6 +1417,11 @@ window.addEventListener("error", e => console.log("JS ERROR:", e.message));
 function esc(str){ const d=document.createElement("div"); d.textContent=String(str); return d.innerHTML; }
 
 /* ═══════════════ UI HELPERS ═══════════════ */
+function trendTag(trend,cls){
+if(!trend||trend==="(none)")return"";
+const map={"Stable":`<span class="${cls||"pcv-trend"} trend-stable">\u2014 Stable</span>`,"Trending":`<span class="${cls||"pcv-trend"} trend-trending">\u2191 Trending</span>`,"Declining":`<span class="${cls||"pcv-trend"} trend-declining">\u2193 Declining</span>`};
+return map[trend]||"";
+}
 function demandBadge(demand){
 const colors={"No Demand":"#6b7280","Low":"#4ade80","Medium":"#fbbf24","High":"#f97316","Super High":"#ef4444"};
 const d=demand||"?"; return `<span style="color:${colors[d]||"#6b7280"};font-weight:600;font-size:12px;">${esc(d)}</span>`;
@@ -1487,9 +1510,9 @@ document.getElementById("petDemandLine").innerHTML=petData&&petData.demand?`Dema
 document.getElementById("petDescLine").textContent=info?info.t:"";
 const vr=document.getElementById("petValuesRow");
 vr.innerHTML=petData
-?`<div class="pet-val-card"><div class="val-label">Normal</div><div class="val-num">${esc(petData.normal)}</div></div>`+
-`<div class="pet-val-card"><div class="val-label">Golden</div><div class="val-num">${esc(petData.golden)}</div></div>`+
-`<div class="pet-val-card"><div class="val-label">Rainbow</div><div class="val-num">${esc(petData.rainbow)}</div></div>`
+?`<div class="pet-val-card"><div class="val-label">Normal</div><div class="val-num">${esc(petData.normal)}</div>${trendTag(petData.normalTrend,"val-trend")}</div>`+
+`<div class="pet-val-card"><div class="val-label">Golden</div><div class="val-num">${esc(petData.golden)}</div>${trendTag(petData.goldenTrend,"val-trend")}</div>`+
+`<div class="pet-val-card"><div class="val-label">Rainbow</div><div class="val-num">${esc(petData.rainbow)}</div>${trendTag(petData.rainbowTrend,"val-trend")}</div>`
 :'<p style="color:var(--text-3);">No value data yet.</p>';
 document.getElementById("levelSlider").value=0;document.getElementById("levelDisplay").textContent="0";
 document.querySelector('input[name="variant"][value="Normal"]').checked=true;
@@ -1522,7 +1545,7 @@ const card=document.createElement("div");card.className="pet-card";
 card.innerHTML=
 `<div class="pet-card-icon"><img data-asset="${hasIcon?icons.normal:""}" alt="${esc(p.name)}" style="display:none;"></div>`+
 `<div class="pet-card-name">${esc(p.name)}</div>`+
-`<div class="pet-card-values"><div class="pcv"><span class="pcv-label">N</span><span class="pcv-val">${esc(p.normal||"?")}</span></div><div class="pcv"><span class="pcv-label">G</span><span class="pcv-val">${esc(p.golden||"?")}</span></div><div class="pcv"><span class="pcv-label">R</span><span class="pcv-val">${esc(p.rainbow||"?")}</span></div></div>`+
+`<div class="pet-card-values"><div class="pcv"><span class="pcv-label">N</span><span class="pcv-val">${esc(p.normal||"?")}</span>${trendTag(p.normalTrend)}</div><div class="pcv"><span class="pcv-label">G</span><span class="pcv-val">${esc(p.golden||"?")}</span>${trendTag(p.goldenTrend)}</div><div class="pcv"><span class="pcv-label">R</span><span class="pcv-val">${esc(p.rainbow||"?")}</span>${trendTag(p.rainbowTrend)}</div></div>`+
 `<div class="pet-card-demand">${demandBadge(p.demand)}</div>`+
 (hasInfo?`<button class="pet-card-info" data-pet="${esc(p.name)}">i</button>`:"")+
 (window.isAdmin?`<button class="pet-card-del" data-id="${esc(p.id)}">&times;</button>`:"");
@@ -1679,10 +1702,13 @@ if(!window.isAdmin){alert("Not admin");return;}
 const n=document.getElementById("name").value.trim(),no=document.getElementById("normal").value.trim();
 const g=document.getElementById("golden").value.trim(),r=document.getElementById("rainbow").value.trim();
 const ra=document.getElementById("rarity").value,dem=document.getElementById("demand").value;
+const nt=document.getElementById("normalTrend").value,gt=document.getElementById("goldenTrend").value,rt=document.getElementById("rainbowTrend").value;
 if(!n||!no){alert("Fill required fields");return;}
 const docId=n.toLowerCase().replace(/[^a-z0-9]/g,"_");
-try{await setDoc(doc(db,"pets",docId),{name:n,normal:no,golden:g,rainbow:r,rarity:ra,demand:dem});
-await loadPets();["name","normal","golden","rainbow"].forEach(id=>document.getElementById(id).value="");document.getElementById("demand").value="?";alert("Saved!");
+const petDoc={name:n,normal:no,golden:g,rainbow:r,rarity:ra,demand:dem};
+if(nt&&nt!=="(none)")petDoc.normalTrend=nt; if(gt&&gt!=="(none)")petDoc.goldenTrend=gt; if(rt&&rt!=="(none)")petDoc.rainbowTrend=rt;
+try{await setDoc(doc(db,"pets",docId),petDoc);
+await loadPets();["name","normal","golden","rainbow"].forEach(id=>document.getElementById(id).value="");document.getElementById("demand").value="?";document.getElementById("normalTrend").value="(none)";document.getElementById("goldenTrend").value="(none)";document.getElementById("rainbowTrend").value="(none)";alert("Saved!");
 }catch(err){alert("Save failed: "+err.message);}
 };
 
@@ -1725,6 +1751,12 @@ document.getElementById("logoutBtn").addEventListener("click",()=>signOut(auth).
 document.getElementById("addPetBtn").addEventListener("click",()=>window.addPet());
 document.getElementById("seedBtn").addEventListener("click",()=>window.seedPets());
 document.getElementById("demandBtn").addEventListener("click",()=>window.setDemandValues());
+document.getElementById("trendStableBtn").addEventListener("click",async()=>{
+if(!window.isAdmin){alert("Not admin");return;}if(!confirm("Set ALL pet trends to Stable?"))return;
+const batch=writeBatch(db);
+for(const pet of window.data){batch.set(doc(db,"pets",pet.id),{normalTrend:"Stable",goldenTrend:"Stable",rainbowTrend:"Stable"},{merge:true});}
+try{await batch.commit();await loadPets();alert("All trends set to Stable!");}catch(err){alert("Failed: "+err.message);}
+});
 
 onAuthStateChanged(auth,user=>{
 window.isAdmin=!!user;document.getElementById("adminTools").style.display=user?"block":"none";
@@ -1749,7 +1781,7 @@ suggestions.style.display="block";
 m.forEach(p=>{const d=document.createElement("div");d.textContent=p.name+" ("+p.rarity+")";
 d.addEventListener("click",()=>{nameInput.value=p.name;document.getElementById("normal").value=p.normal||"";
 document.getElementById("golden").value=p.golden||"";document.getElementById("rainbow").value=p.rainbow||"";
-document.getElementById("rarity").value=p.rarity||"Basic";document.getElementById("demand").value=p.demand||"?";suggestions.style.display="none";});
+document.getElementById("rarity").value=p.rarity||"Basic";document.getElementById("demand").value=p.demand||"?";document.getElementById("normalTrend").value=p.normalTrend||"(none)";document.getElementById("goldenTrend").value=p.goldenTrend||"(none)";document.getElementById("rainbowTrend").value=p.rainbowTrend||"(none)";suggestions.style.display="none";});
 suggestions.appendChild(d);});
 });
 nameInput.addEventListener("blur",()=>{setTimeout(()=>{suggestions.style.display="none";},150);});
