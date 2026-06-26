@@ -327,6 +327,8 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;hei
 .tb-handle{overflow-x:auto;-webkit-overflow-scrolling:touch;}
 .tb-container{display:none!important;}
 .he-tb-section{display:none!important;}
+.order-card-actions button{min-height:44px;flex:1;min-width:80px;}
+.admin-discount-row input,.admin-discount-row button{min-height:40px;}
 }
 @media(max-width:480px){
 .pet-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
@@ -516,6 +518,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;hei
 .trade-status.pending{background:rgba(251,191,36,0.15);color:#fbbf24;}
 .trade-status.processing{background:rgba(96,165,250,0.15);color:#60a5fa;}
 .trade-status.completed{background:rgba(52,211,153,0.15);color:#34d399;}
+.trade-status.cancelled{background:rgba(220,38,38,0.15);color:#f87171;}
 
 .order-card{background:var(--glass);backdrop-filter:blur(12px);border:1px solid var(--glass-border);border-radius:14px;padding:16px;margin-bottom:10px;transition:border-color .25s;}
 .order-card:hover{border-color:rgba(192,132,252,.3);}
@@ -524,9 +527,10 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;hei
 .order-card-time{font-size:11px;color:var(--text-3);}
 .order-card-items{font-size:12px;color:var(--text-2);margin-bottom:8px;line-height:1.6;}
 .order-card-total{font-size:13px;color:var(--accent-400);font-weight:600;margin-bottom:10px;}
-.order-card-actions{display:flex;gap:6px;}
-.order-card-actions button{padding:6px 14px;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;}
+.order-card-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.order-card-actions button{padding:10px 16px;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;min-height:40px;user-select:none;}
 .order-card-actions button:hover{filter:brightness(1.2);}
+.order-card-actions button:active{transform:scale(0.96);}
 
 .trade-settings-section{margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
 .trade-settings-section h4{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:var(--text-2);margin-bottom:10px;}
@@ -546,10 +550,12 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;hei
 .bulk-discount-rule{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;margin-bottom:4px;background:var(--glass);border:1px solid var(--glass-border);border-radius:8px;font-size:12px;color:var(--text-2);}
 .bulk-discount-rule button{background:rgba(220,38,38,0.15);color:#f87171;border:none;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;transition:all .2s;}
 .bulk-discount-rule button:hover{filter:brightness(1.2);}
-.admin-discount-row{display:flex;gap:6px;align-items:center;margin-top:8px;}
-.admin-discount-row input{width:60px;padding:5px 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg-surface);color:var(--text-1);font-family:'Inter',sans-serif;font-size:12px;outline:none;text-align:center;}
-.admin-discount-row button{padding:5px 12px;border:none;border-radius:6px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;cursor:pointer;background:rgba(251,191,36,0.2);color:#fbbf24;transition:all .2s;}
+.admin-discount-row{display:flex;gap:6px;align-items:center;margin-top:8px;flex-wrap:wrap;}
+.admin-discount-row input{width:80px;padding:8px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg-surface);color:var(--text-1);font-family:'Inter',sans-serif;font-size:12px;outline:none;text-align:center;min-height:36px;}
+.admin-discount-row button{padding:8px 14px;border:none;border-radius:6px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;background:rgba(251,191,36,0.2);color:#fbbf24;transition:all .2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;min-height:36px;user-select:none;}
 .admin-discount-row button:hover{filter:brightness(1.2);}
+.admin-discount-row button:active{transform:scale(0.96);}
+.admin-discount-row .adr-sep{font-size:12px;color:var(--text-3);margin:0 2px;}
 .order-discount-badge{display:inline-block;background:rgba(251,191,36,0.15);color:#fbbf24;font-size:11px;font-weight:600;padding:2px 8px;border-radius:6px;margin-left:8px;}
 
 .trade-req-no-admins-note{text-align:center;padding:8px 14px;margin-top:8px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:10px;color:var(--text-2);font-size:12px;line-height:1.5;}
@@ -2853,7 +2859,7 @@ const pending=tradeReqOrders.filter(o=>o.status==="pending"||o.status==="process
 const badge=document.getElementById("ordersPendingBadge");
 if(badge)badge.textContent=pending+" pending";
 const sorted=[...tradeReqOrders].sort((a,b)=>{
-const so={pending:0,processing:1,completed:2};
+const so={pending:0,processing:1,completed:2,cancelled:3};
 const sa=so[a.status]??1,sb=so[b.status]??1;
 if(sa!==sb)return sa-sb;return(b.createdAt||0)-(a.createdAt||0);
 });
@@ -2867,24 +2873,29 @@ return s;
 let actions="";
 if(order.status==="pending"){
 actions=`<button style="background:rgba(96,165,250,0.2);color:#60a5fa;" data-order-process="${esc(order.id)}">Mark Processing</button>
-<button style="background:rgba(52,211,153,0.2);color:#34d399;" data-order-complete="${esc(order.id)}">Complete</button>`;}
+<button style="background:rgba(52,211,153,0.2);color:#34d399;" data-order-complete="${esc(order.id)}">Complete</button>
+<button style="background:rgba(251,191,36,0.2);color:#fbbf24;" data-order-cancel="${esc(order.id)}">Cancel</button>`;}
 else if(order.status==="processing"){
-actions=`<button style="background:rgba(52,211,153,0.2);color:#34d399;" data-order-complete="${esc(order.id)}">Complete</button>`;}
+actions=`<button style="background:rgba(52,211,153,0.2);color:#34d399;" data-order-complete="${esc(order.id)}">Complete</button>
+<button style="background:rgba(251,191,36,0.2);color:#fbbf24;" data-order-cancel="${esc(order.id)}">Cancel</button>`;}
 if(em)actions+=`<button style="background:rgba(220,38,38,0.2);color:#f87171;" data-order-delete="${esc(order.id)}">Delete</button>`;
 const isActive=order.status==="pending"||order.status==="processing";
 const discountRow=isActive
 ?`<div class="admin-discount-row">
 <input type="number" min="0" max="100" placeholder="%" data-disc-input="${esc(order.id)}" value="${order.adminDiscountPct||""}">
-<span style="font-size:12px;color:var(--text-3);">%</span>
+<span class="adr-sep">%</span>
 <button data-disc-apply="${esc(order.id)}">Apply Discount</button>
+<span class="adr-sep">or</span>
+<input type="number" min="0" placeholder="Set cost" data-cost-input="${esc(order.id)}" value="${order.manualCost!=null?order.manualCost:""}">
+<button data-cost-apply="${esc(order.id)}">Set Cost</button>
 </div>`:"";
-const discBadge=order.adminDiscountPct?`<span class="order-discount-badge">-${order.adminDiscountPct}% admin discount</span>`:"";
+const discBadge=order.adminDiscountPct?`<span class="order-discount-badge">-${order.adminDiscountPct}% admin discount</span>`:order.manualCost!=null?`<span class="order-discount-badge">was ${formatValueFull(order.baseTotalRaw||0)}</span>`:"";
 return`<div class="order-card">
 <div class="order-card-header">
 <span class="order-card-user">${esc(order.username)}${order.discord?` <span style="color:var(--text-3);font-weight:400;font-size:12px;">(@${esc(order.discord)})</span>`:""}</span>
 <span class="trade-status ${order.status}">${order.status.charAt(0).toUpperCase()+order.status.slice(1)}</span>
 </div>
-<div class="order-card-time">${fmtTs(order.createdAt)}${order.completedAt?" \u2014 Completed "+fmtTs(order.completedAt)+(order.completedBy?" by "+esc(order.completedBy):""):""}</div>
+<div class="order-card-time">${fmtTs(order.createdAt)}${order.completedAt?" \u2014 Completed "+fmtTs(order.completedAt)+(order.completedBy?" by "+esc(order.completedBy):""):""}${order.cancelledAt?" \u2014 Cancelled "+fmtTs(order.cancelledAt)+(order.cancelledBy?" by "+esc(order.cancelledBy):""):""}</div>
 <div class="order-card-items">${items}</div>
 <div class="order-card-total">Total: ${formatValueFull(order.totalValueRaw||0)}${discBadge}</div>
 ${discountRow}
@@ -2938,6 +2949,13 @@ if(deleteBtn&&window.teamEditMode){
 const id=deleteBtn.dataset.orderDelete;
 tradeReqOrders=tradeReqOrders.filter(o=>o.id!==id);
 renderTradeOrders();await saveTradeOrders();return;}
+const cancelBtn=e.target.closest("[data-order-cancel]");
+if(cancelBtn){
+const id=cancelBtn.dataset.orderCancel;
+const order=tradeReqOrders.find(o=>o.id===id);
+if(!order||!confirm("Cancel order for "+order.username+"?"))return;
+order.status="cancelled";order.cancelledAt=Date.now();order.cancelledBy=window.teamCurrentMember;
+renderTradeOrders();await saveTradeOrders();return;}
 const discBtn=e.target.closest("[data-disc-apply]");
 if(discBtn){
 const id=discBtn.dataset.discApply;
@@ -2950,6 +2968,20 @@ if(!order.baseTotalRaw)order.baseTotalRaw=order.totalValueRaw||0;
 order.adminDiscountPct=pct;
 order.totalValueRaw=pct?Math.round(order.baseTotalRaw*(1-pct/100)):order.baseTotalRaw;
 order.totalValue=formatValueFull(order.totalValueRaw);
+order.manualCost=null;
+renderTradeOrders();await saveTradeOrders();return;}
+const costBtn=e.target.closest("[data-cost-apply]");
+if(costBtn){
+const id=costBtn.dataset.costApply;
+const order=tradeReqOrders.find(o=>o.id===id);
+if(!order)return;
+const input=document.querySelector(`[data-cost-input="${id}"]`);
+const val=parseInt(input?input.value:"",10);
+if(isNaN(val)||val<0){alert("Enter a valid cost.");return;}
+if(!order.baseTotalRaw)order.baseTotalRaw=order.totalValueRaw||0;
+order.manualCost=val;order.totalValueRaw=val;
+order.totalValue=formatValueFull(val);
+order.adminDiscountPct=0;
 renderTradeOrders();await saveTradeOrders();return;}
 });
 
