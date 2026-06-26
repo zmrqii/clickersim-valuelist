@@ -2840,7 +2840,7 @@ totalValue:formatValueFull(total),totalValueRaw:total,baseTotalRaw:total,
 status:"pending",createdAt:Date.now(),completedAt:null,completedBy:null
 };
 let saved=false;
-try{tradeReqOrders.push(order);await saveTradeOrders();saved=true;}
+try{await loadTradeOrders();tradeReqOrders.push(order);await saveTradeOrders();saved=true;}
 catch(err){console.log("Save order error:",err.message);}
 try{await sendTradeWebhook(order);}catch(err){console.log("Webhook error:",err.message);}
 overlay.remove();
