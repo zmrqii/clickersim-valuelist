@@ -766,7 +766,6 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;hei
 <input id="teamInvName" placeholder="Item name" data-team-ac>
 <select id="teamInvVariant"><option value="">Normal</option><option value="Golden">Golden</option><option value="Rainbow">Rainbow</option></select>
 <input id="teamInvQty" type="number" placeholder="Qty" value="1" min="1">
-<input id="teamInvPrice" placeholder="Price (e.g. 1.5M)" style="width:110px;">
 <button id="teamInvAddBtn">Add Item</button>
 </div>
 <div style="margin-bottom:12px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
@@ -2274,9 +2273,8 @@ grid.innerHTML=items.map((item,idx)=>{
 const realIdx=allItems.indexOf(item);
 const priceKey=item.name+"|"+(item.variant||"");
 const curPrice=prices[priceKey]||"";
-const priceDisplay=curPrice?`<div style="font-size:11px;color:var(--text-2);margin-bottom:2px;">Price: ${esc(curPrice)}</div>`:`<div style="font-size:11px;color:var(--text-3);margin-bottom:2px;">No price set</div>`;
-const priceEdit=em?`<input class="team-edit-inp" style="width:80px;text-align:center;font-size:11px;margin-top:2px;" placeholder="Price" value="${esc(curPrice)}" data-edit-inv-price="${esc(priceKey)}">`:"";
-return`<div class="inv-card"><div class="inv-name">${esc(item.name)}</div>${item.variant?`<div class="inv-variant">${esc(item.variant)}</div>`:""}<div class="inv-qty">${em?`<input class="team-edit-inp" style="width:50px;text-align:center;" value="${item.qty}" data-edit-inv-qty="${realIdx}">`:item.qty}</div>${em?priceEdit:priceDisplay}<div style="font-size:10px;color:var(--text-3);margin-bottom:4px;">${esc(item.owner||"Unknown")}</div>${em?`<button class="team-edit-del" data-edit-inv-del="${realIdx}" style="width:100%;margin-top:2px;">Delete</button>`:""}</div>`;
+const priceInput=`<input class="team-edit-inp" style="width:80px;text-align:center;font-size:11px;margin-top:2px;" placeholder="Set price" value="${esc(curPrice)}" data-edit-inv-price="${esc(priceKey)}">`;
+return`<div class="inv-card"><div class="inv-name">${esc(item.name)}</div>${item.variant?`<div class="inv-variant">${esc(item.variant)}</div>`:""}<div class="inv-qty">${em?`<input class="team-edit-inp" style="width:50px;text-align:center;" value="${item.qty}" data-edit-inv-qty="${realIdx}">`:item.qty}</div>${priceInput}<div style="font-size:10px;color:var(--text-3);margin-bottom:4px;">${esc(item.owner||"Unknown")}</div>${em?`<button class="team-edit-del" data-edit-inv-del="${realIdx}" style="width:100%;margin-top:2px;">Delete</button>`:""}</div>`;
 }).join("");
 const log=[...(window.teamInventory.log||[])].sort((a,b)=>(b.ts||0)-(a.ts||0));
 document.getElementById("teamInvLogBody").innerHTML=log.slice(0,50).map((l,i)=>`<tr><td>${fmtTs(l.ts)}</td><td>${esc(l.member)}</td><td class="${l.action==="add"?"gain":"spend"}">${l.action==="add"?"+":"-"}</td><td>${esc(l.item)}</td><td>${l.qty}</td>${em?`<td><button class="team-edit-del" data-edit-invlog-del="${i}">Delete</button></td>`:""}</tr>`).join("");
@@ -2500,7 +2498,6 @@ const name=document.getElementById("teamInvName").value.trim();
 if(!name){alert("Enter an item name.");return;}
 const variant=document.getElementById("teamInvVariant").value.trim();
 const qty=parseInt(document.getElementById("teamInvQty").value)||1;
-const priceStr=document.getElementById("teamInvPrice").value.trim();
 if(!window.teamInventory.items)window.teamInventory.items=[];
 if(!window.teamInventory.log)window.teamInventory.log=[];
 if(!window.teamInventory.prices)window.teamInventory.prices={};
@@ -2508,10 +2505,9 @@ const owner=window.teamCurrentMember;
 const existing=window.teamInventory.items.find(i=>i.name===name&&(i.variant||"")===(variant||"")&&(i.owner||"")===owner);
 if(existing){existing.qty+=qty;}
 else{window.teamInventory.items.push({name:name,variant:variant||"",qty:qty,owner:owner});}
-if(priceStr){window.teamInventory.prices[name+"|"+(variant||"")]=priceStr;}
 window.teamInventory.log.push({ts:Date.now(),member:window.teamCurrentMember,action:"add",item:name+(variant?" ("+variant+")":""),qty:qty});
 await saveTeamInventory();
-document.getElementById("teamInvName").value="";document.getElementById("teamInvVariant").value="";document.getElementById("teamInvQty").value="1";document.getElementById("teamInvPrice").value="";
+document.getElementById("teamInvName").value="";document.getElementById("teamInvVariant").value="";document.getElementById("teamInvQty").value="1";
 renderTeamInventory();renderTeamDashboard();
 });
 
@@ -2571,6 +2567,16 @@ return;
 
 // Edit mode — inventory qty inline edit (blur to save)
 document.getElementById("teamPage").addEventListener("change",async(e)=>{
+const priceInput=e.target.closest("[data-edit-inv-price]");
+if(priceInput){
+if(!window.teamInventory.prices)window.teamInventory.prices={};
+const key=priceInput.dataset.editInvPrice;
+const val=priceInput.value.trim();
+if(val)window.teamInventory.prices[key]=val;
+else delete window.teamInventory.prices[key];
+renderTeamInventory();await saveTeamInventory();
+return;
+}
 if(!window.teamEditMode)return;
 const qtyInput=e.target.closest("[data-edit-inv-qty]");
 if(qtyInput){
@@ -2581,15 +2587,6 @@ if(isNaN(newQty)||newQty<0)return;
 if(newQty===0){window.teamInventory.items.splice(idx,1);}
 else{window.teamInventory.items[idx].qty=newQty;}
 renderTeamInventory();renderTeamDashboard();await saveTeamInventory();
-}
-const priceInput=e.target.closest("[data-edit-inv-price]");
-if(priceInput){
-if(!window.teamInventory.prices)window.teamInventory.prices={};
-const key=priceInput.dataset.editInvPrice;
-const val=priceInput.value.trim();
-if(val)window.teamInventory.prices[key]=val;
-else delete window.teamInventory.prices[key];
-renderTeamInventory();await saveTeamInventory();
 }
 });
 
