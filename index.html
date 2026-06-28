@@ -387,6 +387,8 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;hei
 body{padding-bottom:64px;}
 .nav-tabs{display:none;}
 .header-search{display:none;}
+/* Giveaway: hide home card on mobile, use dedicated page */
+#giveawayCard{display:none!important;}
 .search-page-bar{display:block;}
 .logo-icon{font-size:18px;}
 .logo-text{font-size:16px;}
@@ -753,6 +755,68 @@ button,.nav-tab,.rarity-row,.pet-card{min-height:44px;}
 .trade-confirm-btns{flex-direction:column;}
 .trade-confirm-btns button{min-height:48px;}
 }
+
+/* ═══════════════ GIVEAWAY ═══════════════ */
+.giveaway-card{background:linear-gradient(135deg,rgba(212,135,43,0.08),rgba(196,113,58,0.05));border:1px solid rgba(240,173,78,0.2);border-radius:16px;padding:20px 24px;margin-bottom:16px;position:relative;overflow:hidden;}
+.giveaway-card::before{content:'';position:absolute;inset:-1px;border-radius:17px;background:linear-gradient(135deg,rgba(240,173,78,0.3),rgba(196,113,58,0.15),rgba(240,173,78,0.3));z-index:-1;opacity:0.5;}
+.giveaway-card-inner{display:flex;align-items:center;gap:16px;justify-content:center;flex-wrap:wrap;}
+.giveaway-icon{font-size:32px;line-height:1;}
+.giveaway-info{text-align:center;}
+.giveaway-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);margin-bottom:4px;}
+.giveaway-prize{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(18px,4vw,24px);color:var(--text-1);}
+.giveaway-countdown{font-family:'Space Grotesk',monospace;font-size:clamp(14px,3vw,18px);color:var(--accent-300);margin-top:6px;letter-spacing:.04em;}
+.giveaway-winner{text-align:center;padding:12px 16px;margin-top:12px;background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.25);border-radius:12px;color:#34d399;font-size:14px;line-height:1.5;}
+.giveaway-ended{color:var(--text-2);font-size:13px;margin-top:6px;}
+.giveaway-odds{margin-top:12px;text-align:center;}
+.giveaway-odds-toggle{background:none;border:none;color:var(--accent-400);font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;padding:4px 0;text-decoration:underline;text-underline-offset:3px;transition:color .15s;}
+.giveaway-odds-toggle:hover{color:var(--accent-300);}
+.giveaway-odds-body{margin-top:10px;}
+.giveaway-odds-result{margin-top:10px;padding:12px 16px;background:var(--glass);border:1px solid var(--glass-border);border-radius:12px;font-size:13px;color:var(--text-2);line-height:1.6;}
+.giveaway-odds-result .odds-pct{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--accent-400);display:block;margin:4px 0;}
+.giveaway-odds-result .odds-detail{font-size:12px;color:var(--text-3);}
+
+/* Giveaway config (team page) */
+.giveaway-config{max-width:600px;}
+.giveaway-config .gc-field{margin-bottom:14px;}
+.giveaway-config .gc-field label{display:block;font-size:12px;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;font-weight:500;}
+.giveaway-config .gc-field input,.giveaway-config .gc-field select,.giveaway-config .gc-field textarea{width:100%;background:var(--bg-surface);border:1px solid var(--border);color:var(--text-1);font-family:'Inter',sans-serif;font-size:13px;padding:10px 14px;border-radius:10px;outline:none;transition:border-color .2s;}
+.giveaway-config .gc-field input:focus,.giveaway-config .gc-field select:focus,.giveaway-config .gc-field textarea:focus{border-color:var(--accent-700);}
+.giveaway-config .gc-field textarea{resize:vertical;min-height:60px;}
+.gc-tier-row{display:flex;gap:8px;align-items:center;margin-bottom:6px;}
+.gc-tier-row input{flex:1;background:var(--bg-surface);border:1px solid var(--border);color:var(--text-1);font-family:'Inter',sans-serif;font-size:13px;padding:8px 10px;border-radius:8px;outline:none;}
+.gc-tier-row input:focus{border-color:var(--accent-700);}
+.gc-tier-row button{background:rgba(220,38,38,0.15);border:1px solid rgba(220,38,38,0.3);color:#f87171;font-size:16px;width:32px;height:32px;border-radius:8px;cursor:pointer;line-height:1;flex-shrink:0;}
+.gc-tier-row button:hover{background:rgba(220,38,38,0.25);}
+.gc-add-tier{background:var(--glass);border:1px solid var(--glass-border);color:var(--text-2);font-family:'Inter',sans-serif;font-size:12px;padding:6px 14px;border-radius:8px;cursor:pointer;transition:all .15s;}
+.gc-add-tier:hover{background:var(--glass-hover);color:var(--text-1);}
+.gc-toggle{display:inline-flex;align-items:center;gap:10px;padding:10px 20px;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;}
+.gc-toggle.active{background:linear-gradient(135deg,#059669,#10b981);color:#fff;}
+.gc-toggle.inactive{background:rgba(220,38,38,0.15);border:1px solid rgba(220,38,38,0.3);color:#f87171;}
+.gc-btn{background:var(--accent-700);color:#fff;border:none;padding:10px 20px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;transition:background .2s;}
+.gc-btn:hover{background:var(--accent-600);}
+.gc-btn:disabled{opacity:0.4;cursor:not-allowed;}
+.gc-btn.danger{background:rgba(220,38,38,0.15);border:1px solid rgba(220,38,38,0.3);color:#f87171;}
+.gc-btn.danger:hover{background:rgba(220,38,38,0.25);}
+.gc-entry-table{margin-top:20px;}
+.gc-entry-table table{width:100%;border-collapse:collapse;font-size:13px;}
+.gc-entry-table th{text-align:left;padding:10px 12px;color:var(--text-3);font-size:11px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border);}
+.gc-entry-table td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.03);color:var(--text-2);}
+.gc-entry-table tr:hover td{background:rgba(212,135,43,0.04);}
+.gc-total-row{font-weight:600;color:var(--accent-400)!important;}
+.gc-roll-section{margin-top:24px;padding:20px;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;text-align:center;}
+.gc-roll-display{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;color:var(--accent-400);padding:16px;margin:12px 0;background:var(--bg-surface);border:1px solid var(--border);border-radius:12px;min-height:60px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.gc-roll-display.rolling{border-color:var(--accent-500);box-shadow:0 0 20px rgba(212,135,43,0.3);}
+.gc-roll-display.winner{border-color:#34d399;box-shadow:0 0 24px rgba(52,211,153,0.3);color:#34d399;}
+.gc-winner-msg{margin-top:12px;padding:12px 16px;background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.25);border-radius:12px;color:#34d399;font-size:14px;line-height:1.5;}
+.gc-actions{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap;}
+/* Giveaway standalone page (mobile) */
+.giveaway-page-inner{max-width:500px;margin:0 auto;text-align:center;padding:40px 0 20px;}
+.giveaway-page-icon{font-size:48px;margin-bottom:12px;}
+.giveaway-page-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);margin-bottom:6px;}
+.giveaway-page-prize{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(24px,6vw,32px);color:var(--text-1);margin-bottom:16px;}
+.giveaway-page-countdown{font-family:'Space Grotesk',monospace;font-size:clamp(20px,5vw,28px);color:var(--accent-300);letter-spacing:.04em;padding:20px;background:var(--glass);border:1px solid var(--glass-border);border-radius:16px;margin-bottom:20px;}
+.giveaway-page-winner{padding:16px 20px;background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.25);border-radius:14px;color:#34d399;font-size:16px;line-height:1.6;}
+.giveaway-page-ended{color:var(--text-2);font-size:15px;margin-top:8px;}
 </style>
 </head>
 <body>
@@ -785,6 +849,30 @@ button,.nav-tab,.rarity-row,.pet-card{min-height:44px;}
 <!-- HOME -->
 <section id="homePage" class="page active">
 <div id="homeBanner" style="display:none;text-align:center;padding:12px 18px;margin-bottom:12px;background:linear-gradient(135deg,rgba(212,135,43,.12),rgba(196,113,58,.08));border:1px solid rgba(240,173,78,.2);border-radius:14px;color:var(--accent-300);font-size:14px;line-height:1.5;white-space:pre-wrap;"></div>
+<div id="giveawayCard" class="giveaway-card" style="display:none;">
+<div class="giveaway-card-inner">
+<div class="giveaway-icon">🎉</div>
+<div class="giveaway-info">
+<div class="giveaway-title">RAFFLE</div>
+<div class="giveaway-prize" id="giveawayPrize"></div>
+<div class="giveaway-countdown" id="giveawayCountdown"></div>
+<div class="giveaway-entry-rules" id="giveawayEntryRules" style="margin-top:8px;font-size:12px;color:var(--text-2);line-height:1.5;"></div>
+</div>
+</div>
+<div class="giveaway-winner" id="giveawayWinner" style="display:none;"></div>
+<div class="giveaway-odds" id="giveawayOdds">
+<button class="giveaway-odds-toggle" id="giveawayOddsToggle">See your odds</button>
+<span style="margin:0 6px;color:var(--text-3);">|</span>
+<button class="giveaway-odds-toggle" id="giveawayRulesBtn">Raffle info</button>
+<div class="giveaway-odds-body" id="giveawayOddsBody" style="display:none;">
+<div style="display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;">
+<input id="giveawayOddsInput" placeholder="Your Discord username" style="background:var(--bg-surface);border:1px solid var(--border);color:var(--text-1);font-family:'Inter',sans-serif;font-size:13px;padding:8px 12px;border-radius:8px;outline:none;width:200px;">
+<button class="gc-btn" id="giveawayOddsCheck" style="padding:8px 14px;font-size:12px;">Check</button>
+</div>
+<div class="giveaway-odds-result" id="giveawayOddsResult" style="display:none;"></div>
+</div>
+</div>
+</div>
 <div class="home-split">
 <div class="home-hero-col">
 <div class="hero">
@@ -889,6 +977,7 @@ button,.nav-tab,.rarity-row,.pet-card{min-height:44px;}
 <button class="team-sub-tab" data-team-tab="teamInventory">Inventory</button>
 <button class="team-sub-tab" data-team-tab="teamOrders">Orders</button>
 <button class="team-sub-tab" data-team-tab="teamLeaderboard">Leaderboard</button>
+<button class="team-sub-tab" data-team-tab="teamGiveaway">Giveaway</button>
 </div>
 <div id="teamDash" class="team-sub-section active">
 <div class="team-dash-grid" id="teamDashGrid"></div>
@@ -1007,6 +1096,44 @@ button,.nav-tab,.rarity-row,.pet-card{min-height:44px;}
 <tbody id="lbBody"></tbody>
 </table></div>
 </div>
+<div id="teamGiveaway" class="team-sub-section">
+<h3 class="team-section-header">Giveaway Raffle</h3>
+<div class="giveaway-config">
+<div class="gc-field"><label>Prize</label><div style="display:flex;gap:8px;"><input id="gcPrizeQty" type="number" min="1" value="1" style="max-width:70px;flex:none;" placeholder="Qty"><input id="gcPrize" placeholder="e.g. Apex Pet" style="flex:1;" list="gcPetList"><datalist id="gcPetList"></datalist></div></div>
+<div class="gc-field"><label>End Date/Time</label><input id="gcEndTime" type="datetime-local"></div>
+<div class="gc-field"><label>Entry Mode</label>
+<select id="gcEntryMode"><option value="tiers">Tiers</option><option value="linear">Linear</option></select>
+</div>
+<div class="gc-field" id="gcLinearWrap" style="display:none;"><label>1 Entry Per X Tokens</label><input id="gcLinearRatio" type="number" min="1" value="100"></div>
+<div class="gc-field" id="gcTiersWrap">
+<label>Tier Editor</label>
+<div id="gcTierRows"></div>
+<button class="gc-add-tier" id="gcAddTier">+ Add Tier</button>
+</div>
+<div class="gc-field"><label>Winner Message</label><textarea id="gcWinnerMsg" placeholder="Congrats {winner}! You won {prize}! DM us to claim."></textarea></div>
+<div class="gc-field"><label>Raffle Rules (shown in info popup)</label><textarea id="gcRaffleRules" rows="6" placeholder="Enter the raffle rules here. Each line will be shown as-is."></textarea></div>
+<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px;">
+<button class="gc-btn" id="gcSaveBtn">Save Config</button>
+<button class="gc-toggle inactive" id="gcActivateBtn">Start Raffle</button>
+</div>
+</div>
+<h3 class="team-section-header" style="margin-top:28px;">Entry Preview</h3>
+<div class="gc-entry-table"><div class="table-wrap">
+<table class="team-table"><thead><tr><th>Discord</th><th>Tokens Spent</th><th>Entries</th></tr></thead>
+<tbody id="gcEntryBody"></tbody>
+</table></div>
+<div style="text-align:right;font-size:13px;color:var(--text-3);margin-top:6px;">Total entries: <span id="gcTotalEntries" style="color:var(--accent-400);font-weight:600;">0</span></div>
+</div>
+<div class="gc-roll-section">
+<h3 class="team-section-header" style="margin:0 0 8px;justify-content:center;">Roll Winner</h3>
+<div class="gc-roll-display" id="gcRollDisplay">—</div>
+<div class="gc-winner-msg" id="gcWinnerMsgDisplay" style="display:none;"></div>
+<div class="gc-actions">
+<button class="gc-btn" id="gcRollBtn" disabled>Roll Winner</button>
+<button class="gc-btn danger" id="gcResetBtn">Reset Raffle</button>
+</div>
+</div>
+</div>
 </div>
 </section>
 
@@ -1075,6 +1202,30 @@ button,.nav-tab,.rarity-row,.pet-card{min-height:44px;}
 </div>
 </section>
 
+<!-- GIVEAWAY PAGE (mobile) -->
+<section id="giveawayPage" class="page">
+<div class="giveaway-page-inner">
+<div class="giveaway-page-icon">🎉</div>
+<div class="giveaway-page-title">RAFFLE</div>
+<div class="giveaway-page-prize" id="giveawayPagePrize"></div>
+<div class="giveaway-page-countdown" id="giveawayPageCountdown"></div>
+<div class="giveaway-entry-rules" id="giveawayPageEntryRules" style="margin-top:12px;font-size:13px;color:var(--text-2);line-height:1.6;text-align:center;"></div>
+<div class="giveaway-page-winner" id="giveawayPageWinner" style="display:none;"></div>
+<div class="giveaway-odds" id="giveawayPageOdds">
+<button class="giveaway-odds-toggle" id="giveawayPageOddsToggle">See your odds</button>
+<span style="margin:0 6px;color:var(--text-3);">|</span>
+<button class="giveaway-odds-toggle" id="giveawayPageRulesBtn">Raffle info</button>
+<div class="giveaway-odds-body" id="giveawayPageOddsBody" style="display:none;">
+<div style="display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;">
+<input id="giveawayPageOddsInput" placeholder="Your Discord username" style="background:var(--bg-surface);border:1px solid var(--border);color:var(--text-1);font-family:'Inter',sans-serif;font-size:13px;padding:10px 14px;border-radius:10px;outline:none;width:220px;">
+<button class="gc-btn" id="giveawayPageOddsCheck" style="padding:10px 16px;">Check</button>
+</div>
+<div class="giveaway-odds-result" id="giveawayPageOddsResult" style="display:none;"></div>
+</div>
+</div>
+</div>
+</section>
+
 </div>
 
 <nav class="bottom-nav" id="bottomNav">
@@ -1083,9 +1234,19 @@ button,.nav-tab,.rarity-row,.pet-card{min-height:44px;}
 <button class="bottom-nav-btn" data-page="all"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg><span>All</span></button>
 <button class="bottom-nav-btn" data-page="faq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r=".5"/></svg><span>FAQ</span></button>
 <button class="bottom-nav-btn" data-page="trade"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/></svg><span>Trade</span></button>
+<button class="bottom-nav-btn" data-page="giveaway" id="bottomNavGiveaway" style="display:none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8V2m0 0L9 5m3-3l3 3"/><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M12 8v13"/></svg><span>Gift</span></button>
 <button class="bottom-nav-btn" data-page="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><span>Search</span></button>
 </div>
 </nav>
+
+<!-- RAFFLE RULES MODAL -->
+<div class="modal-overlay" id="raffleRulesModal" style="display:none;">
+<div class="modal" style="max-width:500px;">
+<button class="modal-close" id="raffleRulesClose">&times;</button>
+<h2 class="gradient-text" style="margin-bottom:16px;font-size:20px;">Raffle Rules</h2>
+<div id="raffleRulesContent" style="color:var(--text-2);font-size:14px;line-height:1.7;white-space:pre-line;"></div>
+</div>
+</div>
 
 <!-- PET DETAIL MODAL -->
 <div class="modal-overlay" id="petModal" style="display:none;">
@@ -1833,7 +1994,8 @@ else if(page==="all"){showPage("allPage");renderAll();}
 else if(page==="search"){showPage("searchPage");renderSearch("");const spi=document.getElementById("searchPageInput");if(spi)setTimeout(()=>spi.focus(),100);}
 else if(page==="faq"){showPage("faqPage");renderFaq();}
 else if(page==="trade"){showPage("tradePage");initTradePage();}
-else if(page==="team"||page==="team-my"||page==="team-inventory"||page==="team-orders"){if(!window.isAdmin){goPage("home");return;}showPage("teamPage");initTeamTracker().then(()=>{if(page==="team-my")showTeamSection("teamMy");else if(page==="team-inventory")showTeamSection("teamInventory");else if(page==="team-orders")showTeamSection("teamOrders");else showTeamSection("teamDash");});}
+else if(page==="giveaway"){showPage("giveawayPage");updateGiveawayPage(giveawayData);}
+else if(page==="team"||page==="team-my"||page==="team-inventory"||page==="team-orders"||page==="team-giveaway"){if(!window.isAdmin){goPage("home");return;}showPage("teamPage");initTeamTracker().then(()=>{if(page==="team-my")showTeamSection("teamMy");else if(page==="team-inventory")showTeamSection("teamInventory");else if(page==="team-orders")showTeamSection("teamOrders");else if(page==="team-giveaway")showTeamSection("teamGiveaway");else showTeamSection("teamDash");});}
 else{showPage("listPage");render(page);}
 }
 
@@ -1841,7 +2003,7 @@ function updateActiveTabs(page){
 document.querySelectorAll(".nav-tab").forEach(t=>{t.classList.remove("active");if(t.dataset.page===page)t.classList.add("active");});
 document.querySelectorAll(".bottom-nav-btn").forEach(t=>{t.classList.remove("active");
 const tp=t.dataset.page;if(tp===page||(tp==="search"&&page==="search"))t.classList.add("active");
-else if(!["home","all","faq","trade","search"].includes(page)&&tp==="all")t.classList.add("active");});
+else if(!["home","all","faq","trade","search","giveaway"].includes(page)&&tp==="all")t.classList.add("active");});
 }
 
 /* ═══════════════ BUILD NAV & HOME ═══════════════ */
@@ -2311,6 +2473,7 @@ const el=document.getElementById(id);if(el)el.classList.add("active");
 document.querySelectorAll(".team-sub-tab[data-team-tab]").forEach(t=>{if(t.dataset.teamTab===id)t.classList.add("active");});
 if(id==="teamOrders"){loadTradeOrders().then(()=>{loadTradeSettings().then(()=>{renderTradeOrders();startTradeOrdersListener();const wu=document.getElementById("tradeWebhookUrl");const ri=document.getElementById("tradeRoleId");if(wu)wu.value=tradeReqSettings.webhookUrl||"";if(ri)ri.value=tradeReqSettings.roleId||"";renderBulkDiscounts();populateBulkDiscPetList();updatePauseBtn();});});}
 if(id==="teamLeaderboard"){Promise.all([loadTradeOrders(),loadLbEntries()]).then(()=>renderLeaderboard());}
+if(id==="teamGiveaway"){Promise.all([loadTradeOrders(),loadGiveawayConfig()]).then(()=>{populateGiveawayForm();renderGiveawayEntries();const dl=document.getElementById("gcPetList");if(dl)dl.innerHTML=(window.data||[]).map(p=>`<option value="${esc(p.name)}">`).join("");});}
 }
 
 async function initTeamTracker(){
@@ -3637,6 +3800,482 @@ Promise.all([loadTradeOrders(),loadLbEntries()]).then(()=>{buildPubLbData();rend
 renderTradeNotices();
 }
 
+/* ═══════════════ GIVEAWAY RAFFLE ═══════════════ */
+let giveawayData=null;
+let giveawayCountdownInterval=null;
+let giveawayUnsub=null;
+
+async function loadGiveawayConfig(){
+try{const snap=await getDoc(doc(db,"config","giveaway"));
+giveawayData=snap.exists()?snap.data():null;
+}catch(e){console.log("loadGiveaway error:",e.message);giveawayData=null;}
+}
+
+async function saveGiveawayConfig(data){
+await setDoc(doc(db,"config","giveaway"),data);
+giveawayData=data;
+}
+
+function buildRaffleEntries(giveaway){
+if(!giveaway||!giveaway.startedAt)return[];
+const completed=tradeReqOrders.filter(o=>o.status==="completed"&&(o.completedAt||o.createdAt||0)>=giveaway.startedAt);
+const canonMap=new Map();
+const stats=new Map();
+completed.forEach(o=>{
+const raw=o.discord||o.username||"Unknown";
+const key=resolveCanonicalUsername(raw,canonMap);
+const cur=stats.get(key)||{tokens:0};
+cur.tokens+=(o.totalValueRaw||0);
+stats.set(key,cur);
+});
+const entries=[];
+for(const [name,d] of stats){
+let ent=0;
+if(giveaway.entryMode==="linear"){
+const ratio=giveaway.linearRatio||100;
+ent=Math.floor(d.tokens/ratio);
+}else{
+const tiers=(giveaway.tiers||[]).slice().sort((a,b)=>b.min-a.min);
+for(const t of tiers){if(d.tokens>=t.min){ent=t.entries;break;}}
+}
+if(ent>0)entries.push({name,tokens:d.tokens,entries:ent});
+}
+entries.sort((a,b)=>b.entries-a.entries||b.tokens-a.tokens);
+return entries;
+}
+
+function rollWeightedWinner(entries){
+const tickets=[];
+entries.forEach(e=>{for(let i=0;i<e.entries;i++)tickets.push(e.name);});
+if(!tickets.length)return null;
+return tickets[Math.floor(Math.random()*tickets.length)];
+}
+
+function fmtPrize(data){
+const name=data.prize||"TBD";
+const qty=data.prizeQty||1;
+return qty>1?qty+"x "+name:name;
+}
+
+function buildEntryRulesText(data){
+if(!data)return"";
+if(data.entryMode==="linear"){
+const ratio=data.linearRatio||100;
+return"Every "+formatValueFull(ratio)+" total tokens spent = 1 entry";
+}
+const tiers=(data.tiers||[]).slice().sort((a,b)=>a.min-b.min);
+if(!tiers.length)return"";
+const parts=tiers.map((t,i)=>{
+const next=tiers[i+1];
+const label=next?formatValueFull(t.min)+"–"+formatValueFull(next.min-1):formatValueFull(t.min)+"+";
+return label+" tokens = "+t.entries+" entr"+(t.entries===1?"y":"ies");
+});
+const maxEntries=Math.max(...tiers.map(t=>t.entries));
+return"Total tokens spent:\n"+parts.join("\n")+"\nCapped at "+maxEntries+" entr"+(maxEntries===1?"y":"ies")+" per person";
+}
+
+// --- Home page giveaway card + mobile bottom nav ---
+function updateGiveawayCard(data){
+const card=document.getElementById("giveawayCard");
+const prizeEl=document.getElementById("giveawayPrize");
+const countdownEl=document.getElementById("giveawayCountdown");
+const winnerEl=document.getElementById("giveawayWinner");
+const navBtn=document.getElementById("bottomNavGiveaway");
+if(!data||!data.active){
+card.style.display="none";
+if(navBtn)navBtn.style.display="none";
+stopGiveawayCountdown();
+return;
+}
+card.style.display="";
+if(navBtn)navBtn.style.display="";
+prizeEl.textContent=fmtPrize(data);
+const rulesEl=document.getElementById("giveawayEntryRules");
+if(rulesEl){const txt=buildEntryRulesText(data);rulesEl.textContent=txt;rulesEl.style.whiteSpace="pre-line";rulesEl.style.display=txt?"":"";}
+const oddsEl=document.getElementById("giveawayOdds");
+if(data.winner){
+countdownEl.style.display="none";
+winnerEl.style.display="";
+if(oddsEl)oddsEl.style.display="none";
+if(rulesEl)rulesEl.style.display="none";
+const msg=(data.winnerMessage||"Winner: {winner}").replace(/\{winner\}/g,data.winner).replace(/\{prize\}/g,fmtPrize(data));
+winnerEl.textContent=msg;
+stopGiveawayCountdown();
+}else{
+winnerEl.style.display="none";
+countdownEl.style.display="";
+if(oddsEl)oddsEl.style.display="";
+startGiveawayCountdown(data.endTime);
+}
+updateGiveawayPage(data);
+}
+
+// --- Giveaway standalone page (mobile) ---
+let giveawayPageInterval=null;
+function updateGiveawayPage(data){
+const prizeEl=document.getElementById("giveawayPagePrize");
+const countdownEl=document.getElementById("giveawayPageCountdown");
+const winnerEl=document.getElementById("giveawayPageWinner");
+if(!prizeEl)return;
+const pageOddsEl=document.getElementById("giveawayPageOdds");
+if(!data||!data.active){
+prizeEl.textContent="No active giveaway";
+countdownEl.style.display="none";
+winnerEl.style.display="none";
+if(pageOddsEl)pageOddsEl.style.display="none";
+if(giveawayPageInterval){clearInterval(giveawayPageInterval);giveawayPageInterval=null;}
+return;
+}
+prizeEl.textContent=fmtPrize(data);
+const pageRulesEl=document.getElementById("giveawayPageEntryRules");
+if(pageRulesEl){const txt=buildEntryRulesText(data);pageRulesEl.textContent=txt;pageRulesEl.style.whiteSpace="pre-line";pageRulesEl.style.display=txt?"":"none";}
+if(data.winner){
+countdownEl.style.display="none";
+winnerEl.style.display="";
+if(pageOddsEl)pageOddsEl.style.display="none";
+if(pageRulesEl)pageRulesEl.style.display="none";
+const msg=(data.winnerMessage||"Winner: {winner}").replace(/\{winner\}/g,data.winner).replace(/\{prize\}/g,fmtPrize(data));
+winnerEl.textContent=msg;
+if(giveawayPageInterval){clearInterval(giveawayPageInterval);giveawayPageInterval=null;}
+}else{
+if(pageOddsEl)pageOddsEl.style.display="";
+winnerEl.style.display="none";
+countdownEl.style.display="";
+if(giveawayPageInterval)clearInterval(giveawayPageInterval);
+function tickPage(){
+const diff=data.endTime-Date.now();
+if(diff<=0){countdownEl.innerHTML='<span class="giveaway-page-ended">Ended — winner pending</span>';if(giveawayPageInterval){clearInterval(giveawayPageInterval);giveawayPageInterval=null;}return;}
+const d=Math.floor(diff/86400000),h=Math.floor((diff%86400000)/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
+let parts=[];if(d>0)parts.push(d+"d");
+parts.push(String(h).padStart(2,"0")+"h");parts.push(String(m).padStart(2,"0")+"m");parts.push(String(s).padStart(2,"0")+"s");
+countdownEl.textContent=parts.join(" ");
+}
+tickPage();
+giveawayPageInterval=setInterval(tickPage,1000);
+}
+}
+
+function startGiveawayCountdown(endTime){
+stopGiveawayCountdown();
+const el=document.getElementById("giveawayCountdown");
+function tick(){
+const now=Date.now();
+const diff=endTime-now;
+if(diff<=0){el.innerHTML='<span class="giveaway-ended">Ended — winner pending</span>';stopGiveawayCountdown();return;}
+const d=Math.floor(diff/86400000);
+const h=Math.floor((diff%86400000)/3600000);
+const m=Math.floor((diff%3600000)/60000);
+const s=Math.floor((diff%60000)/1000);
+let parts=[];
+if(d>0)parts.push(d+"d");
+parts.push(String(h).padStart(2,"0")+"h");
+parts.push(String(m).padStart(2,"0")+"m");
+parts.push(String(s).padStart(2,"0")+"s");
+el.textContent=parts.join(" ");
+}
+tick();
+giveawayCountdownInterval=setInterval(tick,1000);
+}
+
+function stopGiveawayCountdown(){
+if(giveawayCountdownInterval){clearInterval(giveawayCountdownInterval);giveawayCountdownInterval=null;}
+}
+
+function startGiveawayListener(){
+if(giveawayUnsub)return;
+giveawayUnsub=onSnapshot(doc(db,"config","giveaway"),(snap)=>{
+giveawayData=snap.exists()?snap.data():null;
+updateGiveawayCard(giveawayData);
+});
+}
+
+// --- Team page giveaway config ---
+let gcTiers=[{min:0,entries:1},{min:100,entries:5},{min:500,entries:10}];
+
+function populateGiveawayForm(){
+const g=giveawayData||{};
+document.getElementById("gcPrize").value=g.prize||"";
+document.getElementById("gcPrizeQty").value=g.prizeQty||1;
+if(g.endTime){
+const d=new Date(g.endTime);
+const local=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16);
+document.getElementById("gcEndTime").value=local;
+}else{document.getElementById("gcEndTime").value="";}
+const modeEl=document.getElementById("gcEntryMode");
+modeEl.value=g.entryMode||"tiers";
+document.getElementById("gcLinearRatio").value=g.linearRatio||100;
+gcTiers=g.tiers&&g.tiers.length?g.tiers.map(t=>({...t})):[{min:0,entries:1},{min:100,entries:5},{min:500,entries:10}];
+renderGcTiers();
+toggleEntryModeFields();
+document.getElementById("gcWinnerMsg").value=g.winnerMessage||"Congrats {winner}! You won {prize}! DM us to claim.";
+document.getElementById("gcRaffleRules").value=g.raffleRules||"";
+const btn=document.getElementById("gcActivateBtn");
+if(g.active){btn.className="gc-toggle active";btn.textContent="Stop Raffle";}
+else{btn.className="gc-toggle inactive";btn.textContent="Start Raffle";}
+// Roll section
+const rollDisplay=document.getElementById("gcRollDisplay");
+const rollMsgEl=document.getElementById("gcWinnerMsgDisplay");
+if(g.winner){
+rollDisplay.textContent=g.winner;
+rollDisplay.className="gc-roll-display winner";
+const msg=(g.winnerMessage||"Winner: {winner}").replace(/\{winner\}/g,g.winner).replace(/\{prize\}/g,fmtPrize(g));
+rollMsgEl.textContent=msg;rollMsgEl.style.display="";
+document.getElementById("gcRollBtn").disabled=true;
+}else{
+rollDisplay.textContent="—";
+rollDisplay.className="gc-roll-display";
+rollMsgEl.style.display="none";
+updateRollBtnState();
+}
+}
+
+function toggleEntryModeFields(){
+const mode=document.getElementById("gcEntryMode").value;
+document.getElementById("gcLinearWrap").style.display=mode==="linear"?"":"none";
+document.getElementById("gcTiersWrap").style.display=mode==="tiers"?"":"none";
+}
+
+function renderGcTiers(){
+const container=document.getElementById("gcTierRows");
+container.innerHTML=gcTiers.map((t,i)=>`<div class="gc-tier-row">
+<input type="number" min="0" placeholder="Min tokens" value="${t.min}" data-gc-tier-idx="${i}" data-gc-tier-field="min">
+<input type="number" min="1" placeholder="Entries" value="${t.entries}" data-gc-tier-idx="${i}" data-gc-tier-field="entries">
+<button data-gc-tier-del="${i}">&times;</button>
+</div>`).join("");
+}
+
+function readGiveawayForm(){
+const prize=document.getElementById("gcPrize").value.trim();
+const prizeQty=Math.max(1,parseInt(document.getElementById("gcPrizeQty").value)||1);
+const endVal=document.getElementById("gcEndTime").value;
+const endTime=endVal?new Date(endVal).getTime():null;
+const entryMode=document.getElementById("gcEntryMode").value;
+const linearRatio=parseInt(document.getElementById("gcLinearRatio").value)||100;
+const winnerMessage=document.getElementById("gcWinnerMsg").value.trim()||"Congrats {winner}! You won {prize}! DM us to claim.";
+const raffleRules=document.getElementById("gcRaffleRules").value.trim();
+// Read tier inputs from DOM
+document.querySelectorAll("[data-gc-tier-idx]").forEach(inp=>{
+const idx=parseInt(inp.dataset.gcTierIdx);
+const field=inp.dataset.gcTierField;
+if(gcTiers[idx])gcTiers[idx][field]=parseInt(inp.value)||0;
+});
+const tiers=gcTiers.slice().sort((a,b)=>a.min-b.min);
+const prev=giveawayData||{};
+return{
+prize,prizeQty,endTime,entryMode,linearRatio,tiers,winnerMessage,raffleRules,
+active:prev.active||false,
+startedAt:prev.startedAt||null,
+winner:prev.winner||null,
+rolledAt:prev.rolledAt||null
+};
+}
+
+function renderGiveawayEntries(){
+const g=giveawayData||readGiveawayForm();
+const entries=buildRaffleEntries(g);
+const body=document.getElementById("gcEntryBody");
+if(!entries.length){
+body.innerHTML='<tr><td colspan="3" style="text-align:center;color:var(--text-3);padding:20px;">No entries yet</td></tr>';
+document.getElementById("gcTotalEntries").textContent="0";
+return;
+}
+let totalEntries=0;
+body.innerHTML=entries.map(e=>{totalEntries+=e.entries;return`<tr><td style="font-weight:600;color:var(--text-1)">${esc(e.name)}</td><td>${formatValueFull(e.tokens)}</td><td style="color:var(--accent-400);font-weight:600;">${e.entries}</td></tr>`;}).join("");
+document.getElementById("gcTotalEntries").textContent=formatValueFull(totalEntries);
+}
+
+function updateRollBtnState(){
+const g=giveawayData||{};
+const btn=document.getElementById("gcRollBtn");
+btn.disabled=!g.active||!g.endTime||Date.now()<g.endTime||!!g.winner;
+}
+
+async function rollGiveawayWinner(){
+const g=giveawayData;
+if(!g||!g.active||g.winner)return;
+const entries=buildRaffleEntries(g);
+if(!entries.length){alert("No entries to roll from!");return;}
+const winner=rollWeightedWinner(entries);
+if(!winner){alert("Could not determine a winner.");return;}
+// Animation
+const display=document.getElementById("gcRollDisplay");
+const names=entries.map(e=>e.name);
+display.className="gc-roll-display rolling";
+const rollBtn=document.getElementById("gcRollBtn");
+rollBtn.disabled=true;
+let delay=50;
+let steps=0;
+const maxSteps=30;
+await new Promise(resolve=>{
+function step(){
+display.textContent=names[Math.floor(Math.random()*names.length)];
+steps++;
+if(steps>=maxSteps){
+display.textContent=winner;
+display.className="gc-roll-display winner";
+resolve();
+return;
+}
+delay=50+Math.pow(steps/maxSteps,2)*450;
+setTimeout(step,delay);
+}
+step();
+});
+// Save
+const updated={...g,winner,rolledAt:Date.now()};
+await saveGiveawayConfig(updated);
+const msg=(g.winnerMessage||"Winner: {winner}").replace(/\{winner\}/g,winner).replace(/\{prize\}/g,fmtPrize(g));
+const msgEl=document.getElementById("gcWinnerMsgDisplay");
+msgEl.textContent=msg;msgEl.style.display="";
+updateGiveawayCard(updated);
+}
+
+async function resetGiveaway(){
+if(!confirm("Reset raffle? This clears the winner, prize, and deactivates it. Entry config (tiers/linear) is kept."))return;
+const prev=giveawayData||{};
+const fresh={active:false,prize:"",prizeQty:1,endTime:null,startedAt:null,
+winnerMessage:prev.winnerMessage||"Congrats {winner}! You won {prize}! DM us to claim.",
+entryMode:prev.entryMode||"tiers",linearRatio:prev.linearRatio||100,
+tiers:prev.tiers||[{min:0,entries:1},{min:100,entries:5},{min:500,entries:10}],
+winner:null,rolledAt:null};
+await saveGiveawayConfig(fresh);
+populateGiveawayForm();
+renderGiveawayEntries();
+updateGiveawayCard(fresh);
+}
+
+// --- Giveaway event listeners ---
+document.getElementById("gcEntryMode").addEventListener("change",toggleEntryModeFields);
+
+document.getElementById("gcTierRows").addEventListener("input",(e)=>{
+const inp=e.target.closest("[data-gc-tier-idx]");
+if(!inp)return;
+const idx=parseInt(inp.dataset.gcTierIdx);
+const field=inp.dataset.gcTierField;
+if(gcTiers[idx])gcTiers[idx][field]=parseInt(inp.value)||0;
+});
+
+document.getElementById("gcTierRows").addEventListener("click",(e)=>{
+const del=e.target.closest("[data-gc-tier-del]");
+if(!del)return;
+gcTiers.splice(parseInt(del.dataset.gcTierDel),1);
+renderGcTiers();
+});
+
+document.getElementById("gcAddTier").addEventListener("click",()=>{
+const lastMin=gcTiers.length?Math.max(...gcTiers.map(t=>t.min)):0;
+gcTiers.push({min:lastMin+100,entries:1});
+renderGcTiers();
+});
+
+// Save Config — saves entry mode, tiers, linear ratio, winner message, raffle rules
+document.getElementById("gcSaveBtn").addEventListener("click",async()=>{
+// Read tier inputs from DOM
+document.querySelectorAll("[data-gc-tier-idx]").forEach(inp=>{
+const idx=parseInt(inp.dataset.gcTierIdx);
+const field=inp.dataset.gcTierField;
+if(gcTiers[idx])gcTiers[idx][field]=parseInt(inp.value)||0;
+});
+const prev=giveawayData||{};
+const updated={...prev,
+entryMode:document.getElementById("gcEntryMode").value,
+linearRatio:parseInt(document.getElementById("gcLinearRatio").value)||100,
+tiers:gcTiers.slice().sort((a,b)=>a.min-b.min),
+winnerMessage:document.getElementById("gcWinnerMsg").value.trim()||"Congrats {winner}! You won {prize}! DM us to claim.",
+raffleRules:document.getElementById("gcRaffleRules").value.trim()
+};
+await saveGiveawayConfig(updated);
+renderGiveawayEntries();
+updateGiveawayCard(updated);
+alert("Entry config saved!");
+});
+
+// Activate/Deactivate — saves everything and starts or stops the raffle
+document.getElementById("gcActivateBtn").addEventListener("click",async()=>{
+const btn=document.getElementById("gcActivateBtn");
+const wasActive=btn.classList.contains("active");
+if(wasActive){
+// Deactivate
+const prev=giveawayData||{};
+const updated={...prev,active:false};
+await saveGiveawayConfig(updated);
+btn.className="gc-toggle inactive";btn.textContent="Start Raffle";
+renderGiveawayEntries();
+updateGiveawayCard(updated);
+updateRollBtnState();
+}else{
+// Activate — validate and save all fields
+const data=readGiveawayForm();
+data.active=true;
+if(!data.prize){alert("Prize name required.");return;}
+if(!data.endTime){alert("End date required.");return;}
+if(!data.startedAt)data.startedAt=Date.now();
+await saveGiveawayConfig(data);
+btn.className="gc-toggle active";btn.textContent="Stop Raffle";
+renderGiveawayEntries();
+updateGiveawayCard(data);
+updateRollBtnState();
+}
+});
+
+document.getElementById("gcRollBtn").addEventListener("click",()=>rollGiveawayWinner());
+document.getElementById("gcResetBtn").addEventListener("click",()=>resetGiveaway());
+
+// --- See your odds ---
+async function checkGiveawayOdds(username,resultEl){
+if(!username){resultEl.style.display="none";return;}
+const g=giveawayData;
+if(!g||!g.active){resultEl.innerHTML='<span style="color:var(--text-3);">No active giveaway.</span>';resultEl.style.display="";return;}
+if(!tradeReqOrders.length)await loadTradeOrders();
+const entries=buildRaffleEntries(g);
+const totalTickets=entries.reduce((s,e)=>s+e.entries,0);
+if(!totalTickets){resultEl.innerHTML='<span style="color:var(--text-3);">No entries yet.</span>';resultEl.style.display="";return;}
+const lower=username.toLowerCase().trim();
+const match=entries.find(e=>e.name.toLowerCase()===lower||stringSimilarity(e.name.toLowerCase(),lower)>=0.75);
+if(!match){resultEl.innerHTML=`<span style="color:var(--text-3);">No entries found for "<strong>${esc(username)}</strong>".<br>Complete trade orders to earn entries!</span>`;resultEl.style.display="";return;}
+const pct=(match.entries/totalTickets*100);
+const pctStr=pct<0.01?"<0.01":pct<1?pct.toFixed(2):pct.toFixed(1);
+resultEl.innerHTML=`<span class="odds-pct">${pctStr}%</span>${esc(match.name)}: ${match.entries} entr${match.entries===1?"y":"ies"} out of ${formatValueFull(totalTickets)} total<br><span class="odds-detail">${formatValueFull(match.tokens)} tokens spent since giveaway started</span>`;
+resultEl.style.display="";
+}
+
+function initOddsToggle(toggleId,bodyId){
+document.getElementById(toggleId).addEventListener("click",()=>{
+const body=document.getElementById(bodyId);
+const open=body.style.display!=="none";
+body.style.display=open?"none":"";
+});
+}
+
+function initOddsCheck(btnId,inputId,resultId){
+document.getElementById(btnId).addEventListener("click",()=>{
+const username=document.getElementById(inputId).value.trim();
+const resultEl=document.getElementById(resultId);
+checkGiveawayOdds(username,resultEl);
+});
+document.getElementById(inputId).addEventListener("keydown",(e)=>{
+if(e.key==="Enter"){e.preventDefault();document.getElementById(btnId).click();}
+});
+}
+
+initOddsToggle("giveawayOddsToggle","giveawayOddsBody");
+initOddsToggle("giveawayPageOddsToggle","giveawayPageOddsBody");
+initOddsCheck("giveawayOddsCheck","giveawayOddsInput","giveawayOddsResult");
+initOddsCheck("giveawayPageOddsCheck","giveawayPageOddsInput","giveawayPageOddsResult");
+
+// --- Raffle rules modal ---
+function showRaffleRules(){
+const modal=document.getElementById("raffleRulesModal");
+const content=document.getElementById("raffleRulesContent");
+const g=giveawayData||{};
+content.textContent=g.raffleRules||"No rules have been set yet.";
+modal.style.display="flex";
+}
+document.getElementById("raffleRulesClose").addEventListener("click",()=>{document.getElementById("raffleRulesModal").style.display="none";});
+document.getElementById("raffleRulesModal").addEventListener("click",(e)=>{if(e.target===e.currentTarget)e.currentTarget.style.display="none";});
+document.getElementById("giveawayRulesBtn").addEventListener("click",showRaffleRules);
+document.getElementById("giveawayPageRulesBtn").addEventListener("click",showRaffleRules);
+
 /* ═══════════════ ROUTING ═══════════════ */
 function readHash(){const raw=location.hash.replace("#","");const [h,qs]=raw.split("?");return{page:h||"home",query:new URLSearchParams(qs||"").get("q")||""};}
 window.addEventListener("popstate",()=>{const r=readHash();goPage(r.page,false);if(r.page==="search"&&r.query){document.getElementById("headerSearch").value=r.query;renderSearch(r.query);}});
@@ -3680,6 +4319,8 @@ _skelGrids.forEach(id=>{const g=document.getElementById(id);if(g&&!g.children.le
 loadPets();
 getDoc(doc(db,"config","home")).then(snap=>{if(snap.exists())applyHomeConfig(snap.data());}).catch(()=>{});
 getDoc(doc(db,"config","faq")).then(snap=>{if(snap.exists()&&snap.data().items){faqItems=snap.data().items;if(window.page==="faq")renderFaq();}}).catch(()=>{});
+loadGiveawayConfig().then(()=>updateGiveawayCard(giveawayData)).catch(()=>{});
+startGiveawayListener();
 
 </script>
 </body>
