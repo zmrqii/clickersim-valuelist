@@ -1892,6 +1892,7 @@ document.getElementById("searchPageInput").addEventListener("input",e=>syncSearc
 async function loadPets(){
 try{const snap=await getDocs(collection(db,"pets"));window.data=[];
 snap.forEach(d=>{window.data.push({id:d.id,...d.data()});});
+if(typeof refreshStats==="function")refreshStats();
 if(window.page==="all")renderAll();
 else if(window.page!=="home"&&window.page!=="search")render(window.page);
 }catch(err){console.log("Firestore load error:",err.message);}
@@ -2028,10 +2029,21 @@ document.getElementById("heroSubLabel").textContent=subLines[0]||"";
 document.getElementById("heroSubContent").textContent=subLines.slice(1).join("\n");
 document.getElementById("heroSubContent").style.display=subLines.length>1?"":"none";
 document.querySelector(".hero-sub-arrow").style.display=subLines.length>1?"":"none";
-const _dynPets=ALL_PETS.length,_dynRar=new Set(ALL_PETS.map(p=>p.rarity)).size,_dynVar=3;
-document.getElementById("totalPets").textContent=_dynPets;document.getElementById("stat1Label").textContent=c.s1l;
-document.getElementById("stat2Num").textContent=_dynRar;document.getElementById("stat2Label").textContent=c.s2l;
-document.getElementById("stat3Num").textContent=_dynVar;document.getElementById("stat3Label").textContent=c.s3l;
+function refreshStats(){
+const src=window.data&&window.data.length?window.data:ALL_PETS;
+document.getElementById("totalPets").textContent=src.length;
+document.getElementById("stat2Num").textContent=new Set(src.map(p=>p.rarity)).size;
+document.getElementById("stat3Num").textContent=3;
+document.querySelectorAll(".rarity-row-count").forEach(el=>{
+const row=el.closest(".rarity-row");if(!row)return;
+const label=row.querySelector("span:nth-child(2)");if(!label)return;
+const r=label.textContent.trim();el.textContent=src.filter(p=>p.rarity===r).length;
+});
+}
+refreshStats();
+document.getElementById("stat1Label").textContent=c.s1l;
+document.getElementById("stat2Label").textContent=c.s2l;
+document.getElementById("stat3Label").textContent=c.s3l;
 const banner=document.getElementById("homeBanner");
 if(c.banner){banner.textContent=c.banner;banner.style.display="block";}else{banner.style.display="none";}
 if(c.textBoxes&&Array.isArray(c.textBoxes)){
