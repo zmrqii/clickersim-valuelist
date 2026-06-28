@@ -346,7 +346,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;hei
 /* Responsive */
 @media(max-width:768px){
 .header-inner{gap:10px;}
-.nav-tabs{gap:0;overflow-x:auto;overflow-y:visible;}
+.nav-tabs{gap:0;overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch;}
 .nav-tab{font-size:12px;padding:10px 14px;}
 .header-search input{width:140px;}
 .pet-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;}
@@ -386,8 +386,19 @@ input[type="range"]::-webkit-slider-thumb{width:28px;height:28px;}
 .team-member-bar select{padding:10px 12px;}
 .team-form input,.team-form select{padding:10px 12px;}
 .team-edit-inp{padding:10px 10px;font-size:14px!important;}
+.team-dash-grid{grid-template-columns:repeat(2,1fr);}
+.collapsible-toggle{padding:12px 0;min-height:44px;}
+.order-card-actions{gap:4px;}
+.order-card-actions button{flex:1;min-width:0;font-size:11px;padding:8px 8px;}
+.order-card{padding:14px;}
+.order-card-header{flex-direction:column;align-items:flex-start;gap:4px;}
+.bulk-discount-row{flex-direction:column;}
+.bulk-discount-row input,.bulk-discount-row select{width:100%;}
+.pub-lb-pager button,.team-pager button{min-height:40px;padding:8px 12px;}
+.faq-toggle{padding:14px 16px;min-height:48px;}
 }
 @media(max-width:480px){
+.main{padding:20px 12px;}
 .pet-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
 .pet-card{padding:12px 10px 10px;}
 .pet-card:hover{transform:translateY(-2px);}
@@ -407,6 +418,17 @@ button,.nav-tab,.rarity-card,.pet-card{min-height:44px;}
 .pet-detail-icon{width:90px;height:90px;}
 .pet-values{flex-direction:column;}
 .calc-checks{flex-direction:column;gap:6px;}
+.team-dash-grid{grid-template-columns:1fr;}
+.team-sub-tab{font-size:12px;padding:8px 10px;}
+.team-table th,.team-table td{padding:8px 6px;font-size:11px;}
+.team-active-item{padding:8px 10px;font-size:12px;}
+.team-clock-btn{font-size:16px;padding:14px;}
+.inv-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
+.inv-card{padding:10px;}
+.order-card-actions button{font-size:11px;padding:6px 6px;min-height:40px;}
+.trade-confirm{padding:20px;border-radius:20px 20px 0 0;}
+.trade-confirm-btns button{padding:14px;min-height:48px;}
+.pub-lb-pager button,.team-pager button{min-height:44px;font-size:12px;padding:8px 10px;}
 }
 
 /* ═══════════════ TEAM TRACKER ═══════════════ */
@@ -531,17 +553,20 @@ button,.nav-tab,.rarity-card,.pet-card{min-height:44px;}
 .team-member-bar{flex-wrap:wrap;gap:8px;}
 .team-member-bar .clock-status{width:100%;justify-content:center;margin-left:0;margin-top:4px;}
 .team-member-bar select{flex:1;min-width:0;}
+.table-wrap{-webkit-overflow-scrolling:touch;}
 .team-table th,.team-table td{padding:8px 8px;font-size:12px;white-space:nowrap;}
+.team-section-header{font-size:13px;}
+.trade-side{padding:10px;}
 }
 @media(max-width:480px){
 .team-sub-nav{flex-direction:column;}
 .team-form{flex-direction:column;}
 .team-form input,.team-form select,.team-form button{min-width:100%;}
-.team-dash-grid{grid-template-columns:1fr;}
-.inv-grid{grid-template-columns:1fr;}
 .team-member-bar{flex-wrap:wrap;}
-.team-section-header{font-size:14px;flex-wrap:wrap;}
-.team-clock-btn{font-size:16px;padding:14px;}
+.team-member-bar select{width:100%;}
+.team-section-header{font-size:13px;flex-wrap:wrap;}
+.trade-side .team-form{flex-direction:column;}
+.trade-side .team-form input,.trade-side .team-form select,.trade-side .team-form button{min-width:100%;}
 .team-setup{padding:40px 16px;}
 .team-setup h2{font-size:20px;}
 }
@@ -670,9 +695,17 @@ button,.nav-tab,.rarity-card,.pet-card{min-height:44px;}
 .trade-req-layout{grid-template-columns:1fr;}
 .trade-req-cart{position:static;}
 .trade-req-cart-box{max-height:none;}
+.trade-req-cart-item{flex-wrap:wrap;}
+.trade-req-cart-item .cart-item-name{min-width:60%;flex-basis:60%;}
 }
 @media(max-width:480px){
-.trade-req-inv-grid{grid-template-columns:repeat(2,1fr);}
+.trade-req-inv-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
+.trade-req-inv-card{padding:10px;}
+.trade-req-inv-card .inv-name{font-size:12px;}
+.trade-req-cart-box{padding:14px;}
+.trade-req-submit{font-size:14px;padding:14px;min-height:48px;}
+.trade-confirm-btns{flex-direction:column;}
+.trade-confirm-btns button{min-height:48px;}
 }
 </style>
 </head>
