@@ -825,7 +825,7 @@ button,.nav-tab,.rarity-card,.pet-card{min-height:44px;}
 <div class="team-dash-card"><span class="dash-num" id="myTokensNet">0</span><span class="dash-label">Net Tokens</span></div>
 <div class="team-dash-card"><span class="dash-num" id="myTradeCount">0</span><span class="dash-label">Trades</span></div>
 </div>
-<button id="teamResetTokensBtn" style="display:none;background:rgba(220,38,38,0.12);border:1px solid rgba(220,38,38,0.25);color:#f87171;font-size:11px;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif;margin-bottom:14px;transition:all .15s;">Reset Token Counters</button>
+<button id="teamResetTokensBtn" style="display:none;background:rgba(220,38,38,0.12);border:1px solid rgba(220,38,38,0.25);color:#f87171;font-size:11px;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif;margin-bottom:14px;transition:all .15s;">Reset Counters</button>
 <h3 class="team-section-header collapsible-toggle" data-collapse="sessionLog">Sessions <span class="collapse-arrow">&#9662;</span></h3>
 <div class="collapsible-body" id="sessionLog"><div class="table-wrap"><table class="team-table"><thead><tr><th>Date</th><th>In</th><th>Out</th><th>Duration</th></tr></thead><tbody id="teamSessionsBody"></tbody></table></div><div class="team-pager" id="sessionPager"></div></div>
 <h3 class="team-section-header">Log Trade</h3>
@@ -2328,7 +2328,7 @@ const d=window.teamData[name]||{tokens:[],sessions:[],shopPets:[],trades:[]};
 const resetAt=d.tokensResetAt||0;
 (d.tokens||[]).forEach(t=>{if((t.ts||0)>=resetAt){if(t.type==="gain")totalGained+=t.amount;else totalSpent+=t.amount;}
 activities.push({ts:t.ts,member:name,type:"token",id:t.id,action:t.type==="gain"?"Gained tokens":"Spent tokens",detail:(t.type==="gain"?"+":"-")+t.amount.toLocaleString()+(t.note?" — "+t.note:"")});});
-(d.trades||[]).forEach(t=>{tradeCount++;
+(d.trades||[]).forEach(t=>{if((t.ts||0)>=resetAt)tradeCount++;
 const outSummary=(t.outPets||[]).map(p=>(p.qty>1?p.qty+"x ":"")+p.name).join(", ")+(t.outTokens?" +"+t.outTokens.toLocaleString()+"t":"");
 const inSummary=(t.inPets||[]).map(p=>(p.qty>1?p.qty+"x ":"")+p.name).join(", ")+(t.inTokens?" +"+t.inTokens.toLocaleString()+"t":"");
 activities.push({ts:t.ts,member:name,type:"trade",id:t.id,action:"Trade"+(t.with?" w/ "+t.with:""),detail:(outSummary||"—")+" → "+(inSummary||"—")});
@@ -2371,7 +2371,7 @@ document.getElementById("teamResetTokensBtn").style.display=em?"":"none";
 document.getElementById("myTokensGained").textContent=myGained.toLocaleString();
 document.getElementById("myTokensSpent").textContent=mySpent.toLocaleString();
 document.getElementById("myTokensNet").textContent=(myGained-mySpent).toLocaleString();
-document.getElementById("myTradeCount").textContent=(d.trades||[]).length;
+document.getElementById("myTradeCount").textContent=(d.trades||[]).filter(t=>(t.ts||0)>=myResetAt).length;
 const openSess=(d.sessions||[]).find(s=>!s.out);
 const clockBtn=document.getElementById("teamClockBtn");
 const timerDisp=document.getElementById("teamClockTimerDisplay");
@@ -2612,7 +2612,7 @@ await saveMyData();
 
 // Reset token counters
 document.getElementById("teamResetTokensBtn").addEventListener("click",async()=>{
-if(!confirm("Reset token counters to 0? Logs will be kept."))return;
+if(!confirm("Reset token and trade counters to 0? Logs will be kept."))return;
 const d=getMyData();d.tokensResetAt=Date.now();
 window.teamData[window.teamCurrentMember]=d;
 renderMyTracker();renderTeamDashboard();
