@@ -861,6 +861,7 @@ button,.nav-tab,.rarity-row,.pet-card{min-height:44px;}
 </div>
 </div>
 <div class="giveaway-winner" id="giveawayWinner" style="display:none;"></div>
+<div class="giveaway-card-stats" id="giveawayCardStats" style="margin-top:12px;text-align:center;font-size:12px;color:var(--text-2);line-height:1.8;"></div>
 <div class="giveaway-odds" id="giveawayOdds">
 <button class="giveaway-odds-toggle" id="giveawayOddsToggle">See your odds</button>
 <span style="margin:0 6px;color:var(--text-3);">|</span>
@@ -1213,6 +1214,7 @@ button,.nav-tab,.rarity-row,.pet-card{min-height:44px;}
 <div class="giveaway-page-countdown" id="giveawayPageCountdown"></div>
 <div class="giveaway-entry-rules" id="giveawayPageEntryRules" style="margin-top:12px;font-size:13px;color:var(--text-2);line-height:1.6;text-align:center;"></div>
 <div class="giveaway-page-winner" id="giveawayPageWinner" style="display:none;"></div>
+<div class="giveaway-page-stats" id="giveawayPageStats" style="margin-top:16px;text-align:center;font-size:13px;color:var(--text-2);line-height:1.8;"></div>
 <div class="giveaway-odds" id="giveawayPageOdds">
 <button class="giveaway-odds-toggle" id="giveawayPageOddsToggle">See your odds</button>
 <span style="margin:0 6px;color:var(--text-3);">|</span>
@@ -3309,6 +3311,7 @@ if(tradeOrdersUnsub)return;
 tradeOrdersUnsub=onSnapshot(collection(db,"trade_requests"),(snap)=>{
 tradeReqOrders=snap.docs.map(d=>d.data());
 renderTradeOrders();
+if(giveawayData&&giveawayData.active)updateGiveawayPublicStats(giveawayData);
 });
 }
 
@@ -3913,6 +3916,25 @@ if(oddsEl)oddsEl.style.display="";
 startGiveawayCountdown(data.endTime);
 }
 updateGiveawayPage(data);
+updateGiveawayPublicStats(data);
+}
+
+function updateGiveawayPublicStats(data){
+const cardEl=document.getElementById("giveawayCardStats");
+const pageEl=document.getElementById("giveawayPageStats");
+if(!data||!data.active||data.winner){
+if(cardEl)cardEl.innerHTML="";
+if(pageEl)pageEl.innerHTML="";
+return;
+}
+(tradeReqOrders.length?Promise.resolve():loadTradeOrders()).then(()=>{
+const entries=buildRaffleEntries(data);
+const uniquePlayers=entries.length;
+const totalEntries=entries.reduce((s,e)=>s+e.entries,0);
+const html='<div style="color:var(--accent-400);font-weight:600;">There are '+uniquePlayers+' Unique Players in this Raffle!</div><div style="color:var(--accent-400);font-weight:600;">There are '+formatValueFull(totalEntries)+' entries for this giveaway currently!</div>';
+if(cardEl)cardEl.innerHTML=html;
+if(pageEl)pageEl.innerHTML=html;
+});
 }
 
 // --- Giveaway standalone page (mobile) ---
