@@ -3594,7 +3594,8 @@ if(completeBtn){
 const id=completeBtn.dataset.orderComplete;
 const order=tradeReqOrders.find(o=>o.id===id);
 if(!order)return;
-if(!confirm("Complete order for "+(order.discord||order.username)+"?\n\nThis will deduct items from inventory and log the trade."))return;
+if(completeBtn.dataset.confirmPending!=="1"){completeBtn.dataset.confirmPending="1";const orig=completeBtn.textContent;completeBtn.textContent="Tap again";setTimeout(()=>{completeBtn.dataset.confirmPending="";completeBtn.textContent=orig;},3000);return;}
+completeBtn.dataset.confirmPending="";
 order.status="completed";order.completedAt=Date.now();order.completedBy=window.teamCurrentMember;
 // Process: log trade and deduct inventory
 const member=window.teamCurrentMember;
@@ -3647,7 +3648,9 @@ const cancelBtn=e.target.closest("[data-order-cancel]");
 if(cancelBtn){
 const id=cancelBtn.dataset.orderCancel;
 const order=tradeReqOrders.find(o=>o.id===id);
-if(!order||!confirm("Cancel order for "+order.username+"?"))return;
+if(!order)return;
+if(cancelBtn.dataset.confirmPending!=="1"){cancelBtn.dataset.confirmPending="1";const orig=cancelBtn.textContent;cancelBtn.textContent="Tap again";setTimeout(()=>{cancelBtn.dataset.confirmPending="";cancelBtn.textContent=orig;},3000);return;}
+cancelBtn.dataset.confirmPending="";
 order.status="cancelled";order.cancelledAt=Date.now();order.cancelledBy=window.teamCurrentMember;
 renderTradeOrders();await saveTradeOrder(order);return;}
 const discBtn=e.target.closest("[data-disc-apply]");
