@@ -422,6 +422,29 @@ input[type="range"]::-webkit-slider-thumb{width:28px;height:28px;}
 .table-wrap{overflow-x:auto;border-radius:12px;background:var(--glass);border:1px solid var(--glass-border);margin-bottom:20px;}
 .team-sub-section{display:none;}
 .team-sub-section.active{display:block;}
+.lb-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;}
+.lb-stat-card{background:var(--glass);backdrop-filter:blur(12px);border:1px solid var(--glass-border);border-radius:14px;padding:16px;text-align:center;}
+.lb-stat-card .lb-num{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--text-1);display:block;}
+.lb-stat-card .lb-label{font-size:12px;color:var(--text-3);margin-top:4px;display:block;}
+.lb-rank{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;font-weight:700;font-size:13px;}
+.lb-rank-1{background:rgba(251,191,36,0.2);color:#fbbf24;border:1px solid rgba(251,191,36,0.4);}
+.lb-rank-2{background:rgba(148,163,184,0.2);color:#94a3b8;border:1px solid rgba(148,163,184,0.4);}
+.lb-rank-3{background:rgba(205,127,50,0.2);color:#cd7f32;border:1px solid rgba(205,127,50,0.4);}
+.lb-sort:hover{color:var(--accent-300);}.lb-sort-active{color:var(--accent-400)!important;}
+.lb-arrow{font-size:11px;margin-left:2px;}
+.lb-edit-btn{background:rgba(96,165,250,0.15);border:1px solid rgba(96,165,250,0.3);color:#60a5fa;font-size:13px;padding:4px 8px;border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent;}
+.lb-edit-btn:hover{background:rgba(96,165,250,0.3);}
+.lb-add-form{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.pub-lb-sort:hover{color:var(--accent-300);}.pub-lb-sort-active{color:var(--accent-400)!important;}
+.pub-lb-pager{display:flex;justify-content:center;gap:6px;margin-top:16px;flex-wrap:wrap;}
+.pub-lb-pager button{background:var(--glass);border:1px solid var(--glass-border);color:var(--text-2);font-family:'Inter',sans-serif;font-size:13px;padding:8px 14px;border-radius:8px;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;}
+.pub-lb-pager button:hover{background:var(--accent-700);color:#fff;border-color:var(--accent-700);}
+.pub-lb-pager button.active{background:var(--accent-700);color:#fff;border-color:var(--accent-700);font-weight:600;}
+@media(max-width:480px){
+.lb-add-form{flex-direction:column;}.lb-add-form input,.lb-add-form button{width:100%!important;min-width:100%!important;box-sizing:border-box;}
+.lb-stats{grid-template-columns:1fr;}
+.lb-edit-btn{padding:6px 10px;}
+}
 .team-clock-timer{font-size:13px;color:var(--accent-300);margin-bottom:12px;}
 .team-edit-del{background:rgba(220,38,38,0.15);border:1px solid rgba(220,38,38,0.3);color:#f87171;font-size:11px;padding:8px 12px;border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s;white-space:nowrap;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
 .team-edit-del:hover{background:rgba(220,38,38,0.35);}
@@ -726,6 +749,7 @@ input[type="range"]::-webkit-slider-thumb{width:28px;height:28px;}
 <button class="team-sub-tab" data-team-tab="teamMy">My Tracker</button>
 <button class="team-sub-tab" data-team-tab="teamInventory">Inventory</button>
 <button class="team-sub-tab" data-team-tab="teamOrders">Orders</button>
+<button class="team-sub-tab" data-team-tab="teamLeaderboard">Leaderboard</button>
 </div>
 <div id="teamDash" class="team-sub-section active">
 <div class="team-dash-grid" id="teamDashGrid"></div>
@@ -804,6 +828,7 @@ input[type="range"]::-webkit-slider-thumb{width:28px;height:28px;}
 </div>
 <div id="teamOrders" class="team-sub-section">
 <h3 class="team-section-header">Trade Requests <span class="badge" id="ordersPendingBadge">0 pending</span></h3>
+<div style="margin-bottom:14px;"><button class="admin-btn" id="tradePauseToggle" style="font-size:12px;padding:8px 14px;"></button></div>
 <div id="teamOrdersList"></div>
 <div class="trade-settings-section">
 <h4>Webhook Settings</h4>
@@ -828,17 +853,39 @@ input[type="range"]::-webkit-slider-thumb{width:28px;height:28px;}
 <div id="bulkDiscRulesList"></div>
 </div>
 </div>
+<div id="teamLeaderboard" class="team-sub-section">
+<h3 class="team-section-header">Customer Leaderboard</h3>
+<div class="lb-stats" id="lbStats"></div>
+<div class="team-form lb-add-form" style="margin-bottom:16px;">
+<input id="lbAddName" placeholder="Discord username">
+<input id="lbAddTrades" type="number" min="0" placeholder="Trades" style="width:90px;">
+<input id="lbAddTokens" type="number" min="0" placeholder="Tokens" style="width:120px;">
+<button class="admin-btn" id="lbAddBtn" style="font-size:12px;padding:8px 14px;">Add</button>
+</div>
+<div class="table-wrap"><table class="team-table" id="lbTable">
+<thead><tr><th>#</th><th>Discord</th><th class="lb-sort" data-lb-sort="trades" style="cursor:pointer;user-select:none;">Trades <span class="lb-arrow"></span></th><th class="lb-sort lb-sort-active" data-lb-sort="tokens" style="cursor:pointer;user-select:none;">Tokens Spent <span class="lb-arrow">▼</span></th><th style="width:80px;"></th></tr></thead>
+<tbody id="lbBody"></tbody>
+</table></div>
+</div>
 </div>
 </section>
 
 <!-- TRADE REQUEST -->
 <section id="tradePage" class="page">
+<div class="trade-req-paused" id="tradePausedBanner" style="display:none;text-align:center;padding:24px 16px;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);border-radius:14px;margin-bottom:20px;">
+<h2 style="color:#fbbf24;margin:0 0 8px;font-family:'Space Grotesk',sans-serif;">Trades Paused</h2>
+<p style="color:var(--text-2);margin:0;font-size:14px;">We are not accepting trade requests at the moment. Please check back later!</p>
+</div>
 <div class="trade-req-header">
 <h1 class="gradient-text">Request A Trade</h1>
 <p style="color:var(--text-2);font-size:14px;margin-top:8px;">Browse available pets and request a trade. An admin will process your order.</p>
 <div class="trade-req-admin-status" id="tradeReqAdminStatus">
 <span class="status-dot offline"></span>Checking admin status...
 </div>
+</div>
+<div class="trade-notice-box" id="tradeNoticeBox" style="max-width:700px;margin:0 auto 16px;padding:14px 18px;background:rgba(96,165,250,0.08);border:1px solid rgba(96,165,250,0.25);border-radius:12px;text-align:center;font-size:13px;color:var(--text-2);line-height:1.6;">
+<span id="tradeNoticeText"></span>
+<button class="trade-notice-edit-btn" id="tradeNoticeEditBtn" style="display:none;margin-left:8px;background:rgba(96,165,250,0.2);border:1px solid rgba(96,165,250,0.3);color:#60a5fa;font-size:11px;padding:4px 10px;border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif;vertical-align:middle;">Edit</button>
 </div>
 <div class="trade-req-layout">
 <div class="trade-req-available">
@@ -872,6 +919,19 @@ input[type="range"]::-webkit-slider-thumb{width:28px;height:28px;}
 <button class="trade-req-submit" id="tradeReqSubmit" disabled>Submit Trade Request</button>
 </div>
 </div>
+</div>
+<div class="pub-lb-wrap" style="margin-top:40px;max-width:700px;margin-left:auto;margin-right:auto;">
+<h2 class="gradient-text" style="text-align:center;margin-bottom:4px;">Leaderboard</h2>
+<p style="color:var(--text-2);font-size:14px;text-align:center;margin-bottom:16px;">Top customers ranked by trade activity.</p>
+<div class="trade-notice-box" id="lbNoticeBox" style="margin:0 auto 16px;padding:14px 18px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);border-radius:12px;text-align:center;font-size:13px;color:var(--text-2);line-height:1.6;">
+<span id="lbNoticeText"></span>
+<button class="trade-notice-edit-btn" id="lbNoticeEditBtn" style="display:none;margin-left:8px;background:rgba(251,191,36,0.2);border:1px solid rgba(251,191,36,0.3);color:#fbbf24;font-size:11px;padding:4px 10px;border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif;vertical-align:middle;">Edit</button>
+</div>
+<div class="table-wrap"><table class="team-table" id="pubLbTable">
+<thead><tr><th style="width:40px;">#</th><th>Discord</th><th class="pub-lb-sort" data-pub-sort="trades" style="cursor:pointer;user-select:none;">Trades <span class="lb-arrow"></span></th><th class="pub-lb-sort pub-lb-sort-active" data-pub-sort="tokens" style="cursor:pointer;user-select:none;">Tokens Spent <span class="lb-arrow">▼</span></th></tr></thead>
+<tbody id="pubLbBody"></tbody>
+</table></div>
+<div class="pub-lb-pager" id="pubLbPager"></div>
 </div>
 </section>
 
@@ -1738,7 +1798,7 @@ if(e.altKey&&e.shiftKey&&e.key==="M"){e.preventDefault();document.getElementById
 if(e.altKey&&e.shiftKey&&e.key==="E"){e.preventDefault();if(window.isAdmin)toggleHomeEditor();}
 if(e.altKey&&e.shiftKey&&e.key==="F"){e.preventDefault();if(window.isAdmin)toggleFaqEditor();}
 if(e.altKey&&e.shiftKey&&e.key==="T"){e.preventDefault();if(window.isAdmin)goPage("team");}
-if(e.altKey&&e.shiftKey&&(e.key==="!"||e.code==="Digit1")){e.preventDefault();if(window.isAdmin){window.teamEditMode=!window.teamEditMode;renderTeamDashboard();renderMyTracker();renderTeamInventory();}}
+if(e.altKey&&e.shiftKey&&(e.key==="!"||e.code==="Digit1")){e.preventDefault();if(window.isAdmin){window.teamEditMode=!window.teamEditMode;renderTeamDashboard();renderMyTracker();renderTeamInventory();if(document.getElementById("teamLeaderboard").classList.contains("active"))renderLeaderboard();}}
 });
 
 document.getElementById("adminClose").addEventListener("click",()=>adminPanel.classList.remove("open"));
@@ -2077,7 +2137,8 @@ document.querySelectorAll(".team-sub-section").forEach(s=>s.classList.remove("ac
 document.querySelectorAll(".team-sub-tab[data-team-tab]").forEach(t=>t.classList.remove("active"));
 const el=document.getElementById(id);if(el)el.classList.add("active");
 document.querySelectorAll(".team-sub-tab[data-team-tab]").forEach(t=>{if(t.dataset.teamTab===id)t.classList.add("active");});
-if(id==="teamOrders"){loadTradeOrders().then(()=>{loadTradeSettings().then(()=>{renderTradeOrders();startTradeOrdersListener();const wu=document.getElementById("tradeWebhookUrl");const ri=document.getElementById("tradeRoleId");if(wu)wu.value=tradeReqSettings.webhookUrl||"";if(ri)ri.value=tradeReqSettings.roleId||"";renderBulkDiscounts();populateBulkDiscPetList();});});}
+if(id==="teamOrders"){loadTradeOrders().then(()=>{loadTradeSettings().then(()=>{renderTradeOrders();startTradeOrdersListener();const wu=document.getElementById("tradeWebhookUrl");const ri=document.getElementById("tradeRoleId");if(wu)wu.value=tradeReqSettings.webhookUrl||"";if(ri)ri.value=tradeReqSettings.roleId||"";renderBulkDiscounts();populateBulkDiscPetList();updatePauseBtn();});});}
+if(id==="teamLeaderboard"){Promise.all([loadTradeOrders(),loadLbEntries()]).then(()=>renderLeaderboard());}
 }
 
 async function initTeamTracker(){
@@ -2370,6 +2431,65 @@ document.querySelectorAll(".team-sub-tab[data-team-tab]").forEach(tab=>{
 tab.addEventListener("click",()=>showTeamSection(tab.dataset.teamTab));
 });
 
+// Leaderboard sort headers
+document.querySelectorAll(".lb-sort[data-lb-sort]").forEach(th=>{
+th.addEventListener("click",()=>renderLeaderboard(th.dataset.lbSort));
+});
+
+// Public leaderboard sort + pager
+document.querySelectorAll(".pub-lb-sort[data-pub-sort]").forEach(th=>{
+th.addEventListener("click",()=>renderPubLeaderboard(th.dataset.pubSort));
+});
+document.getElementById("pubLbPager").addEventListener("click",(e)=>{
+const btn=e.target.closest("[data-pub-page]");
+if(btn){pubLbPage=parseInt(btn.dataset.pubPage);renderPubLeaderboard();}
+});
+
+// Leaderboard add entry
+document.getElementById("lbAddBtn").addEventListener("click",async()=>{
+const nameEl=document.getElementById("lbAddName");
+const tradesEl=document.getElementById("lbAddTrades");
+const tokensEl=document.getElementById("lbAddTokens");
+const name=nameEl.value.trim();if(!name){alert("Enter a Discord username.");return;}
+const trades=parseInt(tradesEl.value)||0;
+const tokens=parseInt(tokensEl.value)||0;
+if(!trades&&!tokens){alert("Enter trades or tokens.");return;}
+lbManualEntries.push({id:teamId("lb"),name,trades,tokens});
+await saveLbEntries();
+nameEl.value="";tradesEl.value="";tokensEl.value="";
+renderLeaderboard();
+});
+
+// Leaderboard edit/delete delegation
+document.getElementById("lbTable").addEventListener("click",async(e)=>{
+const editBtn=e.target.closest("[data-lb-edit]");
+if(editBtn){
+const oldName=editBtn.dataset.lbEdit;
+const oldTrades=parseInt(editBtn.dataset.lbTrades)||0;
+const oldTokens=parseInt(editBtn.dataset.lbTokens)||0;
+const mid=editBtn.dataset.lbMid;
+const input=prompt(`Edit "${oldName}"\n\nFormat: name, trades, tokens`,`${oldName}, ${oldTrades}, ${oldTokens}`);
+if(!input)return;
+const parts=input.split(",").map(s=>s.trim());
+const newName=parts[0]||oldName;
+const newTrades=parseInt(parts[1])||0;
+const newTokens=parseInt(parts[2])||0;
+if(mid){
+const entry=lbManualEntries.find(e=>e.id===mid);
+if(entry){entry.name=newName;entry.trades=newTrades;entry.tokens=newTokens;}
+}else{
+lbManualEntries.push({id:teamId("lb"),name:newName,trades:newTrades,tokens:newTokens});
+}
+await saveLbEntries();renderLeaderboard();
+}
+const delBtn=e.target.closest("[data-lb-del]");
+if(delBtn){
+if(!confirm("Delete this manual entry?"))return;
+lbManualEntries=lbManualEntries.filter(e=>e.id!==delBtn.dataset.lbDel);
+await saveLbEntries();renderLeaderboard();
+}
+});
+
 // Clock In/Out
 document.getElementById("teamClockBtn").addEventListener("click",async()=>{
 const d=getMyData();if(!d.sessions)d.sessions=[];
@@ -2602,6 +2722,141 @@ return n.toLocaleString();
 }
 
 function formatValueFull(n){return n.toLocaleString();}
+
+function stringSimilarity(a,b){
+a=a.toLowerCase().trim();b=b.toLowerCase().trim();
+if(a===b)return 1;
+const len=Math.max(a.length,b.length);if(!len)return 1;
+const m=[];
+for(let i=0;i<=a.length;i++)m[i]=[i];
+for(let j=0;j<=b.length;j++)m[0][j]=j;
+for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)
+m[i][j]=Math.min(m[i-1][j]+1,m[i][j-1]+1,m[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
+return 1-m[a.length][b.length]/len;
+}
+
+function resolveCanonicalUsername(name,canonMap){
+const lower=name.toLowerCase().trim();
+for(const [canon] of canonMap){if(stringSimilarity(lower,canon.toLowerCase())>=0.75)return canon;}
+canonMap.set(name,true);return name;
+}
+
+let lbSortBy="tokens";
+let lbManualEntries=[];
+
+async function loadLbEntries(){
+try{const snap=await getDoc(doc(db,"config","leaderboard"));
+if(snap.exists())lbManualEntries=snap.data().entries||[];
+else lbManualEntries=[];
+}catch(e){lbManualEntries=[];}
+}
+
+async function saveLbEntries(){
+await setDoc(doc(db,"config","leaderboard"),{entries:lbManualEntries});
+}
+
+let pubLbSortBy="tokens";
+let pubLbPage=0;
+const PUB_LB_PER_PAGE=10;
+let pubLbData=[];
+
+function buildPubLbData(){
+const completed=tradeReqOrders.filter(o=>o.status==="completed"&&!o.lbExclude);
+const canonMap=new Map();
+const stats=new Map();
+completed.forEach(o=>{
+const raw=o.discord||o.username||"Unknown";
+const key=resolveCanonicalUsername(raw,canonMap);
+const cur=stats.get(key)||{trades:0,tokens:0,lastAt:0};
+cur.trades++;cur.tokens+=(o.totalValueRaw||0);
+const ts=o.completedAt||o.createdAt||0;
+if(ts>cur.lastAt)cur.lastAt=ts;
+stats.set(key,cur);
+});
+lbManualEntries.forEach(e=>{
+const key=resolveCanonicalUsername(e.name,canonMap);
+const cur=stats.get(key)||{trades:0,tokens:0,lastAt:0};
+cur.trades+=(e.trades||0);cur.tokens+=(e.tokens||0);
+stats.set(key,cur);
+});
+pubLbData=[...stats.entries()];
+}
+
+function renderPubLeaderboard(sortBy){
+if(sortBy){pubLbSortBy=sortBy;pubLbPage=0;}
+pubLbData.sort((a,b)=>b[1][pubLbSortBy]-a[1][pubLbSortBy]||(a[1].lastAt||0)-(b[1].lastAt||0));
+const total=pubLbData.length;
+const pages=Math.ceil(total/PUB_LB_PER_PAGE)||1;
+if(pubLbPage>=pages)pubLbPage=pages-1;
+const start=pubLbPage*PUB_LB_PER_PAGE;
+const slice=pubLbData.slice(start,start+PUB_LB_PER_PAGE);
+document.querySelectorAll(".pub-lb-sort").forEach(th=>{
+const key=th.dataset.pubSort;
+const arrow=th.querySelector(".lb-arrow");
+if(key===pubLbSortBy){th.classList.add("pub-lb-sort-active");arrow.textContent="▼";}
+else{th.classList.remove("pub-lb-sort-active");arrow.textContent="";}
+});
+const body=document.getElementById("pubLbBody");
+body.innerHTML=slice.map(([name,d],i)=>{
+const rank=start+i+1;
+const rankClass=rank<=3?` lb-rank-${rank}`:"";
+const rankEl=rank<=3?`<span class="lb-rank${rankClass}">${rank}</span>`:`<span style="color:var(--text-3)">${rank}</span>`;
+return `<tr><td>${rankEl}</td><td style="font-weight:600;color:var(--text-1)">${esc(name)}</td><td>${d.trades}</td><td>${formatValueFull(d.tokens)}</td></tr>`;
+}).join("")||'<tr><td colspan="4" style="text-align:center;color:var(--text-3);padding:20px;">No data yet.</td></tr>';
+const pager=document.getElementById("pubLbPager");
+if(pages<=1){pager.innerHTML="";return;}
+let btns="";
+if(pubLbPage>0)btns+=`<button data-pub-page="${pubLbPage-1}">&laquo; Prev</button>`;
+for(let p=0;p<pages;p++)btns+=`<button data-pub-page="${p}"${p===pubLbPage?' class="active"':''}>${p+1}</button>`;
+if(pubLbPage<pages-1)btns+=`<button data-pub-page="${pubLbPage+1}">Next &raquo;</button>`;
+pager.innerHTML=btns;
+}
+
+function renderLeaderboard(sortBy){
+if(sortBy)lbSortBy=sortBy;
+const completed=tradeReqOrders.filter(o=>o.status==="completed"&&!o.lbExclude);
+const canonMap=new Map();
+const stats=new Map();
+// aggregate completed orders
+completed.forEach(o=>{
+const raw=o.discord||o.username||"Unknown";
+const key=resolveCanonicalUsername(raw,canonMap);
+const cur=stats.get(key)||{trades:0,tokens:0,manual:false,lastAt:0};
+cur.trades++;cur.tokens+=(o.totalValueRaw||0);
+const ts=o.completedAt||o.createdAt||0;
+if(ts>cur.lastAt)cur.lastAt=ts;
+stats.set(key,cur);
+});
+// merge manual entries
+lbManualEntries.forEach(e=>{
+const key=resolveCanonicalUsername(e.name,canonMap);
+const cur=stats.get(key)||{trades:0,tokens:0,manual:false,lastAt:0};
+cur.trades+=(e.trades||0);cur.tokens+=(e.tokens||0);cur.manual=true;cur.manualId=e.id;
+stats.set(key,cur);
+});
+const sorted=[...stats.entries()].sort((a,b)=>b[1][lbSortBy]-a[1][lbSortBy]||(a[1].lastAt||0)-(b[1].lastAt||0));
+let totalTokens=0;sorted.forEach(([,v])=>totalTokens+=v.tokens);
+const lbStats=document.getElementById("lbStats");
+lbStats.innerHTML=`<div class="lb-stat-card"><span class="lb-num">${sorted.length}</span><span class="lb-label">Unique Customers</span></div>`+
+`<div class="lb-stat-card"><span class="lb-num">${formatValue(totalTokens)}</span><span class="lb-label">Total Tokens Traded</span></div>`;
+document.querySelectorAll(".lb-sort").forEach(th=>{
+const key=th.dataset.lbSort;
+const arrow=th.querySelector(".lb-arrow");
+if(key===lbSortBy){th.classList.add("lb-sort-active");arrow.textContent="▼";}
+else{th.classList.remove("lb-sort-active");arrow.textContent="";}
+});
+const em=window.teamEditMode;
+const body=document.getElementById("lbBody");
+body.innerHTML=sorted.map(([name,d],i)=>{
+const rank=i+1;
+const rankClass=rank<=3?` lb-rank-${rank}`:"";
+const rankEl=rank<=3?`<span class="lb-rank${rankClass}">${rank}</span>`:`<span style="color:var(--text-3)">${rank}</span>`;
+const mid=d.manualId||"";
+let actions=`<button class="lb-edit-btn" data-lb-edit="${esc(name)}" data-lb-trades="${d.trades}" data-lb-tokens="${d.tokens}" data-lb-mid="${esc(mid)}" title="Edit">✎</button>`;
+if(em&&mid)actions+=` <button class="team-edit-del" data-lb-del="${esc(mid)}" style="padding:4px 8px;font-size:11px;" title="Delete">✕</button>`;
+return `<tr><td>${rankEl}</td><td style="font-weight:600;color:var(--text-1)">${esc(name)}</td><td>${d.trades}</td><td>${formatValueFull(d.tokens)}</td><td>${actions}</td></tr>`;
+}).join("");
+}
 
 function getPetValue(name,variant){
 const inv=tradeReqInventory.find(i=>i.name===name&&i.variant===(variant||""));
@@ -2904,6 +3159,8 @@ actions=`<button style="background:rgba(96,165,250,0.2);color:#60a5fa;" data-ord
 else if(order.status==="processing"){
 actions=`<button style="background:rgba(52,211,153,0.2);color:#34d399;" data-order-complete="${esc(order.id)}">Complete</button>
 <button style="background:rgba(251,191,36,0.2);color:#fbbf24;" data-order-cancel="${esc(order.id)}">Cancel</button>`;}
+if(em&&order.status==="completed")actions+=`<button style="background:rgba(168,85,247,0.2);color:#c084fc;" data-order-editcost="${esc(order.id)}">Edit Cost</button>`;
+if(em&&order.status==="completed")actions+=`<button style="background:${order.lbExclude?"rgba(52,211,153,0.2)":"rgba(251,191,36,0.2)"};color:${order.lbExclude?"#34d399":"#fbbf24"};" data-order-lbtoggle="${esc(order.id)}">${order.lbExclude?"Include in LB":"Exclude from LB"}</button>`;
 if(em)actions+=`<button style="background:rgba(220,38,38,0.2);color:#f87171;" data-order-delete="${esc(order.id)}">Delete</button>`;
 const isActive=order.status==="pending"||order.status==="processing";
 const discountRow=isActive
@@ -2943,7 +3200,7 @@ if(completeBtn){
 const id=completeBtn.dataset.orderComplete;
 const order=tradeReqOrders.find(o=>o.id===id);
 if(!order)return;
-if(!confirm("Complete order for "+order.username+"?\n\nThis will deduct items from inventory and log the trade."))return;
+if(!confirm("Complete order for "+(order.discord||order.username)+"?\n\nThis will deduct items from inventory and log the trade."))return;
 order.status="completed";order.completedAt=Date.now();order.completedBy=window.teamCurrentMember;
 // Process: log trade and deduct inventory
 const member=window.teamCurrentMember;
@@ -2951,10 +3208,10 @@ const d=getMyData();if(!d.trades)d.trades=[];if(!d.tokens)d.tokens=[];
 d.trades.push({id:teamId("trd"),
 outPets:order.items.map(i=>({name:i.name,variant:i.variant||"",qty:i.qty})),
 inPets:[],outTokens:0,inTokens:order.totalValueRaw||0,
-with:order.username,ts:Date.now()});
+with:order.discord||order.username,ts:Date.now()});
 if(order.totalValueRaw){
 d.tokens.push({id:teamId("tok"),amount:order.totalValueRaw,type:"gain",
-note:"Trade w/ "+order.username+" (order)",ts:Date.now()});}
+note:"Trade w/ "+(order.discord||order.username)+" (order)",ts:Date.now()});}
 window.teamData[member]=d;
 if(!window.teamInventory.items)window.teamInventory.items=[];
 if(!window.teamInventory.log)window.teamInventory.log=[];
@@ -2970,6 +3227,23 @@ window.teamInventory.items=window.teamInventory.items.filter(i=>i.qty>0);
 renderTradeOrders();renderMyTracker();renderTeamDashboard();renderTeamInventory();
 await saveTradeOrder(order);await saveMyData();await saveTeamInventory();
 return;}
+const lbToggleBtn=e.target.closest("[data-order-lbtoggle]");
+if(lbToggleBtn&&window.teamEditMode){
+const id=lbToggleBtn.dataset.orderLbtoggle;
+const order=tradeReqOrders.find(o=>o.id===id);
+if(!order)return;
+order.lbExclude=!order.lbExclude;
+renderTradeOrders();await saveTradeOrder(order);return;}
+const editCostBtn=e.target.closest("[data-order-editcost]");
+if(editCostBtn&&window.teamEditMode){
+const id=editCostBtn.dataset.orderEditcost;
+const order=tradeReqOrders.find(o=>o.id===id);
+if(!order)return;
+const input=prompt("Edit total cost for "+(order.discord||order.username)+":\n\nCurrent: "+formatValueFull(order.totalValueRaw||0),order.totalValueRaw||0);
+if(input===null)return;
+const newCost=parseInt(input)||0;
+order.totalValueRaw=newCost;
+renderTradeOrders();await saveTradeOrder(order);return;}
 const deleteBtn=e.target.closest("[data-order-delete]");
 if(deleteBtn&&window.teamEditMode){
 const id=deleteBtn.dataset.orderDelete;
@@ -3020,6 +3294,21 @@ try{await setDoc(doc(db,"config","trade_settings"),tradeReqSettings);alert("Sett
 catch(e){alert("Save failed: "+e.message);}
 });
 
+// Pause toggle
+function updatePauseBtn(){
+const btn=document.getElementById("tradePauseToggle");if(!btn)return;
+btn.textContent=tradeReqSettings.paused?"Resume Trade Requests":"Pause Trade Requests";
+btn.style.background=tradeReqSettings.paused?"rgba(52,211,153,0.2)":"rgba(251,191,36,0.2)";
+btn.style.color=tradeReqSettings.paused?"#34d399":"#fbbf24";
+btn.style.border=tradeReqSettings.paused?"1px solid rgba(52,211,153,0.3)":"1px solid rgba(251,191,36,0.3)";
+}
+document.getElementById("tradePauseToggle").addEventListener("click",async()=>{
+tradeReqSettings.paused=!tradeReqSettings.paused;
+updatePauseBtn();
+try{await setDoc(doc(db,"config","trade_settings"),tradeReqSettings);}
+catch(e){alert("Save failed: "+e.message);tradeReqSettings.paused=!tradeReqSettings.paused;updatePauseBtn();}
+});
+
 // Bulk discount management
 function renderBulkDiscounts(){
 const list=document.getElementById("bulkDiscRulesList");if(!list)return;
@@ -3065,16 +3354,58 @@ try{await setDoc(doc(db,"config","trade_settings"),tradeReqSettings);}catch(e){a
 renderBulkDiscounts();
 });
 
+const TRADE_NOTICE_DEFAULT="Any cost amount is prone to be cheaper if a discount is applied by an admin.\nONLY ENTER ROBLOX USERNAME AND DISCORD USERNAME IN THE REQUIRED FIELDS! IF YOU HAVE A QUESTION, ASK BEFORE PLACING THE ORDER!";
+const LB_NOTICE_DEFAULT="Anyone in either TOP 3 leaderboard spot will get an additional 10% discount!";
+
+function renderTradeNotices(){
+const tradeText=tradeReqSettings.tradeNotice!=null?tradeReqSettings.tradeNotice:TRADE_NOTICE_DEFAULT;
+const lbText=tradeReqSettings.lbNotice!=null?tradeReqSettings.lbNotice:LB_NOTICE_DEFAULT;
+const tn=document.getElementById("tradeNoticeText");
+const ln=document.getElementById("lbNoticeText");
+if(tn)tn.innerHTML=esc(tradeText).replace(/\n/g,"<br>");
+if(ln)ln.innerHTML=esc(lbText).replace(/\n/g,"<br>");
+const isAdm=window.isAdmin;
+const teBtn=document.getElementById("tradeNoticeEditBtn");
+const leBtn=document.getElementById("lbNoticeEditBtn");
+if(teBtn)teBtn.style.display=isAdm?"inline-block":"none";
+if(leBtn)leBtn.style.display=isAdm?"inline-block":"none";
+}
+
+document.getElementById("tradeNoticeEditBtn").addEventListener("click",async()=>{
+const cur=tradeReqSettings.tradeNotice!=null?tradeReqSettings.tradeNotice:TRADE_NOTICE_DEFAULT;
+const input=prompt("Edit trade notice (use \\n for new lines):",cur);
+if(input===null)return;
+tradeReqSettings.tradeNotice=input.replace(/\\n/g,"\n");
+try{await setDoc(doc(db,"config","trade_settings"),tradeReqSettings);}catch(e){alert("Save failed: "+e.message);return;}
+renderTradeNotices();
+});
+
+document.getElementById("lbNoticeEditBtn").addEventListener("click",async()=>{
+const cur=tradeReqSettings.lbNotice!=null?tradeReqSettings.lbNotice:LB_NOTICE_DEFAULT;
+const input=prompt("Edit leaderboard notice (use \\n for new lines):",cur);
+if(input===null)return;
+tradeReqSettings.lbNotice=input.replace(/\\n/g,"\n");
+try{await setDoc(doc(db,"config","trade_settings"),tradeReqSettings);}catch(e){alert("Save failed: "+e.message);return;}
+renderTradeNotices();
+});
+
 // Init trade page (public)
 async function initTradePage(){
 await loadTradeSettings();
+const paused=tradeReqSettings.paused;
+const banner=document.getElementById("tradePausedBanner");
+const layout=document.querySelector(".trade-req-layout");
+if(paused){banner.style.display="";if(layout)layout.style.display="none";}
+else{banner.style.display="none";if(layout)layout.style.display="";
 await loadTradeInventory();
 startTradeInvListener();
 renderTradeInventory();
 renderTradeCart();
 checkAdminsOnline().then(()=>renderAdminStatus());
 if(tradeAdminInterval)clearInterval(tradeAdminInterval);
-tradeAdminInterval=setInterval(()=>{checkAdminsOnline().then(()=>renderAdminStatus());},30000);
+tradeAdminInterval=setInterval(()=>{checkAdminsOnline().then(()=>renderAdminStatus());},30000);}
+Promise.all([loadTradeOrders(),loadLbEntries()]).then(()=>{buildPubLbData();renderPubLeaderboard();});
+renderTradeNotices();
 }
 
 /* ═══════════════ ROUTING ═══════════════ */
