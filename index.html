@@ -1131,6 +1131,7 @@ button,.nav-tab,.rarity-row,.pet-card{min-height:44px;}
 <div class="gc-winner-msg" id="gcWinnerMsgDisplay" style="display:none;"></div>
 <div class="gc-actions">
 <button class="gc-btn" id="gcRollBtn" disabled>Roll Winner</button>
+<button class="gc-btn" id="gcRerollBtn" style="display:none;">Reroll Winner</button>
 <button class="gc-btn danger" id="gcResetBtn">Reset Raffle</button>
 </div>
 </div>
@@ -4022,10 +4023,12 @@ rollDisplay.className="gc-roll-display winner";
 const msg=(g.winnerMessage||"Winner: {winner}").replace(/\{winner\}/g,g.winner).replace(/\{prize\}/g,fmtPrize(g));
 rollMsgEl.textContent=msg;rollMsgEl.style.display="";
 document.getElementById("gcRollBtn").disabled=true;
+document.getElementById("gcRerollBtn").style.display="";
 }else{
 rollDisplay.textContent="—";
 rollDisplay.className="gc-roll-display";
 rollMsgEl.style.display="none";
+document.getElementById("gcRerollBtn").style.display="none";
 updateRollBtnState();
 }
 }
@@ -4091,55 +4094,80 @@ const btn=document.getElementById("gcRollBtn");
 btn.disabled=!g.active||!g.endTime||Date.now()<g.endTime||!!g.winner;
 }
 
-async function rollGiveawayWinner(){
-const g=giveawayData;
-if(!g||!g.active||g.winner)return;
-const entries=buildRaffleEntries(g);
-if(!entries.length){alert("No entries to roll from!");return;}
-const winner=rollWeightedWinner(entries);
-if(!winner){alert("Could not determine a winner.");return;}
-// Animation
+async function doRollAnimation(entries){
 const display=document.getElementById("gcRollDisplay");
 const names=entries.map(e=>e.name);
+const winner=rollWeightedWinner(entries);
+if(!winner)return null;
 display.className="gc-roll-display rolling";
-const rollBtn=document.getElementById("gcRollBtn");
-rollBtn.disabled=true;
-let delay=50;
-let steps=0;
-const maxSteps=30;
+let delay=50,steps=0;const maxSteps=30;
 await new Promise(resolve=>{
 function step(){
 display.textContent=names[Math.floor(Math.random()*names.length)];
 steps++;
-if(steps>=maxSteps){
-display.textContent=winner;
-display.className="gc-roll-display winner";
-resolve();
-return;
-}
+if(steps>=maxSteps){display.textContent=winner;display.className="gc-roll-display winner";resolve();return;}
 delay=50+Math.pow(steps/maxSteps,2)*450;
 setTimeout(step,delay);
 }
 step();
 });
-// Save
+return winner;
+}
+
+async function rollGiveawayWinner(){
+const g=giveawayData;
+if(!g||!g.active||g.winner)return;
+const entries=buildRaffleEntries(g);
+const display=document.getElementById("gcRollDisplay");
+if(!entries.length){display.textContent="No entries to roll from";display.className="gc-roll-display";return;}
+document.getElementById("gcRollBtn").disabled=true;
+const winner=await doRollAnimation(entries);
+if(!winner){display.textContent="Could not determine a winner";display.className="gc-roll-display";return;}
 const updated={...g,winner,rolledAt:Date.now()};
 await saveGiveawayConfig(updated);
 const msg=(g.winnerMessage||"Winner: {winner}").replace(/\{winner\}/g,winner).replace(/\{prize\}/g,fmtPrize(g));
 const msgEl=document.getElementById("gcWinnerMsgDisplay");
 msgEl.textContent=msg;msgEl.style.display="";
+document.getElementById("gcRerollBtn").style.display="";
 updateGiveawayCard(updated);
 }
 
+async function rerollGiveawayWinner(){
+const g=giveawayData;
+if(!g||!g.active)return;
+const entries=buildRaffleEntries(g);
+const display=document.getElementById("gcRollDisplay");
+if(!entries.length){display.textContent="No entries to roll from";display.className="gc-roll-display";return;}
+document.getElementById("gcRerollBtn").disabled=true;
+const winner=await doRollAnimation(entries);
+if(!winner){document.getElementById("gcRerollBtn").disabled=false;return;}
+const updated={...g,winner,rolledAt:Date.now()};
+await saveGiveawayConfig(updated);
+const msg=(g.winnerMessage||"Winner: {winner}").replace(/\{winner\}/g,winner).replace(/\{prize\}/g,fmtPrize(g));
+const msgEl=document.getElementById("gcWinnerMsgDisplay");
+msgEl.textContent=msg;msgEl.style.display="";
+document.getElementById("gcRerollBtn").disabled=false;
+updateGiveawayCard(updated);
+}
+
+let resetPending=false;
 async function resetGiveaway(){
-if(!confirm("Reset raffle? This clears the winner, prize, and deactivates it. Entry config (tiers/linear) is kept."))return;
+if(!resetPending){
+resetPending=true;
+const btn=document.getElementById("gcResetBtn");
+btn.textContent="Tap again to confirm";
+setTimeout(()=>{resetPending=false;btn.textContent="Reset Raffle";},3000);
+return;
+}
+resetPending=false;
 const prev=giveawayData||{};
 const fresh={active:false,prize:"",prizeQty:1,endTime:null,startedAt:null,
 winnerMessage:prev.winnerMessage||"Congrats {winner}! You won {prize}! DM us to claim.",
 entryMode:prev.entryMode||"tiers",linearRatio:prev.linearRatio||100,
 tiers:prev.tiers||[{min:0,entries:1},{min:100,entries:5},{min:500,entries:10}],
-winner:null,rolledAt:null};
+winner:null,rolledAt:null,raffleRules:prev.raffleRules||""};
 await saveGiveawayConfig(fresh);
+document.getElementById("gcResetBtn").textContent="Reset Raffle";
 populateGiveawayForm();
 renderGiveawayEntries();
 updateGiveawayCard(fresh);
@@ -4221,6 +4249,7 @@ updateRollBtnState();
 
 ["click","touchend"].forEach(evt=>{
 document.getElementById("gcRollBtn").addEventListener(evt,(e)=>{if(evt==="touchend"){e.preventDefault();}rollGiveawayWinner();});
+document.getElementById("gcRerollBtn").addEventListener(evt,(e)=>{if(evt==="touchend"){e.preventDefault();}rerollGiveawayWinner();});
 document.getElementById("gcResetBtn").addEventListener(evt,(e)=>{if(evt==="touchend"){e.preventDefault();}resetGiveaway();});
 });
 
