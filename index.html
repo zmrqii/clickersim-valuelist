@@ -3167,6 +3167,22 @@ stats.set(key,cur);
 pubLbData=[...stats.entries()];
 }
 
+function savePubLbCache(){
+if(!window.isAdmin)return;
+const entries=pubLbData.map(([n,d])=>({n,tr:d.trades,tk:d.tokens}));
+setDoc(doc(db,"config","public_leaderboard"),{entries,at:Date.now()}).catch(()=>{});
+}
+
+async function loadPubLb(){
+try{const snap=await getDoc(doc(db,"config","public_leaderboard"));
+if(snap.exists()&&snap.data().entries){
+pubLbData=snap.data().entries.map(e=>[e.n,{trades:e.tr,tokens:e.tk}]);
+return;}
+}catch(e){}
+await Promise.all([loadTradeOrders(),loadLbEntries()]);
+buildPubLbData();
+}
+
 function renderPubLeaderboard(sortBy){
 if(sortBy){pubLbSortBy=sortBy;pubLbPage=0;}
 pubLbData.sort((a,b)=>b[1][pubLbSortBy]-a[1][pubLbSortBy]||(a[1].lastAt||0)-(b[1].lastAt||0));
@@ -3241,6 +3257,7 @@ let actions=`<button class="lb-edit-btn" data-lb-edit="${esc(name)}" data-lb-tra
 if(em&&mid)actions+=` <button class="team-edit-del" data-lb-del="${esc(mid)}" style="padding:4px 8px;font-size:11px;" title="Delete">✕</button>`;
 return `<tr><td>${rankEl}</td><td style="font-weight:600;color:var(--text-1)">${esc(name)}</td><td>${d.trades}</td><td>${formatValueFull(d.tokens)}</td><td>${actions}</td></tr>`;
 }).join("");
+buildPubLbData();savePubLbCache();
 }
 
 function getPetValue(name,variant){
@@ -3313,6 +3330,7 @@ tradeOrdersUnsub=onSnapshot(collection(db,"trade_requests"),(snap)=>{
 tradeReqOrders=snap.docs.map(d=>d.data());
 renderTradeOrders();
 if(giveawayData&&giveawayData.active)updateGiveawayPublicStats(giveawayData);
+if(window.isAdmin){buildPubLbData();savePubLbCache();}
 });
 }
 
@@ -3805,7 +3823,7 @@ renderTradeCart();
 checkAdminsOnline().then(()=>renderAdminStatus());
 if(tradeAdminInterval)clearInterval(tradeAdminInterval);
 tradeAdminInterval=setInterval(()=>{checkAdminsOnline().then(()=>renderAdminStatus());},30000);}
-Promise.all([loadTradeOrders(),loadLbEntries()]).then(()=>{buildPubLbData();renderPubLeaderboard();});
+loadPubLb().then(()=>renderPubLeaderboard());
 renderTradeNotices();
 }
 
