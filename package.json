@@ -1,0 +1,15 @@
+{
+  "name": "clickersim-valuelist",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "node build.js"
+  },
+  "type": "commonjs",
+  "devDependencies": {
+    "cssnano": "^8.0.2",
+    "html-minifier-terser": "^7.2.0",
+    "postcss": "^8.5.22",
+    "terser": "^5.49.0"
+  }
+}
