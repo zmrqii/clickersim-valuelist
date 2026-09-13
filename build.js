@@ -7,7 +7,7 @@ const DIR = __dirname;
 const DIST = path.join(DIR, "dist");
 
 async function build() {
-  const html = fs.readFileSync(path.join(DIR, "v2.html"), "utf8");
+  const html = fs.readFileSync(path.join(DIR, "index.html"), "utf8");
 
   // Extract inline <script type="module"> block
   const scriptOpenTag = '<script type="module">';
